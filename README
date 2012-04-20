@@ -1,0 +1,27 @@
+Vectoroid for Android
+
+This is a library to use drawings made in vectoroid apps.
+
+It can be used to manipluate and animate the vectors drawn by people for whatever purpose, art, fun, games, presentations, etc.
+
+This software is Dual-Licenced see LICENCE.txt for more information.
+
+Projects
+
+vectoroid-android
+The Android APK library
+http://www.vectoroid.com
+
+VectoroidExample
+The simplest hello world example - loads a drawing from assets
+https://play.google.com/store/apps/details?id=co.uk.sentinelweb.vectoroid.example.basic
+
+SuprCardsExploder
+This 'explodes' drawings made in SuprCards - the first drawing app. 
+It is available on market.
+https://play.google.com/store/apps/details?id=co.uk.sentinelweb.example.cards.explode
+
+The demo explodes the hello world drawing.
+
+
+
