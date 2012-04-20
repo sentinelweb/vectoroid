@@ -70,8 +70,8 @@ public class GSONDrawing extends JSONParent{
 		GsonBuilder gsonb = new GsonBuilder();
 		gsonb.registerTypeAdapter(Fill.class, new FillDeserializer(_saveFile));
 		FillSerializer fillSerializer = new FillSerializer(_saveFile);
-		PenSerializer penSerializer = new PenSerializer(_saveFile);
 		gsonb.registerTypeAdapter(Fill.class, fillSerializer);
+		PenSerializer penSerializer = new PenSerializer(_saveFile);
 		gsonb.registerTypeAdapter(Pen.class, penSerializer);
 		gson = gsonb.create();
 		penSerializer.setGson(gson);

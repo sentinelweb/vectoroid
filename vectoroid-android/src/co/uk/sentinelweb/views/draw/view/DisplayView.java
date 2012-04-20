@@ -49,7 +49,7 @@ public class DisplayView extends ImageView {
 	PointF _tl;
 	Paint testPaint;
 	//RectF drawingBounds = new RectF();
-	private String svgPath;
+	private String filePath;
 	int loadState = LOADSTATE_UNLOADED;
 	OnAsyncListener<Integer> onLoadListener;
 	boolean _isAsset = false;
@@ -95,7 +95,6 @@ public class DisplayView extends ImageView {
 		if (attrs!=null) {
 		//	TypedArray a = context.obtainStyledAttributes(attrs,R.styleable.DisplayView);
 		//	String svgPath = a.getString(R.styleable.DisplayView_svg);
-			//loadSVGFile();
 		//	setAsset(svgPath);
 		}
 	}
@@ -184,7 +183,7 @@ public class DisplayView extends ImageView {
 					text = "Updating";
 					break;
 				case LOADSTATE_UNLOADED:text = "No Image";break;
-				case LOADSTATE_FAILED:text = "Failed:"+svgPath;break;
+				case LOADSTATE_FAILED:text = "Failed:"+filePath;break;
 			}
 			canvas.drawText(text, 20, 40, testPaint);
 		}
@@ -202,10 +201,11 @@ public class DisplayView extends ImageView {
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 	}
-	/*
+	
 	public void setAsset(String assetPath) {
 		loadState=LOADSTATE_LOADING;
 		_isAsset = true;
+		/*
 		if (assetPath!=null) {
 			new LoadSVGTask().execute(assetPath);
 		} else {
@@ -213,8 +213,16 @@ public class DisplayView extends ImageView {
 			loadState=LOADSTATE_UNLOADED;
 			invalidate();
 		}
+		*/
+		if (assetPath!=null) {
+			new LoadDrawingTask().execute(assetPath);
+		} else {
+			d=null;
+			loadState=LOADSTATE_UNLOADED;
+			invalidate();
+		}
 	}
-	
+	/*
 	public void setFile(String assetPath) {
 		loadState=LOADSTATE_LOADING;
 		_isAsset = false;
@@ -232,7 +240,7 @@ public class DisplayView extends ImageView {
 		this._saveFile=saveFile;
 		_isAsset = false;
 		if (f!=null && f.exists()) {
-			new LoadDrawingTask().execute(f);
+			new LoadDrawingTask().execute(f.getAbsolutePath());
 		} else {
 			d=null;
 			loadState=LOADSTATE_UNLOADED;
@@ -337,21 +345,32 @@ public class DisplayView extends ImageView {
 //			}
 //		}
 //	}
-	private class LoadDrawingTask extends AsyncTask<File , Integer, Long> {
+	private class LoadDrawingTask extends AsyncTask<String , Integer, Long> {
 
 		@Override
-		protected Long doInBackground(File... params) {
-			File f  = params[0];
-			DisplayView.this.svgPath=f.getAbsolutePath();
-			if (VecGlobals._isDebug) Log.d(VecGlobals.LOG_TAG, "SVGImageView.this.svgPath: "+DisplayView.this.svgPath);
-			if (svgPath!=null) {
+		protected Long doInBackground(String... params) {
+			//File f  = params[0];
+			File f = null;
+			DisplayView.this.filePath=params[0];//f.getAbsolutePath();
+			if (_isAsset) {
+				
+			} else {
+				f = new File(params[0]);
+			}
+			if (VecGlobals._isDebug) Log.d(VecGlobals.LOG_TAG, "SVGImageView.this.svgPath: "+DisplayView.this.filePath);
+			if (filePath!=null) {
 				try {
 					loadState=LOADSTATE_LOADING;
 					this.publishProgress(loadState);
 					d=null;
 					agr.dropCache();
 					System.gc();
-					d = DrawingFileUtil.loadJSON(f,_saveFile);
+					if (_isAsset) {
+						InputStream is = getContext().getResources().getAssets().open(params[0]);
+						d = DrawingFileUtil.loadJSON(is);
+					} else {
+						d = DrawingFileUtil.loadJSON(f,_saveFile);
+					}
 					loadState=LOADSTATE_UPDATING;
 					this.publishProgress(loadState);
 					d.update(true, agr, UpdateFlags.ALL);
@@ -363,7 +382,7 @@ public class DisplayView extends ImageView {
 					//}
 					loadState=LOADSTATE_LOADED;
 				} catch (Exception e) {
-					if (VecGlobals._isDebug) Log.d(VecGlobals.LOG_TAG, "Load failed:"+DisplayView.this.svgPath,e);
+					if (VecGlobals._isDebug) Log.d(VecGlobals.LOG_TAG, "Load failed:"+DisplayView.this.filePath,e);
 					loadState=LOADSTATE_FAILED;
 					this.publishProgress(loadState);
 				}

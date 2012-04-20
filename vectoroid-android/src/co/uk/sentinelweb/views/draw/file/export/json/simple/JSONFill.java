@@ -60,7 +60,7 @@ public class JSONFill extends JSONParent{
 				case COLOUR: o.put(JSONConst.JSON_COLOUR, f._color);break;
 				case GRADIENT: o.put(JSONConst.JSON_GRADIENT, jsg.toJSON(f._gradient));break;
 				case BITMAP: 
-					if (f._bitmapFill!=null) {o.put(JSONConst.JSON_ASSET, _saveFile.getAssetManager().toJSON(f._bitmapFill));}
+					if (f._bitmapFill!=null && _saveFile!=null) {o.put(JSONConst.JSON_ASSET, _saveFile.getAssetManager().toJSON(f._bitmapFill));}
 					o.put(JSONConst.JSON_BMP_ALPHA, f._bitmapAlpha);
 					break;
 			}
@@ -84,7 +84,7 @@ public class JSONFill extends JSONParent{
 					break;
 				case GRADIENT: f._gradient=jsg.fromJSON(o.getJSONObject(JSONConst.JSON_GRADIENT));break;
 				case BITMAP: 
-					if (o.has(JSONConst.JSON_ASSET)) {
+					if (o.has(JSONConst.JSON_ASSET)&& _saveFile!=null) {
 						JSONObject jsonObject = o.getJSONObject(JSONConst.JSON_ASSET);
 						f._bitmapFill=_saveFile.getAssetManager().fromJSON(jsonObject);
 						

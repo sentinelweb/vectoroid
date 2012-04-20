@@ -32,18 +32,21 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringWriter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import co.uk.sentinelweb.views.draw.file.export.json.gson.GSONDrawing;
 import co.uk.sentinelweb.views.draw.file.export.json.simple.JSONDrawing;
 import co.uk.sentinelweb.views.draw.model.Drawing;
 
@@ -86,6 +89,39 @@ public class DrawingFileUtil {
 			e.printStackTrace();
 		} catch (JSONException e) {
 			e.printStackTrace();
+		}
+		return null;
+	}
+	/*
+	public static Drawing loadJSON(InputStream is) {
+		try {
+			InputStream fis = new BufferedInputStream(is);
+			GSONDrawing gd = new GSONDrawing(null);
+			Drawing dd=gd.fromJSON( fis);
+			return dd;
+		} catch (Exception e) {
+			Log.d(VecGlobals.LOG_TAG, "loadGSON: ex :",e);
+			//d = parseJSONSimple(file);
+		}
+		return null;
+	}
+	*/
+	public static Drawing loadJSON(InputStream is) {
+		try {
+			//File file = getClipJson(ci);
+			InputStream fis = new BufferedInputStream(is);
+			GSONDrawing gd = new GSONDrawing(null);
+			Drawing dd=gd.fromJSON( fis);
+			return dd;
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (JSONException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			//Log.d(VecGlobals.LOG_TAG, "loadGSON: ex :",e);
+			//d = parseJSONSimple(file);
 		}
 		return null;
 	}

@@ -107,7 +107,7 @@ public class FillDeserializer implements JsonDeserializer<Fill> {
 			} else if (f.type==Fill.Type.BITMAP) {
 				JsonElement assetElement = GSONStatic.getElement(fillEntrySet, JSONConst.JSON_ASSET);
 				JsonElement assetName = GSONStatic.getElement(assetElement.getAsJsonObject().entrySet(),JSONConst.JSON_NAME);
-				if (assetName!=null) {
+				if (assetName!=null && _saveFile!=null) {
 					f._bitmapFill=_saveFile.getAssetManager().loadAsset(assetName.getAsString());
 					JsonElement alphaElement = GSONStatic.getElement(fillEntrySet, JSONConst.JSON_BMP_ALPHA);
 					if (alphaElement!=null) {

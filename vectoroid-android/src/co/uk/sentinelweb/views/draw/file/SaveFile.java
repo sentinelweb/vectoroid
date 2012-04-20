@@ -275,15 +275,6 @@ public class SaveFile {
 		return false;
 	}
 	
-	public  JSONObject toJSON(Drawing d) {
-			JSONDrawing jsd = new JSONDrawing(this);
-			return jsd.toJSON(d);
-	}
-	
-	public  Drawing fromJSON(JSONObject o) {
-			JSONDrawing jsd = new JSONDrawing(this);
-			return jsd.fromJSON(o);
-	}
 	/* ********************************** set save / load ******************************************/
 	public boolean saveSet() {
 		try {
@@ -428,12 +419,42 @@ public class SaveFile {
 			sw.append(readline);
 		}
 		String string = sw.toString();
+		return parseJSONSImple(string);
+	}
+	
+	private Drawing parseJSONSimple(InputStream is) throws FileNotFoundException, IOException, JSONException {
+		Drawing d;
+		StringWriter sw = new StringWriter();
+		BufferedInputStream reader = new BufferedInputStream(	is);
+		String readline = "";
+		byte[] buffer = new byte[1000];
+		int offset=0;
+		int block=-1;
+		while ((block = reader.read(buffer, offset, buffer.length))>-1) { 
+			sw.append(new String(buffer,0,block));
+			offset+=block;
+		}
+		String string = sw.toString();
+		return parseJSONSImple(string);
+	}
+	
+	public Drawing parseJSONSImple(String string) throws JSONException {
+		Drawing d;
 		JSONObject o = new JSONObject(new JSONTokener(string));
 		d = fromJSON(o);
 		return d;
 	}
 	
+	public  JSONObject toJSON(Drawing d) {
+		JSONDrawing jsd = new JSONDrawing(this);
+		return jsd.toJSON(d);
+	}
 	
+	public  Drawing fromJSON(JSONObject o) {
+			JSONDrawing jsd = new JSONDrawing(this);
+			return jsd.fromJSON(o);
+	}
+
 	
 	public void saveBitmaps (Drawing drawing) {
 		saveBitmaps(drawing,true,false);

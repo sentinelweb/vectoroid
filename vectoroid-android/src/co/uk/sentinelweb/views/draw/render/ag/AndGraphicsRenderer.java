@@ -58,16 +58,6 @@ public class AndGraphicsRenderer extends Renderer {
 	private ViewPortData _vpd ;
 	public StrokesRenderer sr ;
 	
-	/* Operators - Experimental */
-	public static class Operator  {
-		public Float rotation = null;
-		public PointF translate = null;
-		public PointF scale =null;
-		//PointF skew = null;
-	}
-	public HashMap<DrawingElement,Operator> animations=new HashMap<DrawingElement,Operator>();
-	
-	
 	Canvas canvas;
 	protected DrawingMode mode = DrawingMode.DISPLAY;
 	public AndGraphicsRenderer(Context c) {

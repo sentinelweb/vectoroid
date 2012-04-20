@@ -40,7 +40,10 @@
     <artifactId>Vectoroid</artifactId>
     <packaging>apklib</packaging>
     <name>Vectoroid Library</name>
-	<version>1.0</version>
+	<version>0.8</version>
+	<description>This the Vectoroid APK library for Android</description>
+	<url>http://www.vectoroid.com</url>
+	
     <dependencies>
         <dependency>
             <groupId>com.google.android</groupId>

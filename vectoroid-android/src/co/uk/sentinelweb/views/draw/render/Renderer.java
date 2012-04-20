@@ -36,6 +36,7 @@ import java.util.Collection;
 import java.util.HashMap;
 
 import android.content.Context;
+import android.graphics.PointF;
 import co.uk.sentinelweb.views.draw.model.DrawingElement;
 import co.uk.sentinelweb.views.draw.model.Group;
 import co.uk.sentinelweb.views.draw.model.Stroke;
@@ -52,6 +53,15 @@ public abstract class Renderer {
 	public abstract void setupViewPort();
 	public abstract void revertViewPort();
 	
+	/* Operators - Experimental */
+	public static class Operator  {
+		public Float rotation = null;
+		public PointF translate = null;
+		public PointF scale =null;
+		//PointF skew = null;
+	}
+	public HashMap<DrawingElement,Operator> animations=new HashMap<DrawingElement,Operator>();
+	
 	public Renderer(Context c) {
 		this.c=c;
 		renderObjects=new HashMap<DrawingElement,RenderObject>();
@@ -66,12 +76,14 @@ public abstract class Renderer {
 		}
 	}
 	
-	public void removeFromCache(DrawingElement oldStroke) {
-		if (oldStroke instanceof Stroke) {
-			renderObjects.remove(oldStroke);
-		} else if (oldStroke instanceof Group) {
-			renderObjects.remove(oldStroke);
-			for (DrawingElement de : ((Group) oldStroke).elements) {
+	public void removeFromCache(DrawingElement oldDE) {
+		if (oldDE instanceof Stroke) {
+			renderObjects.remove(oldDE);
+			animations.remove(oldDE);
+		} else if (oldDE instanceof Group) {
+			renderObjects.remove(oldDE);
+			animations.remove(oldDE);
+			for (DrawingElement de : ((Group) oldDE).elements) {
 				removeFromCache(de);
 			}
 		}
@@ -79,6 +91,7 @@ public abstract class Renderer {
 	
 	public void dropCache() {
 		renderObjects.clear();
+		animations.clear();
 	}
 	
 	public RenderObject getObject(DrawingElement de) {

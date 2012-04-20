@@ -43,7 +43,7 @@ import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.model.DrawingElement;
 import co.uk.sentinelweb.views.draw.model.Group;
 import co.uk.sentinelweb.views.draw.model.Stroke;
-import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer.Operator;
+import co.uk.sentinelweb.views.draw.render.Renderer.Operator;
 import co.uk.sentinelweb.views.draw.util.BoundsUtil;
 import co.uk.sentinelweb.views.draw.util.PointUtil;
 
