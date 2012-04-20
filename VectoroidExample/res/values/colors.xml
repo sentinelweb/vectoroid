@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-	<color name="button_enabled">#88000000</color>
-	<color name="button_disabled">#88666666</color>
-	<color name="button_pressed">#88ff8800</color>
-	<color name="button_selected">#cc0088bb</color>
-</resources>
