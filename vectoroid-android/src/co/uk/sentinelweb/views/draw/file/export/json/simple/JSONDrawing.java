@@ -37,7 +37,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.file.SaveFile;
 import co.uk.sentinelweb.views.draw.file.export.json.JSONConst;
 import co.uk.sentinelweb.views.draw.file.export.json.JSONParent;
@@ -86,7 +86,7 @@ public class JSONDrawing extends JSONParent{
 			drawingJSON.put(JSONConst.JSON_LAYERS, jsLayers);
 			return drawingJSON;
 		} catch (JSONException e) {
-			Log.d(DVGlobals.LOG_TAG, "JSON Drawing to drawing", e);
+			Log.d(VecGlobals.LOG_TAG, "JSON Drawing to drawing", e);
 		}
 		return null;
 	}
@@ -117,7 +117,7 @@ public class JSONDrawing extends JSONParent{
 				}
 			}
 		} catch (JSONException e) {
-			Log.d(DVGlobals.LOG_TAG, "JSON Drawing from drawing", e);
+			Log.d(VecGlobals.LOG_TAG, "JSON Drawing from drawing", e);
 		}
 		return d;
 	}

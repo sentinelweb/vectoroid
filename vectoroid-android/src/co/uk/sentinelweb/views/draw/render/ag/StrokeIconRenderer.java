@@ -44,7 +44,7 @@ import android.graphics.PointF;
 import android.graphics.PorterDuff;
 import android.graphics.RectF;
 import android.util.Log;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.model.DrawingElement;
 import co.uk.sentinelweb.views.draw.model.Group;
 import co.uk.sentinelweb.views.draw.model.Stroke;
@@ -146,7 +146,7 @@ public class StrokeIconRenderer {
 			_renderer.revertViewPort();
 			//Log.d(DVGlobals.LOG_TAG,"makeIcon:"+sizeIcon.x+"x"+sizeIcon.x+": made");//,new Exception("trace")
 		} catch (OutOfMemoryError e) {
-			Log.d(DVGlobals.LOG_TAG,"makeIcon: OME ");//,new Exception("trace")
+			Log.d(VecGlobals.LOG_TAG,"makeIcon: OME ");//,new Exception("trace")
 			return null;
 		}
 		

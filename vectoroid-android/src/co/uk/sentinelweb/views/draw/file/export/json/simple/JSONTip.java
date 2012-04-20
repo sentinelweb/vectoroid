@@ -36,7 +36,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.file.SaveFile;
 import co.uk.sentinelweb.views.draw.file.export.json.JSONConst;
 import co.uk.sentinelweb.views.draw.file.export.json.JSONParent;
@@ -57,7 +57,7 @@ public class JSONTip extends JSONParent {
 			if (e.inside) {o.put(JSONConst.JSON_INSIDE, e.inside);}
 			if (e.size>0) {o.put(JSONConst.JSON_SIZE, e.size);}
 		} catch(JSONException ex) {
-			Log.d(DVGlobals.LOG_TAG, "toJSON endtype", ex);
+			Log.d(VecGlobals.LOG_TAG, "toJSON endtype", ex);
 		}
 		return o;
 	}
@@ -71,7 +71,7 @@ public class JSONTip extends JSONParent {
 			if (object.has(JSONConst.JSON_INSIDE)) {e.inside=object.getBoolean(JSONConst.JSON_INSIDE);} else {e.inside=false;}
 			if (object.has(JSONConst.JSON_SIZE)) {e.size=(float)object.getDouble(JSONConst.JSON_SIZE);} else {e.size=0;}
 		} catch (JSONException ex) {
-			Log.d(DVGlobals.LOG_TAG, "fromJSON EndType", ex);
+			Log.d(VecGlobals.LOG_TAG, "fromJSON EndType", ex);
 		}
 		return e;
 	}

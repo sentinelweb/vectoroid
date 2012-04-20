@@ -40,7 +40,7 @@ import org.json.JSONObject;
 
 import android.graphics.PointF;
 import android.util.Log;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.file.SaveFile;
 import co.uk.sentinelweb.views.draw.file.export.json.JSONConst;
 import co.uk.sentinelweb.views.draw.file.export.json.JSONParent;
@@ -83,7 +83,7 @@ public class JSONPointVec extends JSONParent{
 			}		
 			*/
 		} catch (JSONException e) {
-			Log.d(DVGlobals.LOG_TAG, "JSON to pointvec", e);
+			Log.d(VecGlobals.LOG_TAG, "JSON to pointvec", e);
 		}
 		return o;
 	}
@@ -126,7 +126,7 @@ public class JSONPointVec extends JSONParent{
 				for (int i=0;i<jsPtsSplit.length;i++) {
 					PointF fromPointStr = JSONUtil.fromPointStr(jsPtsSplit[i]);
 					if (fromPointStr==null) {
-						Log.d(DVGlobals.LOG_TAG, "null point:"+jsPtsSplit[i]+":");
+						Log.d(VecGlobals.LOG_TAG, "null point:"+jsPtsSplit[i]+":");
 					} else {
 						pv.add(fromPointStr);
 					}
@@ -191,7 +191,7 @@ public class JSONPointVec extends JSONParent{
 			}
 			*/
 		} catch (JSONException e) {
-			Log.d(DVGlobals.LOG_TAG, "JSON from pointvec", e);
+			Log.d(VecGlobals.LOG_TAG, "JSON from pointvec", e);
 		}
 		return pv;
 	}

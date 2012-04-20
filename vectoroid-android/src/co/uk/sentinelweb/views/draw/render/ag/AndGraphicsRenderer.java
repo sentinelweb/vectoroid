@@ -32,12 +32,14 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+import java.util.HashMap;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.Log;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.model.Drawing;
 import co.uk.sentinelweb.views.draw.model.DrawingElement;
 import co.uk.sentinelweb.views.draw.model.Group;
@@ -52,9 +54,19 @@ import co.uk.sentinelweb.views.draw.util.DispUtil;
 public class AndGraphicsRenderer extends Renderer {
 	public enum DrawingMode {DISPLAY,WRITE}
 	protected float density=1;
-	public boolean _debug=DVGlobals._isDebug && false;
+	public boolean _debug=VecGlobals._isDebug && false;
 	private ViewPortData _vpd ;
 	public StrokesRenderer sr ;
+	
+	/* Operators - Experimental */
+	public static class Operator  {
+		public Float rotation = null;
+		public PointF translate = null;
+		public PointF scale =null;
+		//PointF skew = null;
+	}
+	public HashMap<DrawingElement,Operator> animations=new HashMap<DrawingElement,Operator>();
+	
 	
 	Canvas canvas;
 	protected DrawingMode mode = DrawingMode.DISPLAY;
@@ -152,7 +164,7 @@ public class AndGraphicsRenderer extends Renderer {
 	@Override
 	public void setupViewPort() {
 		//canvas.translate(-_vpd.topLeft.x*_vpd.zoom, -_vpd.topLeft.y*_vpd.zoom);// conver to vector op
-		if (_debug)Log.d(DVGlobals.LOG_TAG, "renderer zoom:"+_vpd.zoom);
+		if (_debug)Log.d(VecGlobals.LOG_TAG, "renderer zoom:"+_vpd.zoom);
 		canvas.scale(_vpd.zoom, _vpd.zoom);
 		canvas.translate(-_vpd.topLeft.x,-_vpd.topLeft.y);
 		

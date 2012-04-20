@@ -37,7 +37,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.file.SaveFile;
 import co.uk.sentinelweb.views.draw.file.export.json.JSONConst;
 import co.uk.sentinelweb.views.draw.file.export.json.JSONParent;
@@ -69,7 +69,7 @@ public class JSONGradient extends JSONParent{
 				o.put(JSONConst.JSON_GD, toJSON(g.data));
 			}
 		} catch(JSONException e) {
-			Log.d(DVGlobals.LOG_TAG, "JSON to gradient", e);
+			Log.d(VecGlobals.LOG_TAG, "JSON to gradient", e);
 		}
 		return o;
 	}
@@ -81,7 +81,7 @@ public class JSONGradient extends JSONParent{
 			jsonGradientData.put(JSONConst.JSON_GD_P1, JSONStatic.toJSON(g.p1));
 			jsonGradientData.put(JSONConst.JSON_GD_P2, JSONStatic.toJSON(g.p2));
 		} catch(JSONException e) {
-			Log.d(DVGlobals.LOG_TAG, "JSON to gradient data", e);
+			Log.d(VecGlobals.LOG_TAG, "JSON to gradient data", e);
 		}
 		return jsonGradientData;
 	}
@@ -102,7 +102,7 @@ public class JSONGradient extends JSONParent{
 			}
 			g.data=fromJSONGD(o.getJSONObject(JSONConst.JSON_GD));
 		} catch (JSONException e) {
-			Log.d(DVGlobals.LOG_TAG, "JSON from gradient", e);
+			Log.d(VecGlobals.LOG_TAG, "JSON from gradient", e);
 		}
 		return g;
 	}
@@ -113,7 +113,7 @@ public class JSONGradient extends JSONParent{
 			gd.p1=JSONStatic.fromJSON(o.getJSONObject(JSONConst.JSON_GD_P1));
 			gd.p2=JSONStatic.fromJSON(o.getJSONObject(JSONConst.JSON_GD_P2));
 		} catch (JSONException e) {
-			Log.d(DVGlobals.LOG_TAG, "JSON from gradient data", e);
+			Log.d(VecGlobals.LOG_TAG, "JSON from gradient data", e);
 		}
 		return gd;
 	}

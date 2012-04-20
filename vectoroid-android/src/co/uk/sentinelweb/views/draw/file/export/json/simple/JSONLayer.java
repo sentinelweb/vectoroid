@@ -37,7 +37,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.file.SaveFile;
 import co.uk.sentinelweb.views.draw.file.export.json.JSONConst;
 import co.uk.sentinelweb.views.draw.file.export.json.JSONParent;
@@ -75,7 +75,7 @@ public class JSONLayer extends JSONParent {
 			}
 			o.put(JSONConst.JSON_ELEMENTS, jsElements);
 		} catch (JSONException e) {
-			Log.d(DVGlobals.LOG_TAG, "JSON to Layer", e);
+			Log.d(VecGlobals.LOG_TAG, "JSON to Layer", e);
 		}
 		return o;
 	}
@@ -99,7 +99,7 @@ public class JSONLayer extends JSONParent {
 				}
 			}
 		} catch (JSONException e) {
-			Log.d(DVGlobals.LOG_TAG, "JSON from Layer", e);
+			Log.d(VecGlobals.LOG_TAG, "JSON from Layer", e);
 		}
 		return layer;
 	}

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="fill_parent" android:layout_height="fill_parent" 
+    android:background="#fff" android:id="@+id/loader_root">
+  <co.uk.sentinelweb.cards.cover.CoverFlow   android:id="@+id/loader_coverflow" android:paddingTop="20dp" 
+      android:layout_width="fill_parent" android:layout_height="fill_parent" />
+  <TextView android:id="@+id/loader_msg" android:layout_width="wrap_content" android:layout_height="wrap_content" android:visibility="gone"
+       android:layout_centerInParent="true" android:text="This app requires SuprCards - use the button to get it."/>
+  <ImageView android:id="@+id/loader_sc_launch" android:layout_width="80dp" android:layout_height="80dp" 
+      android:layout_alignParentLeft="true" android:src="@drawable/star_120"/>
+  <ImageView android:id="@+id/loader_sc_edit" android:layout_width="60dp" android:layout_height="60dp" 
+      android:layout_alignParentRight="true" android:src="@drawable/i_edit" android:background="@drawable/button_selector"/>
+</RelativeLayout>

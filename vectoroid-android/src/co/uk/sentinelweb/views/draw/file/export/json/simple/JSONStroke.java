@@ -37,7 +37,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.file.SaveFile;
 import co.uk.sentinelweb.views.draw.file.export.json.JSONConst;
 import co.uk.sentinelweb.views.draw.file.export.json.JSONParent;
@@ -84,7 +84,7 @@ public class JSONStroke extends JSONParent{
 			}
 			o.put(JSONConst.JSON_POINTS, jsPts);
 		} catch(JSONException e) {
-			Log.d(DVGlobals.LOG_TAG, "JSON to stroke", e);
+			Log.d(VecGlobals.LOG_TAG, "JSON to stroke", e);
 		}
 		return o;
 	}
@@ -109,7 +109,7 @@ public class JSONStroke extends JSONParent{
 				if (object.has(JSONConst.JSON_FILL)) {s.fill = jsf.fromJSON(object.getJSONObject(JSONConst.JSON_FILL));}
 			}
 		} catch (JSONException e) {
-			Log.d(DVGlobals.LOG_TAG, "JSON fromstroke", e);
+			Log.d(VecGlobals.LOG_TAG, "JSON fromstroke", e);
 		}
 		return s;
 	}

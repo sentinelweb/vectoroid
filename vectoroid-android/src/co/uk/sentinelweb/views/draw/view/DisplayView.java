@@ -24,7 +24,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.ImageView;
 import co.uk.sentinelweb.vectoroid.R;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.file.DrawingFileUtil;
 import co.uk.sentinelweb.views.draw.file.SaveFile;
 import co.uk.sentinelweb.views.draw.model.Drawing;
@@ -48,7 +48,7 @@ public class DisplayView extends ImageView {
 	AndGraphicsRenderer agr ;
 	PointF _tl;
 	Paint testPaint;
-	RectF drawingBounds = new RectF();
+	//RectF drawingBounds = new RectF();
 	private String svgPath;
 	int loadState = LOADSTATE_UNLOADED;
 	OnAsyncListener<Integer> onLoadListener;
@@ -102,7 +102,7 @@ public class DisplayView extends ImageView {
 	PointF _touchDownPt = new PointF(-1,-1);
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		if (DVGlobals._isDebug) Log.d(DVGlobals.LOG_TAG, "shapeview:ontouch:"+event.getAction()+":"+isClickable());
+		if (VecGlobals._isDebug) Log.d(VecGlobals.LOG_TAG, "shapeview:ontouch:"+event.getAction()+":"+isClickable());
 		if (event.getAction()==MotionEvent.ACTION_DOWN ) {
 			_touchDownPt.x = event.getX();
 			return true;
@@ -136,11 +136,12 @@ public class DisplayView extends ImageView {
 		//canvas.drawRect(5, 5, 20, 20, testPaint);
 		//ViewPortData vpd = ViewPortData.getFullDrawing(d);
 		if (loadState==LOADSTATE_LOADED) {
-			ViewPortData vpd = ViewPortData.getFromBounds(drawingBounds);
+			//ViewPortData vpd = ViewPortData.getFromBounds(drawingBounds);
+			ViewPortData vpd = ViewPortData.getFullDrawing(d);
 			int dWidth = getMeasuredWidth() - getPaddingLeft() - getPaddingRight();
 			int dHeight = getMeasuredHeight() - getPaddingTop() - getPaddingBottom();
-			//RectF calculatedBounds = d.calculatedBounds;
-			RectF calculatedBounds = drawingBounds;
+			RectF calculatedBounds = d.calculatedBounds;
+			//RectF calculatedBounds = drawingBounds;
 			float xscaling = (float)dWidth / calculatedBounds.width();
 			
 			float yscaling = (float)dHeight / calculatedBounds.height();
@@ -166,9 +167,9 @@ public class DisplayView extends ImageView {
 			agr.setupViewPort();
 			//DebugUtil.logCall( "svg:rendering:"+vpd.zoom,new Exception());
 			agr.render(d);
-			if (borderColor!=null) {
-				canvas.drawRect(drawingBounds, borderPaint);
-			}
+			//if (borderColor!=null) {
+			//	canvas.drawRect(drawingBounds, borderPaint);
+			//}
 			agr.revertViewPort();
 			
 		} else {
@@ -256,7 +257,7 @@ public class DisplayView extends ImageView {
 				_previewSrcRect=new Rect(0,0, _previewBitmap.getWidth(), _previewBitmap.getHeight());
 				_previewTgtRect=new RectF(tl.x,tl.y,tl.x+_previewBitmap.getWidth()*scale,tl.y+_previewBitmap.getHeight()*scale);
 			} catch (Throwable e) {
-				if (DVGlobals._isDebug) Log.d(DVGlobals.LOG_TAG, "preview load failed : "+f.getAbsolutePath(),e);
+				if (VecGlobals._isDebug) Log.d(VecGlobals.LOG_TAG, "preview load failed : "+f.getAbsolutePath(),e);
 			} 
 		} 
 		invalidate();
@@ -342,7 +343,7 @@ public class DisplayView extends ImageView {
 		protected Long doInBackground(File... params) {
 			File f  = params[0];
 			DisplayView.this.svgPath=f.getAbsolutePath();
-			if (DVGlobals._isDebug) Log.d(DVGlobals.LOG_TAG, "SVGImageView.this.svgPath: "+DisplayView.this.svgPath);
+			if (VecGlobals._isDebug) Log.d(VecGlobals.LOG_TAG, "SVGImageView.this.svgPath: "+DisplayView.this.svgPath);
 			if (svgPath!=null) {
 				try {
 					loadState=LOADSTATE_LOADING;
@@ -354,15 +355,15 @@ public class DisplayView extends ImageView {
 					loadState=LOADSTATE_UPDATING;
 					this.publishProgress(loadState);
 					d.update(true, agr, UpdateFlags.ALL);
-					d.computeBounds(drawingBounds);
-					if (DVGlobals._isDebug) Log.d(DVGlobals.LOG_TAG, "LoadSVGTask:drawing bounds:"+PointUtil.tostr(d.calculatedBounds)+":"+PointUtil.tostr(d.size)+":"+PointUtil.tostr(drawingBounds));
+					//d.computeBounds(drawingBounds);
+					//if (DVGlobals._isDebug) Log.d(DVGlobals.LOG_TAG, "LoadSVGTask:drawing bounds:"+PointUtil.tostr(d.calculatedBounds)+":"+PointUtil.tostr(d.size)+":"+PointUtil.tostr(drawingBounds));
 					
-					if (_correctBounds) {
-						correctBounds();
-					}
+					//if (_correctBounds) {
+					//	correctBounds();
+					//}
 					loadState=LOADSTATE_LOADED;
 				} catch (Exception e) {
-					if (DVGlobals._isDebug) Log.d(DVGlobals.LOG_TAG, "Load failed:"+DisplayView.this.svgPath,e);
+					if (VecGlobals._isDebug) Log.d(VecGlobals.LOG_TAG, "Load failed:"+DisplayView.this.svgPath,e);
 					loadState=LOADSTATE_FAILED;
 					this.publishProgress(loadState);
 				}
@@ -399,8 +400,8 @@ public class DisplayView extends ImageView {
 	public void setDrawing(Drawing d,boolean compute) {
 		this.d=d;
 		d.update(true, agr, UpdateFlags.ALL);
-		if (compute) {d.computeBounds(drawingBounds);}
-		else {drawingBounds.set(d.calculatedBounds);}
+		//if (compute) {d.computeBounds(drawingBounds);}
+		//else {drawingBounds.set(d.calculatedBounds);}
 		invalidate();
 		if (onLoadListener!=null) {
 			onLoadListener.onAsync(loadState);
@@ -429,7 +430,7 @@ public class DisplayView extends ImageView {
 	public AndGraphicsRenderer getRenderer() {
 		return agr;
 	}
-
+/*
 	private void correctBounds() {
 		//d.computeBounds(drawingBounds);
 		PointF p = new PointF(-drawingBounds.left,-drawingBounds.top);
@@ -437,7 +438,7 @@ public class DisplayView extends ImageView {
 		d.size.set(drawingBounds.width(),drawingBounds.height());
 		if (DVGlobals._isDebug) Log.d(DVGlobals.LOG_TAG, "correctBounds():"+PointUtil.tostr(d.calculatedBounds)+":"+PointUtil.tostr(d.size));
 	}
-
+*/
 	/**
 	 * @return the correctBounds
 	 */

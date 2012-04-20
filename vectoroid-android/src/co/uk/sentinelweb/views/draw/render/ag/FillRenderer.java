@@ -48,7 +48,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.SweepGradient;
 import android.util.Log;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.model.Drawing;
 import co.uk.sentinelweb.views.draw.model.DrawingElement;
 import co.uk.sentinelweb.views.draw.model.Fill;
@@ -179,7 +179,7 @@ public class FillRenderer {
 									width*=memScale;
 									height*=memScale;
 								}
-								Log.d(DVGlobals.LOG_TAG, "mask bmp:"+s.hashCode()+" memScale:"+memScale);
+								Log.d(VecGlobals.LOG_TAG, "mask bmp:"+s.hashCode()+" memScale:"+memScale);
 								if (width<=0 || height<=0) {return;}
 								final Bitmap maskBitmap = Bitmap.createBitmap( (int) width, (int) height, Bitmap.Config.ARGB_8888 );// set lowmem argb 4444
 								final Canvas maskCanvas = new Canvas();
@@ -233,7 +233,7 @@ public class FillRenderer {
 													//maskCanvas.scale( scale, scale );
 													sr._textPath.computeBounds(_useRectF, true);
 													maskCanvas.drawTextOnPath(s, sr._textPath, 0,0, _maskPaint);
-													Log.d(DVGlobals.LOG_TAG, "textMask.onLoop:rotation: path bounds"+PointUtil.tostr(_useRectF));
+													Log.d(VecGlobals.LOG_TAG, "textMask.onLoop:rotation: path bounds"+PointUtil.tostr(_useRectF));
 													//maskCanvas.scale( 1/scale, 1/scale );
 													maskCanvas.translate(stroke.calculatedBounds.left, stroke.calculatedBounds.top);
 												}

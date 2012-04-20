@@ -47,7 +47,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.Log;
 import co.uk.sentinelweb.vectoroid.R;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.model.Fill;
 import co.uk.sentinelweb.views.draw.model.PointVec;
 import co.uk.sentinelweb.views.draw.model.Stroke;
@@ -83,7 +83,7 @@ public class StrokeRenderer {
 		if (sro==null||sro.dontDisplay) {return;}
 		//TODO check this works looks like bounds test is failing at high zoom levels >400
 		if (stroke.calculatedBounds.width()*renderer.getVpd().zoom<0.5 || stroke.calculatedBounds.height()*renderer.getVpd().zoom<0.5) {
-			Log.d(DVGlobals.LOG_TAG, "Skipping ..."+PointUtil.tostr(stroke.calculatedBounds)+" x "+renderer.getVpd().zoom +": w:"+(stroke.calculatedBounds.width()*renderer.getVpd().zoom)+" h:"+(stroke.calculatedBounds.height()*renderer.getVpd().zoom));
+			// Log.d(DVGlobals.LOG_TAG, "Skipping ..."+PointUtil.tostr(stroke.calculatedBounds)+" x "+renderer.getVpd().zoom +": w:"+(stroke.calculatedBounds.width()*renderer.getVpd().zoom)+" h:"+(stroke.calculatedBounds.height()*renderer.getVpd().zoom));
 			return;
 		}
 		if (stroke.type!=Stroke.Type.TEXT_TTF) {
@@ -151,7 +151,7 @@ public class StrokeRenderer {
 		if (renderObject.bitmapMask!=null ) {
 			_useRect.set(0,0 ,  renderObject.bitmapMask.getWidth(),renderObject.bitmapMask.getHeight());
 			canvas.drawBitmap( renderObject.bitmapMask, _useRect, stroke.calculatedBounds, renderObject.fgFill);
-			Log.d(DVGlobals.LOG_TAG, "stroke bmp: id="+stroke.hashCode()+" bnds:"+PointUtil.tostr(stroke.calculatedBounds)+" mask:"+PointUtil.tostr(_useRect));
+			Log.d(VecGlobals.LOG_TAG, "stroke bmp: id="+stroke.hashCode()+" bnds:"+PointUtil.tostr(stroke.calculatedBounds)+" mask:"+PointUtil.tostr(_useRect));
 			return true;
 		}
 		return false;

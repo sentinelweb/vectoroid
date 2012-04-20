@@ -52,7 +52,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
 import android.util.Log;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.file.SaveFile.Option;
 import co.uk.sentinelweb.views.draw.file.export.json.JSONConst;
 import co.uk.sentinelweb.views.draw.model.Asset;
@@ -88,7 +88,7 @@ public class AssetManager {
 			File assetFile = getAssetFile(a);
 			FileOutputStream out = new FileOutputStream(assetFile);
 			Bitmap b = a.getBitmap();
-			Log.d(DVGlobals.LOG_TAG, "saveAssetBitmap: "+b+":"+assetFile);
+			Log.d(VecGlobals.LOG_TAG, "saveAssetBitmap: "+b+":"+assetFile);
 			if (b!=null) {
 				b.compress(Bitmap.CompressFormat.PNG, 90,out);
 				out.flush();
@@ -121,7 +121,7 @@ public class AssetManager {
 				sampleSize+=1;
 				if (sampleSize>3) {	break;}
 				System.gc();
-				Log.d(DVGlobals.LOG_TAG, "loadTmpImage(): OutOfMemoryError recieved: trying new subsampling:"+sampleSize);
+				Log.d(VecGlobals.LOG_TAG, "loadTmpImage(): OutOfMemoryError recieved: trying new subsampling:"+sampleSize);
 			}
     	}
 	}
@@ -163,7 +163,7 @@ public class AssetManager {
 				o.put(JSONConst.JSON_DATA, sw.toString());
 			}
 		} catch(JSONException e) {
-			Log.d(DVGlobals.LOG_TAG, "JSON to asset", e);
+			Log.d(VecGlobals.LOG_TAG, "JSON to asset", e);
 		}
 		return o;
 	}
@@ -174,7 +174,7 @@ public class AssetManager {
 			name = jsonObject.getString(JSONConst.JSON_NAME);
 			return loadAsset( name );
 		} catch (JSONException e) {
-			Log.d(DVGlobals.LOG_TAG, "JSON from asset", e);
+			Log.d(VecGlobals.LOG_TAG, "JSON from asset", e);
 		}
 		return null;
 	}
@@ -233,9 +233,9 @@ public class AssetManager {
 			baos.close();
 			inStream.close();
 		} catch (FileNotFoundException e) {
-			Log.d(DVGlobals.LOG_TAG, "b64 encode asset", e);
+			Log.d(VecGlobals.LOG_TAG, "b64 encode asset", e);
 		} catch (IOException e) {
-			Log.d(DVGlobals.LOG_TAG, "b64 encode asset", e);
+			Log.d(VecGlobals.LOG_TAG, "b64 encode asset", e);
 		}
 	}
 	

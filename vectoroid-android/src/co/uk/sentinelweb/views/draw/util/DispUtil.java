@@ -40,7 +40,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 
 public class DispUtil {
 	
@@ -50,10 +50,10 @@ public class DispUtil {
 			try {
 				DisplayMetrics metrics = getMetrics(context);
 				density=metrics.density;
-				Log.d(DVGlobals.LOG_TAG, "getdensity:"+density);
+				Log.d(VecGlobals.LOG_TAG, "getdensity:"+density);
 				
 			} catch (Exception e) {
-				Log.d(DVGlobals.LOG_TAG, "getdensity:",e);
+				Log.d(VecGlobals.LOG_TAG, "getdensity:",e);
 				density=1;
 			}
 		}

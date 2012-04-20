@@ -37,7 +37,7 @@ import java.io.Writer;
 
 import android.graphics.PointF;
 import android.util.Log;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 
 public class JSONUtil {
 	public static StringBuilder _useSb = new StringBuilder();
@@ -51,7 +51,7 @@ public class JSONUtil {
 				Float.parseFloat(s.substring(idx+1,s.length()))
 			);
 		} else {
-			Log.d(DVGlobals.LOG_TAG, "fromPointStr:incorrect format:"+s);
+			Log.d(VecGlobals.LOG_TAG, "fromPointStr:incorrect format:"+s);
 			return null;
 		}
 	}

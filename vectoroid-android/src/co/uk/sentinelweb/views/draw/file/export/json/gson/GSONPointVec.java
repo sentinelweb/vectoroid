@@ -37,7 +37,7 @@ import java.util.ArrayList;
 
 import android.graphics.PointF;
 import android.util.Log;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.file.export.json.JSONConst;
 import co.uk.sentinelweb.views.draw.file.export.json.JSONUtil;
 import co.uk.sentinelweb.views.draw.model.PointVec;
@@ -112,7 +112,7 @@ public class GSONPointVec {
 			}
 			reader.endObject();
 		} catch (IOException e) {
-			Log.d(DVGlobals.LOG_TAG, "GSON from pointvec", e);
+			Log.d(VecGlobals.LOG_TAG, "GSON from pointvec", e);
 		}
 		return pv;
 	}

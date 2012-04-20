@@ -41,7 +41,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.file.SaveFile;
 import co.uk.sentinelweb.views.draw.file.export.json.JSONParent;
 import co.uk.sentinelweb.views.draw.model.DrawingSet;
@@ -84,7 +84,7 @@ public class JSONSet extends JSONParent {
 			setJSON.put(JSON_DRAWIDS, jsids);
 			return setJSON;
 		} catch (JSONException e) {
-			Log.d(DVGlobals.LOG_TAG, "JSON DrawingSet to ", e);
+			Log.d(VecGlobals.LOG_TAG, "JSON DrawingSet to ", e);
 		}
 		return null;
 	}
@@ -122,7 +122,7 @@ public class JSONSet extends JSONParent {
 				ds.setDrawingIDs(ids);
 			}
 		} catch (JSONException e) {
-			Log.d(DVGlobals.LOG_TAG, "JSON DrawingSet from ", e);
+			Log.d(VecGlobals.LOG_TAG, "JSON DrawingSet from ", e);
 		}
 		return ds;
 	}

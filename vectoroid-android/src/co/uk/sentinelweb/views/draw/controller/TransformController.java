@@ -36,7 +36,7 @@ import java.util.ArrayList;
 
 import android.graphics.PointF;
 import android.util.Log;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.model.Drawing;
 import co.uk.sentinelweb.views.draw.model.DrawingElement;
 import co.uk.sentinelweb.views.draw.model.Group;
@@ -48,7 +48,7 @@ import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer;
 
 public class TransformController {
 	public static void transform(DrawingElement de,DrawingElement de1,  TransformOperatorInOut t, AndGraphicsRenderer r) {
-		if (DVGlobals._isDebug)Log.d(DVGlobals.LOG_TAG,"transform de:"+de.hashCode()+":"+de1.hashCode());
+		//if (DVGlobals._isDebug) Log.d(DVGlobals.LOG_TAG,"transform de:"+de.hashCode()+":"+de1.hashCode());
 		boolean updateAfter = de instanceof Drawing || de instanceof Group;
 		if (!de.getClass().equals(de1.getClass())) {throw new RuntimeException("Only matching types please.");}
 		ArrayList<Stroke> processVec= new ArrayList<Stroke>();

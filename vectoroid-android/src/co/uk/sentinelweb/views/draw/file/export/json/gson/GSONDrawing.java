@@ -39,7 +39,7 @@ import java.io.Writer;
 
 import android.graphics.PointF;
 import android.util.Log;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.file.SaveFile;
 import co.uk.sentinelweb.views.draw.file.export.json.JSONConst;
 import co.uk.sentinelweb.views.draw.file.export.json.JSONParent;
@@ -120,7 +120,7 @@ public class GSONDrawing extends JSONParent{
 			jwriter.endObject(); // }
 			jwriter.close();
 		}catch (Exception e) {
-			Log.d(DVGlobals.LOG_TAG, "GSON Drawing to drawing", e);
+			Log.d(VecGlobals.LOG_TAG, "GSON Drawing to drawing", e);
 		}
 	}
 	
@@ -175,7 +175,7 @@ public class GSONDrawing extends JSONParent{
 			reader.endObject();
 			reader.close();
 		} catch (IOException e) {
-			Log.d(DVGlobals.LOG_TAG, "JSON Drawing from drawing", e);
+			Log.d(VecGlobals.LOG_TAG, "JSON Drawing from drawing", e);
 		}
 		return d;
 	}

@@ -51,7 +51,7 @@ import android.graphics.Paint.Style;
 import android.graphics.Typeface;
 import android.util.Log;
 import co.uk.sentinelweb.vectoroid.R;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.file.FileRepository;
 import co.uk.sentinelweb.views.draw.file.FileRepository.Directory;
 import co.uk.sentinelweb.views.draw.file.SaveFile;
@@ -91,7 +91,7 @@ public class FontController {
 			} else { return Typeface.DEFAULT;}
 			
 		} catch (Exception e) {
-			Log.d(DVGlobals.LOG_TAG, "Exception loading TTF Font : "+ name,e);
+			Log.d(VecGlobals.LOG_TAG, "Exception loading TTF Font : "+ name,e);
 			return Typeface.DEFAULT;
 		}
 	}
@@ -182,12 +182,12 @@ public class FontController {
 		float nameWidth = namePaint.measureText(name);
 		cvs.drawText(name, PRV_WID*density-nameWidth-PRV_MARGIN*density, NM_FONT_SZ*density, namePaint);
 		File outFile = getFontPreviewFile(name);
-		Log.d(DVGlobals.LOG_TAG, "makeFontPreview ..."+outFile.getAbsolutePath());
+		Log.d(VecGlobals.LOG_TAG, "makeFontPreview ..."+outFile.getAbsolutePath());
 		try {
 			FileOutputStream out = new FileOutputStream(outFile);
 			b.compress(Bitmap.CompressFormat.PNG, 90,out);
 			out.close();
-			Log.d(DVGlobals.LOG_TAG, "makeFontPreview ... preview generated.");
+			Log.d(VecGlobals.LOG_TAG, "makeFontPreview ... preview generated.");
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

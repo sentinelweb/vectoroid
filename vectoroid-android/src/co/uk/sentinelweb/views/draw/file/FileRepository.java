@@ -44,6 +44,7 @@ public class FileRepository {
 	public static String FR_TMP_FILE = "tmp";
 	public static String _base = null;
 	static FileRepository _fileRepository;
+	
 	public static FileRepository getFileRepository(Context c)  {
 		if (_fileRepository==null ) {
 			if ( _base==null) {
@@ -55,6 +56,18 @@ public class FileRepository {
 		}
 		return _fileRepository;
 	}
+	
+	public static FileRepository getFileRepository(Context c, String s)  {
+		//TODO this shouldnt do checks all the time - store it as a singleton in the client app.
+		FileRepository fileRepository = null;
+		try {
+			fileRepository = new FileRepository( MASTER_DIR, s );
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return fileRepository;  
+	}
+	
 	public static final String SAVES_DIRECTORY = ".saves";
 	public static final String RAW_DIRECTORY = "raw";
 	public static final String TTF_DIRECTORY = ".ttfonts";

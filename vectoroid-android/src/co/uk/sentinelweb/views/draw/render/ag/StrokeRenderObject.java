@@ -48,7 +48,7 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.util.Log;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.file.FileRepository;
 import co.uk.sentinelweb.views.draw.model.DrawingElement;
 import co.uk.sentinelweb.views.draw.model.Fill;
@@ -344,7 +344,7 @@ public class StrokeRenderObject extends RenderObject{
 					path.lineTo(s.points.get(0).get(1).x, s.points.get(0).get(1).y);
 					
 				} else if (s.points.get(0).size()==1) {
-					Log.d(DVGlobals.LOG_TAG, "mkopath txt 2 :shouldnt be here... ");
+					Log.d(VecGlobals.LOG_TAG, "mkopath txt 2 :shouldnt be here... ");
 					path.moveTo((point0.x), point0.y);
 					path.lineTo((point0.x+s.calculatedBounds.width()), point0.y);
 					path.lineTo((point0.x+s.calculatedBounds.width()), (point0.y-getDefaultTextHeight()));

@@ -36,12 +36,14 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.Log;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.model.DrawingElement;
 import co.uk.sentinelweb.views.draw.model.Group;
 import co.uk.sentinelweb.views.draw.model.Stroke;
+import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer.Operator;
 import co.uk.sentinelweb.views.draw.util.BoundsUtil;
 import co.uk.sentinelweb.views.draw.util.PointUtil;
 
@@ -50,7 +52,11 @@ public class StrokesRenderer {
 	RectF useRect = new RectF();
 	AndGraphicsRenderer r;
 	//private ViewPort viewPort;
-	public boolean _debug=DVGlobals._isDebug && false;
+	public boolean _debug=VecGlobals._isDebug && false;
+	
+	PointF usePoint = new PointF();
+	PointF usePoint2 = new PointF();
+	
 	public StrokesRenderer(Context c, AndGraphicsRenderer r) {
 		super();
 		this.r = r;
@@ -63,6 +69,27 @@ public class StrokesRenderer {
 		for (int i=0;i<strokes.size();i++) {
 			DrawingElement de = strokes.get(i);
 			if (!de.visible) {continue;}
+			Operator trans = r.animations.get(de);
+			usePoint.set(de.calculatedCentre.x*r.getVpd().zoom,de.calculatedCentre.y*r.getVpd().zoom);
+			if (trans!=null) {
+
+				if (trans.rotation!=null) {
+					if (trans.translate!=null) {
+						PointUtil.addVector(usePoint, usePoint2, trans.translate);
+						canvas.rotate(trans.rotation,usePoint2.x,usePoint2.y);
+					} else {
+						canvas.rotate(trans.rotation,usePoint.x,usePoint.y);
+					}
+				}
+				if (trans.scale!=null) {
+					canvas.scale(trans.scale.x,trans.scale.y);
+				}
+				
+				if (trans.translate!=null) {
+					canvas.translate(trans.translate.x,trans.translate.y);
+				}
+				
+			}
 			if (de instanceof Stroke) {
 				drawStroke(canvas, (Stroke) de );
 			} else if (de instanceof Group) {
@@ -71,19 +98,36 @@ public class StrokesRenderer {
 					drawStroke(canvas, s );
 				}
 			} 
+			if (trans!=null) {
+				
+				if (trans.translate!=null) {
+					canvas.translate(-trans.translate.x,-trans.translate.y);
+				}
+				if (trans.scale!=null) {
+					canvas.scale(1/trans.scale.x,1/trans.scale.y);
+				}
+				if (trans.rotation!=null) {
+					if (trans.translate!=null) {
+						PointUtil.addVector(usePoint, usePoint2, trans.translate);
+						canvas.rotate(-trans.rotation,usePoint2.x,usePoint2.y);
+					} else {
+						canvas.rotate(-trans.rotation,usePoint.x,usePoint.y);
+					}
+				}
+			}
 		}
 	}
 	// draw a single stroke
 	public void drawStroke(Canvas canvas, Stroke stroke) {//, boolean drawselected, boolean noTest
 		if (stroke.points.size()>0) {
 			useRect.set(r.getVpd().zoomCullingRectF);
-			if (_debug) {Log.d(DVGlobals.LOG_TAG, "viewPort:"+PointUtil.tostr(useRect));}
+			if (_debug) {Log.d(VecGlobals.LOG_TAG, "viewPort:"+PointUtil.tostr(useRect));}
 			//TODO check this works, looks like bounds test is failing at high zoom levels >400
 			boolean checkBoundsIntersect = BoundsUtil.checkBoundsIntersect(useRect, stroke.calculatedBounds, Math.max(stroke.pen.strokeWidth, stroke.pen.glowWidth) );
-			if (_debug) {Log.d(DVGlobals.LOG_TAG, "checkBoundsIntersect:"+checkBoundsIntersect+":"+PointUtil.tostr(useRect)+" :: "+":"+PointUtil.tostr(stroke.calculatedBounds));}
+			if (_debug) {Log.d(VecGlobals.LOG_TAG, "checkBoundsIntersect:"+checkBoundsIntersect+":"+PointUtil.tostr(useRect)+" :: "+":"+PointUtil.tostr(stroke.calculatedBounds));}
 			if (checkBoundsIntersect) {
 				strokeRenderer.render(canvas, stroke);
-				if (_debug) {Log.d(DVGlobals.LOG_TAG, "inbounds:");}
+				if (_debug) {Log.d(VecGlobals.LOG_TAG, "inbounds:");}
 			}
 		}
 	}

@@ -38,7 +38,7 @@ import android.graphics.Paint.Cap;
 import android.graphics.Paint.Join;
 import android.graphics.PointF;
 import android.util.Log;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.model.StrokeDecoration.Tip;
 
 public class Pen {
@@ -143,7 +143,7 @@ public class Pen {
 	}
 	
 	public void log() {
-		Log.d(DVGlobals.LOG_TAG,"pen:sw:"+strokeWidth+" sc:"+strokeColour+" gw:"+glowWidth+" gc:"+glowColour);
+		Log.d(VecGlobals.LOG_TAG,"pen:sw:"+strokeWidth+" sc:"+strokeColour+" gw:"+glowWidth+" gc:"+glowColour);
 
 	}
 }

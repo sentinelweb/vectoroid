@@ -38,7 +38,7 @@ import org.json.JSONObject;
 import android.graphics.Paint.Cap;
 import android.graphics.Paint.Join;
 import android.util.Log;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.file.SaveFile;
 import co.uk.sentinelweb.views.draw.file.export.json.JSONConst;
 import co.uk.sentinelweb.views.draw.file.export.json.JSONParent;
@@ -74,7 +74,7 @@ public class JSONPen extends JSONParent {
 			if (pen.breakType!=null) {o.put(JSONConst.JSON_BREAK_TYPE, pen.breakType.toString());}
 			
 		} catch(JSONException e) {
-			Log.d(DVGlobals.LOG_TAG, "toJSON pen", e);
+			Log.d(VecGlobals.LOG_TAG, "toJSON pen", e);
 		}
 		return o;
 	}
@@ -99,7 +99,7 @@ public class JSONPen extends JSONParent {
 			if (object.has(JSONConst.JSON_END_TIP)) {pen.endTip=je.fromJSON(object.getJSONObject(JSONConst.JSON_END_TIP));}
 			if (object.has(JSONConst.JSON_BREAK_TYPE)) {try {pen.breakType=BreakType.valueOf(object.getString(JSONConst.JSON_BREAK_TYPE));}catch(Exception e){}}
 		} catch (JSONException e) {
-			Log.d(DVGlobals.LOG_TAG, "fromJSON pen", e);
+			Log.d(VecGlobals.LOG_TAG, "fromJSON pen", e);
 		}
 		return pen;
 	}

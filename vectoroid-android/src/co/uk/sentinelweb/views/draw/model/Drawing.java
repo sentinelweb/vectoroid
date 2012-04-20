@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.Log;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer;
 import co.uk.sentinelweb.views.draw.render.ag.DrawingRenderObject;
 import co.uk.sentinelweb.views.draw.util.PointUtil;
@@ -147,8 +147,20 @@ public class Drawing extends DrawingElement{
 				rect.left=Math.min(rect.left, de.calculatedBounds.left);
 				rect.bottom=Math.max(rect.bottom, de.calculatedBounds.bottom);
 				rect.right=Math.max(rect.right, de.calculatedBounds.right);
-			} else {
-				Log.d(DVGlobals.LOG_TAG, "Drawing.computeBounds: "+de+" ; "+(de!=null?de.calculatedBounds:""));
+			} //else {
+
+		}
+		
+		for (Layer l : layers) {
+			for (DrawingElement de : l.elements) {
+				if (de!=null && de.calculatedBounds!=null) {
+					rect.top=Math.min(rect.top, de.calculatedBounds.top);
+					rect.left=Math.min(rect.left, de.calculatedBounds.left);
+					rect.bottom=Math.max(rect.bottom, de.calculatedBounds.bottom);
+					rect.right=Math.max(rect.right, de.calculatedBounds.right);
+				} //else {
+				//	Log.d(DVGlobals.LOG_TAG, "Drawing.computeBounds: "+de+" ; "+(de!=null?de.calculatedBounds:""));
+				//}
 			}
 		}
 	}
@@ -173,5 +185,15 @@ public class Drawing extends DrawingElement{
 	public String getId() {
 		if (id==null) {id="Drawing_"+hashCode();}
 		return id;
+	}
+	
+	public Layer getLayer(String id) {
+		if (id==null) {return null;}
+		for (Layer de : layers) {
+			if (id.equals(de.id)) {
+				return de;
+			}
+		}
+		return null;
 	}
 }

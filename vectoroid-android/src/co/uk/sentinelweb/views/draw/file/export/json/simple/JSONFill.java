@@ -37,7 +37,7 @@ import org.json.JSONObject;
 
 import android.graphics.Color;
 import android.util.Log;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.file.SaveFile;
 import co.uk.sentinelweb.views.draw.file.export.json.JSONConst;
 import co.uk.sentinelweb.views.draw.file.export.json.JSONParent;
@@ -65,7 +65,7 @@ public class JSONFill extends JSONParent{
 					break;
 			}
 		} catch(JSONException e) {
-			Log.d(DVGlobals.LOG_TAG, "JSON to fill", e);
+			Log.d(VecGlobals.LOG_TAG, "JSON to fill", e);
 		}
 		return o;
 	}
@@ -93,7 +93,7 @@ public class JSONFill extends JSONParent{
 				break;
 			}
 		} catch (JSONException e) {
-			Log.d(DVGlobals.LOG_TAG, "JSON from fill", e);
+			Log.d(VecGlobals.LOG_TAG, "JSON from fill", e);
 		}
 		return f;
 	}

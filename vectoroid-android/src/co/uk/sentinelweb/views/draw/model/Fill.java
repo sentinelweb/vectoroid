@@ -36,7 +36,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import android.util.Log;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.util.ColorUtil;
 
 public class Fill {
@@ -140,7 +140,7 @@ public class Fill {
 		return s.toString();
 	}
 	public void log() {
-		Log.d(DVGlobals.LOG_TAG,"fill:"+toString());
+		Log.d(VecGlobals.LOG_TAG,"fill:"+toString());
 	}
 	
 }

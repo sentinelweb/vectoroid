@@ -33,7 +33,7 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 import android.util.Log;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 
 public class DebugUtil {
 	public static StringBuffer _useStringBuffer = new StringBuffer();
@@ -42,7 +42,7 @@ public class DebugUtil {
 		String umemK = (usedMem/1024)+"K";
 		String tmemK = (Runtime.getRuntime().totalMemory()/1024)+"K";
 		float pcfree = (Runtime.getRuntime().freeMemory()*100/Runtime.getRuntime().totalMemory());
-		Log.d(DVGlobals.LOG_TAG, label+": memory: " +	"used: used:"+umemK+": total:"+tmemK+":"+pcfree+" % free.");
+		Log.d(VecGlobals.LOG_TAG, label+": memory: " +	"used: used:"+umemK+": total:"+tmemK+":"+pcfree+" % free.");
 	}
 	public static void logCall(String label, Throwable e) {
 		logCall( label,  e,5);
@@ -61,7 +61,7 @@ public class DebugUtil {
 			cnt++;
 			if (limit>-1 && cnt>limit) break;
 		}
-		Log.d(DVGlobals.LOG_TAG, label+": stack: " +	_useStringBuffer.toString());
+		Log.d(VecGlobals.LOG_TAG, label+": stack: " +	_useStringBuffer.toString());
 	}
 	
 	public static void clear() {

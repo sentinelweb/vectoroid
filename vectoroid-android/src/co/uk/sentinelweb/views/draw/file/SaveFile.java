@@ -56,7 +56,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.util.Log;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.controller.FontController.Font;
 import co.uk.sentinelweb.views.draw.file.FileRepository.Directory;
 import co.uk.sentinelweb.views.draw.file.export.json.gson.GSONDrawing;
@@ -125,6 +125,7 @@ public class SaveFile {
 
 	private void verfiyDrawings() {// TODO this need a re-write - consider changing drawing file ext to be unique
 		File[] list = _dataDir.listFiles();
+		if (list==null) {return;}
 		ArrayList<File> filesToAdd = new ArrayList<File>();
 		ArrayList<String> ids = new ArrayList<String>();
 		ids.addAll(_set.getDrawingIDs());
@@ -145,7 +146,7 @@ public class SaveFile {
 			String name = f.getName().substring(0, f.getName().length()-JSON_FILE_EXT.length());
 			if (!_set.getDrawingIDs().contains(name)) {// TODO revisit this when there is more time to stop id duplicates getting asdded somewhere
 				_set.getDrawingIDs().add(name);
-				Log.d(DVGlobals.LOG_TAG, "added to set:"+name+" -> "+f.getName());
+				Log.d(VecGlobals.LOG_TAG, "added to set:"+name+" -> "+f.getName());
 				changed=true;
 			}
 		}
@@ -293,7 +294,7 @@ public class SaveFile {
 			out.write(jss.toJSON(_set).toString());
 			out.flush();
 			out.close();
-			Log.d(DVGlobals.LOG_TAG, "saved set:"+file.getAbsolutePath());
+			Log.d(VecGlobals.LOG_TAG, "saved set:"+file.getAbsolutePath());
 			
 			
 			return true;
@@ -323,7 +324,7 @@ public class SaveFile {
 			return jss.fromJSON(o);
 		} catch (FileNotFoundException e) {
 			//e.printStackTrace();
-			Log.d(DVGlobals.LOG_TAG, "no file found:"+file.getAbsolutePath());
+			Log.d(VecGlobals.LOG_TAG, "no file found:"+file.getAbsolutePath());
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (JSONException e) {
@@ -359,7 +360,7 @@ public class SaveFile {
 					sjd.toJSON(d, out);
 					out.close();
 				} catch (Exception e) {
-					Log.d(DVGlobals.LOG_TAG, "gson load ex:"+file.getAbsolutePath(),e);
+					Log.d(VecGlobals.LOG_TAG, "gson load ex:"+file.getAbsolutePath(),e);
 					out.close();
 					file.delete();
 					out = new FileWriter(file);
@@ -369,14 +370,14 @@ public class SaveFile {
 					out.close();
 				}
 			}
-			Log.d(DVGlobals.LOG_TAG, "saveJSON: time :"+(System.currentTimeMillis()-st));
+			Log.d(VecGlobals.LOG_TAG, "saveJSON: time :"+(System.currentTimeMillis()-st));
 			return true;
 		} catch (FileNotFoundException e) {
-			Log.d(DVGlobals.LOG_TAG, "saveJSON:FileNotFoundException:",e);
+			Log.d(VecGlobals.LOG_TAG, "saveJSON:FileNotFoundException:",e);
 		} catch (IOException e) {
-			Log.d(DVGlobals.LOG_TAG, "saveJSON:IOException:",e);
+			Log.d(VecGlobals.LOG_TAG, "saveJSON:IOException:",e);
 		} catch (JSONException e) {
-			Log.d(DVGlobals.LOG_TAG, "saveJSON:JSONException:",e);
+			Log.d(VecGlobals.LOG_TAG, "saveJSON:JSONException:",e);
 		}
 		return false;
 	}
@@ -401,11 +402,11 @@ public class SaveFile {
 					GSONDrawing gd = new GSONDrawing(this);
 					d=gd.fromJSON( is);
 				} catch (Exception e) {
-					Log.d(DVGlobals.LOG_TAG, "loadGSON: ex :",e);
+					Log.d(VecGlobals.LOG_TAG, "loadGSON: ex :",e);
 					d = parseJSONSimple(file);
 				}
 			}
-			Log.d(DVGlobals.LOG_TAG, "loadJSON: time :"+(System.currentTimeMillis()-st));
+			Log.d(VecGlobals.LOG_TAG, "loadJSON: time :"+(System.currentTimeMillis()-st));
 			d.setId(drawingId);
 			return d;
 		} catch (FileNotFoundException e) {
@@ -471,9 +472,9 @@ public class SaveFile {
 				thumbBitmap.compress(Bitmap.CompressFormat.PNG, 90,out);
 				out.close();
 			} catch (OutOfMemoryError ome ) {
-				Log.d(DVGlobals.LOG_TAG, "saveBitmaps: preview : OME",ome);
+				Log.d(VecGlobals.LOG_TAG, "saveBitmaps: preview : OME",ome);
 			}
-			Log.d(DVGlobals.LOG_TAG, "saveBitmaps: preview :"+(System.currentTimeMillis()-st));
+			Log.d(VecGlobals.LOG_TAG, "saveBitmaps: preview :"+(System.currentTimeMillis()-st));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -516,10 +517,10 @@ public class SaveFile {
 					out.close();
 					//setPublished(drawing, makeVisible);
 				//}
-					Log.d(DVGlobals.LOG_TAG, "saveBitmaps: large :"+(System.currentTimeMillis()-st));
+					Log.d(VecGlobals.LOG_TAG, "saveBitmaps: large :"+(System.currentTimeMillis()-st));
 					return true;
 			} catch (OutOfMemoryError ome ) {
-				Log.d(DVGlobals.LOG_TAG, "saveBitmaps: full : OME", ome);
+				Log.d(VecGlobals.LOG_TAG, "saveBitmaps: full : OME", ome);
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -546,7 +547,7 @@ public class SaveFile {
 	}
 	public File getPreviewFile(String id) {
 		 File f = new File( _dataDir,"."+id + PREVIEW_FILE_EXT);
-		 Log.d(DVGlobals.LOG_TAG, "preview file:"+f.getAbsolutePath());
+		 Log.d(VecGlobals.LOG_TAG, "preview file:"+f.getAbsolutePath());
 		 return f;
 		 
 	} 

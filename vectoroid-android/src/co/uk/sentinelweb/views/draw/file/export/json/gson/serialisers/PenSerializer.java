@@ -38,7 +38,7 @@ import android.graphics.Paint.Cap;
 import android.graphics.Paint.Join;
 import android.graphics.PointF;
 import android.util.Log;
-import co.uk.sentinelweb.views.draw.DVGlobals;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.file.SaveFile;
 import co.uk.sentinelweb.views.draw.file.export.json.JSONConst;
 import co.uk.sentinelweb.views.draw.model.Pen;
@@ -91,7 +91,7 @@ public class PenSerializer implements JsonSerializer<Pen> {
 			if (e.inside) {o.addProperty(JSONConst.JSON_INSIDE, e.inside);}
 			if (e.size>0) {o.addProperty(JSONConst.JSON_SIZE, e.size);}
 		} catch(Exception ex) {
-			Log.d(DVGlobals.LOG_TAG, "toJSON endtype", ex);
+			Log.d(VecGlobals.LOG_TAG, "toJSON endtype", ex);
 		}
 		return o;
 	}
