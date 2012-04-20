@@ -32,8 +32,8 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-public class DVGlobals {
+public class VecGlobals {
 	public static final String LOG_TAG = "Vectoroid";
-	public static boolean _isDebug=true;
+	public static boolean _isDebug = false;
 	
 }
