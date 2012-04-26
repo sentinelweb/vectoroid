@@ -58,16 +58,16 @@ public class SuprCardsConstants {
 	}
 	
 	public static boolean appInstalled(Context c) {
-		boolean paidVersionPresent = false;  
+		boolean appPresent = false;  
 		try {
 			PackageInfo p = c.getPackageManager().getPackageInfo(PACKAGE, 0); 
 			if (p!=null) {
-				paidVersionPresent=true;
+				appPresent=true;
 			}
 		} catch (NameNotFoundException e1) {
 			
 		}
-		return paidVersionPresent;
+		return appPresent;
 	}
 
 }

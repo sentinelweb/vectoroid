@@ -1,6 +1,6 @@
-package co.uk.sentinelweb.vectoroid.example.basic;
- /*
-Vectoroid Example for Android
+package co.uk.sentinelweb.ps.render.bak;
+/*
+Vectoroid for Android
 Copyright (C) 2010-12 Sentinel Web Technologies Ltd
 All rights reserved.
  
@@ -32,66 +32,40 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+import co.uk.sentinelweb.ps.ParticleSystems.ParticleSystem.Particle;
+import co.uk.sentinelweb.ps.render.ParticleRenderer;
+import co.uk.sentinelweb.ps.Vector3D;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.view.Window;
-import android.widget.TextView;
-import co.uk.sentinelweb.views.draw.view.DisplayView;
+public class CubeRenderer extends ParticleRenderer {
+		Vector3D col = new Vector3D(1f, 0.5f, 0);
 
-public class VectoroidExampleActivity extends Activity {
-	DisplayView dv;
-	TextView t;
-	/** Called when the activity is first created. */
-	@Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE); 
-		setContentView(R.layout.main);
-        
-        dv = (DisplayView) findViewById(R.id.main_grafik);
-        t =  (TextView)findViewById(R.id.main_text);
-        try {
-    		dv.setAsset("hello.json");
-        	t.setText("Hello ...");
-		} catch (Exception e) {
-			e.printStackTrace();
-			t.setText("Error ..."+e.getMessage());
+		public CubeRenderer() {
 		}
-    }
-    
 
-	@Override
-	protected void onPause() {
-		// TODO Auto-generated method stub
-		super.onPause();
+		public CubeRenderer(Vector3D col) {
+			this.col = col;
+		}
+		public void init(Particle pt) {
+		}
+
+		public void cleanup(Particle pt) {
+		}
+
+		public void render(Particle pt) {
+			/*
+			 * Shape.Cube cube =(Shape.Cube)pt.renderObjects.get("cube"); if
+			 * (cube==null) { cube=s.new Cube( 20 , 5,
+			 * 5,//Math.round(random(-100, 100)), 0, 0, 0 ); cube.initCube();
+			 * pt.renderObjects.put("cube",cube); } float alpha=0.6f; float
+			 * fadeOutTime = 30f; if (pt.timer<fadeOutTime) {
+			 * alpha=0.6f*(pt.timer/fadeOutTime); } // gl.glPushMatrix(); //
+			 * gl.glTranslatef(pt.loc.x, pt.loc.y, pt.loc.z); //
+			 * gl.glRotatef(pt.rot.x, 1,0,0); // gl.glRotatef(pt.rot.y, 0,1,0);
+			 * // gl.glRotatef(pt.rot.y, 0,0,1); // gl.glColor4f(col.x,
+			 * col.y,col.z,alpha); cube.draw(); // gl.glPopMatrix();
+			 */
+		}
+
 	}
 
-	@Override
-	protected void onRestart() {
-		// TODO Auto-generated method stub
-		super.onRestart();
-	}
-
-	@Override
-	protected void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
-	}
-
-	@Override
-	protected void onStart() {
-		// TODO Auto-generated method stub
-		super.onStart();
-		
-	}
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onStop()
-	 */
-	@Override
-	protected void onStop() {
-		// TODO Auto-generated method stub
-		super.onStop();
-	}
 	
-}

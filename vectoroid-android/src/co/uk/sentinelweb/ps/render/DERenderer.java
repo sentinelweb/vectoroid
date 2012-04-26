@@ -1,6 +1,6 @@
-package co.uk.sentinelweb.views.draw.render;
+package co.uk.sentinelweb.ps.render;
 /*
-Vectoroid API for Android
+Vectoroid for Android
 Copyright (C) 2010-12 Sentinel Web Technologies Ltd
 All rights reserved.
  
@@ -32,70 +32,56 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-import java.util.Collection;
-import java.util.HashMap;
+import java.util.ArrayList;
 
-import android.content.Context;
 import android.graphics.PointF;
+import co.uk.sentinelweb.ps.ParticleSystems.ParticleSystem.Particle;
 import co.uk.sentinelweb.views.draw.model.DrawingElement;
-import co.uk.sentinelweb.views.draw.model.Group;
-import co.uk.sentinelweb.views.draw.model.Stroke;
-import co.uk.sentinelweb.views.draw.model.UpdateFlags;
+import co.uk.sentinelweb.views.draw.render.Renderer.Operator;
 
-public abstract class Renderer {
-	public Context c;
-	public HashMap<DrawingElement,RenderObject> renderObjects;
-	
-	/* Operators - Experimental */
-	public static class Operator  {
-		public Float rotation = null;
-		public PointF translate = null;
-		public PointF scale =null;
-		//PointF skew = null;
-	}
-	public HashMap<DrawingElement,Operator> animations;
-	
-	public abstract void update(DrawingElement de,UpdateFlags flags);
-	public abstract void render(DrawingElement de);
-	public abstract void setup();
-	
-	public abstract void setupViewPort();
-	public abstract void revertViewPort();
-	
-	public Renderer(Context c) {
-		this.c=c;
-		renderObjects=new HashMap<DrawingElement,RenderObject>();
-		animations=new HashMap<DrawingElement,Operator>();
-	}
-	
-	public void removeFromCache(Collection<DrawingElement> els) {
-		if (els!=null) {
-			for (DrawingElement de : els) {
-				removeFromCache(de);
-			}
+/**
+ * This is a Flyweight Object for updating the animations array in the Vectoroid Renderer
+ * it stores the DrawingElement and Renderer.Operator in the particle renderObjects
+ * @author robert
+ *
+ */
+public class DERenderer extends ParticleRenderer {
+		private static final String AGR_OPERATOR = "agrOperator";
+		private static final String DE = "de";
+		ArrayList<DrawingElement> deArray;
+		int counter = -1;
+
+		public DERenderer(ArrayList<DrawingElement> deArray) {// Vector3D col
+			this.deArray = deArray;
+		}
+
+		public void init(Particle pt) {
+			counter++;
+			DrawingElement drawingElement = deArray.get(counter);
+			pt.renderObjects.put(DE, drawingElement);
+			Operator agrOperator = new Operator();
+			agrOperator.translate = new PointF();
+			agrOperator.scale = new PointF(1, 1);
+			pt.renderObjects.put(AGR_OPERATOR, agrOperator);
+			pss.agr.animations.put(drawingElement, agrOperator);
+		}
+
+		public void render(Particle pt) {
+			Operator operator = (Operator) pt.renderObjects.get(AGR_OPERATOR);
+			operator.translate.set((float)pt.loc.x, (float)pt.loc.y);
+			// ref: http://www.gamedev.net/topic/602569-simulate-z-axis-in-2d/
+			float D = 10000;
+			double scale = D/(D+(pt.loc.z));
+			if (scale<0) {
+				scale=0.01;
+			} 
+			operator.scale.set((float)scale,(float)scale);
+		}
+
+		public void cleanup(Particle pt) {
+			DrawingElement drawingElement = (DrawingElement) pt.renderObjects.remove(DE);
+			pss.agr.animations.remove(drawingElement);
 		}
 	}
-	
-	public void removeFromCache(DrawingElement oldDE) {
-		if (oldDE instanceof Stroke) {
-			renderObjects.remove(oldDE);
-			animations.remove(oldDE);
-		} else if (oldDE instanceof Group) {
-			renderObjects.remove(oldDE);
-			animations.remove(oldDE);
-			for (DrawingElement de : ((Group) oldDE).elements) {
-				removeFromCache(de);
-			}
-		}
-	}
-	
-	public void dropCache() {
-		renderObjects.clear();
-		animations.clear();
-	}
-	
-	public RenderObject getObject(DrawingElement de) {
-		return null;
-	}
 
-}
+	

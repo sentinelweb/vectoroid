@@ -1,6 +1,6 @@
-package co.uk.sentinelweb.vectoroid.example.basic;
- /*
-Vectoroid Example for Android
+package co.uk.sentinelweb.ps.motion;
+/*
+Vectoroid for Android
 Copyright (C) 2010-12 Sentinel Web Technologies Ltd
 All rights reserved.
  
@@ -32,66 +32,49 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+import co.uk.sentinelweb.ps.ParticleSystems.ParticleSystem.Particle;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.view.Window;
-import android.widget.TextView;
-import co.uk.sentinelweb.views.draw.view.DisplayView;
+/**
+ * Motions are designed to be stateless objects - if you store state in a Motion 
+ * then you need to create a new Motion for each Particle in the System
+ * @author robert
+ */
 
-public class VectoroidExampleActivity extends Activity {
-	DisplayView dv;
-	TextView t;
-	/** Called when the activity is first created. */
-	@Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE); 
-		setContentView(R.layout.main);
-        
-        dv = (DisplayView) findViewById(R.id.main_grafik);
-        t =  (TextView)findViewById(R.id.main_text);
-        try {
-    		dv.setAsset("hello.json");
-        	t.setText("Hello ...");
-		} catch (Exception e) {
-			e.printStackTrace();
-			t.setText("Error ..."+e.getMessage());
-		}
-    }
-    
-
-	@Override
-	protected void onPause() {
-		// TODO Auto-generated method stub
-		super.onPause();
-	}
-
-	@Override
-	protected void onRestart() {
-		// TODO Auto-generated method stub
-		super.onRestart();
-	}
-
-	@Override
-	protected void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
-	}
-
-	@Override
-	protected void onStart() {
-		// TODO Auto-generated method stub
-		super.onStart();
-		
-	}
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onStop()
-	 */
-	@Override
-	protected void onStop() {
-		// TODO Auto-generated method stub
-		super.onStop();
-	}
+public abstract class Motion {
 	
+	/**
+	 * @param timerLength time (ms) the motion stays active setting timerLength=1.
+	 */
+	public Motion(int timerLength) {
+		this.timerLength = timerLength;
+	}
+	/**
+	 * Weather to use timer or not - a motion doesn't have to be time based it might.
+	 */
+	public boolean useTimer = true;
+	public int timerLength=1;
+	
+	/**
+	 * The main looping function for the motion - update the particle loc,vel,acc here.
+	 * 
+	 * @param p particle.
+	 * @return true to continue, false to stop (will go to next motion if available).
+	 */
+	public abstract boolean update(Particle p);
+	
+	/**
+	 * Called when the motion is activated on the particle.
+	 * 
+	 * @param pt particle
+	 */
+	public void init(Particle pt){};
+	
+	/**
+	 * It's good form to remove any object you added to the particles renderObjects.
+	 * 
+	 * Called when the motion is deactivated.
+	 * 
+	 * @param pt particle
+	 */
+	public void cleanup(Particle pt){};
 }

@@ -37,10 +37,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>co.uk.sentinelweb.cards</groupId>
-	<artifactId>SuprCardsExploder</artifactId>
+	<artifactId>SuprCardsExploderLib</artifactId>
 	<version>0.8</version>
-	<packaging>apk</packaging>
-	<name>Super Cards Exploder</name>
+	<packaging>apklib</packaging>
+	<name>Super Cards Exploder Lib</name>
 	<description>This is a demo app to show object animation in Vectoroid</description>
 	<url>http://www.vectoroid.com</url>
 	
@@ -52,14 +52,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 			<version>2.3.3</version>
 			<scope>provided</scope>
 		</dependency>
-		
 		<dependency>
             <groupId>co.uk.sentinelweb.views.draw</groupId>
             <artifactId>Vectoroid</artifactId>
             <version>0.8</version>
        	 	<type>apklib</type>
         </dependency>
-		
 	    <dependency>
 	      <groupId>com.google.code.gson</groupId>
 	      <artifactId>gson</artifactId>
@@ -67,127 +65,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	      <type>jar</type>
 	    </dependency>
 	</dependencies> 
-
-	<properties>
-		<maven.build.timestamp.format>yyDDDHH</maven.build.timestamp.format>
-		<versionCode>${maven.build.timestamp}</versionCode>
-		<releaseApkArchivePath>${project.build.directory}</releaseApkArchivePath>
-		<rt.jar.path>${env.JAVA_HOME}/jre/lib/rt.jar</rt.jar.path>
-		<jsse.jar.path>${env.JAVA_HOME}/jre/lib/jsse.jar</jsse.jar.path>
-		
-		<versionString>${project.version}.example</versionString>
-		<vendor>EXAMPLE</vendor>
-	</properties>
-
 	<build>
-		<sourceDirectory>${project.build.directory}/src</sourceDirectory>
 		<plugins>
-			<plugin>
-				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
-				<artifactId>android-maven-plugin</artifactId>
-				<version>3.0.0-alpha-14</version>
-				
+			 <plugin>
+                <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                <artifactId>android-maven-plugin</artifactId>
+                <extensions>true</extensions>
 				<configuration>
-					<sourceDirectory>${project.build.directory}/src</sourceDirectory>
-					<androidManifestFile>${project.build.directory}/AndroidManifest.xml</androidManifestFile>
-					<assetsDirectory>${project.basedir}/assets</assetsDirectory>
-					<resourceDirectory>${project.build.directory}/res</resourceDirectory>
-					<libDirectory>${project.basedir}/lib</libDirectory>
+					<sourceDirectory>${project.basedir}/src</sourceDirectory>
 					<sdk>
 						<path>/home/robert/bin/android-sdk-linux_x86</path>
-						<platform>11</platform>
-					</sdk>
-					<deleteConflictingFiles>true</deleteConflictingFiles>
-					<undeployBeforeDeploy>true</undeployBeforeDeploy>
-					
-					<sign>
-						<debug>false</debug>
-					</sign>
+						<platform>8</platform>
+				  	</sdk>
 				</configuration>
-
-				<extensions>true</extensions>
-			</plugin>
-
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
-				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<executions>
-					<execution>
-						<phase>initialize</phase>
-						<goals>
-							<goal>resources</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jarsigner-plugin</artifactId>
-				<version>1.2</version>
-				<executions>
-					<execution>
-						<id>signing</id>
-						<goals>
-							<goal>sign</goal>
-						</goals>
-						<phase>package</phase>
-						<inherited>true</inherited>
-						<configuration>
-							<includes>
-								<include>${project.build.directory}/${project.artifactId}-${project.version}.apk</include>
-							</includes>
-							<keystore>${keystore.location}</keystore>
-							<storepass>${keystore.password}</storepass>
-							<keypass>${keystore.keypass}</keypass>
-							<alias>${keystore.alias}</alias>
-							<verbose>true</verbose>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+				<version>3.0.0</version>
+            </plugin>
 		</plugins>
-		<resources>
-			<resource>
-				<filtering>false</filtering>
-				<directory>${basedir}</directory>
-				<includes>
-					<include>AndroidManifest.xml</include>
-				</includes>
-				<targetPath>${project.build.directory}</targetPath>
-			</resource>
-			<resource>
-				<filtering>false</filtering>
-				<directory>${basedir}/src</directory>
-				<targetPath>${project.build.directory}/src</targetPath>
-			</resource>
-			<resource>
-				<filtering>false</filtering>
-				<directory>${basedir}/res</directory>
-				<targetPath>${project.build.directory}/res</targetPath>
-			</resource>
-			<resource>
-				<filtering>false</filtering>
-				<directory>${basedir}/assets</directory>
-				<targetPath>${project.build.directory}/assets</targetPath>
-			</resource>
-		</resources>
 	</build>
-	<profiles>
-		<profile>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<properties>
-				<versionString>${project.version}.example</versionString>
-			</properties>
-		</profile>
-		
-	</profiles>
 </project>

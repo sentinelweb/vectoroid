@@ -1,6 +1,6 @@
-package co.uk.sentinelweb.vectoroid.example.basic;
- /*
-Vectoroid Example for Android
+package co.uk.sentinelweb.ps.motion;
+/*
+Vectoroid for Android
 Copyright (C) 2010-12 Sentinel Web Technologies Ltd
 All rights reserved.
  
@@ -32,66 +32,53 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+import co.uk.sentinelweb.ps.ParticleSystems.ParticleSystem.Particle;
+import co.uk.sentinelweb.ps.Vector3D;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.view.Window;
-import android.widget.TextView;
-import co.uk.sentinelweb.views.draw.view.DisplayView;
-
-public class VectoroidExampleActivity extends Activity {
-	DisplayView dv;
-	TextView t;
-	/** Called when the activity is first created. */
+public class GotoMotion extends Motion {
+	private static final String TARGET = "target";
+	private static final String ORIGIN = "origin";
+	Motion m ;
+	Vector3D v;
+	
+	public GotoMotion(Motion m,int timerLength) {
+		super(timerLength);
+		this.m = m;
+	}
+	public GotoMotion(Vector3D m,int timerLength) {
+		super(timerLength);
+		this.v = m;
+	}
 	@Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE); 
-		setContentView(R.layout.main);
-        
-        dv = (DisplayView) findViewById(R.id.main_grafik);
-        t =  (TextView)findViewById(R.id.main_text);
-        try {
-    		dv.setAsset("hello.json");
-        	t.setText("Hello ...");
-		} catch (Exception e) {
-			e.printStackTrace();
-			t.setText("Error ..."+e.getMessage());
+	public void init(Particle pt) {
+		pt.renderObjects.put(ORIGIN,pt.loc.copy());
+		if (m!=null) {
+			Particle testParticle = pt.duplicate(true);
+			testParticle.timeInCycle=0;
+			m.update(testParticle);
+			pt.renderObjects.put(TARGET,testParticle.loc);
+		} else if (v!=null) {
+			pt.renderObjects.put(TARGET,v);
 		}
-    }
-    
-
-	@Override
-	protected void onPause() {
-		// TODO Auto-generated method stub
-		super.onPause();
 	}
 
 	@Override
-	protected void onRestart() {
-		// TODO Auto-generated method stub
-		super.onRestart();
-	}
-
-	@Override
-	protected void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
-	}
-
-	@Override
-	protected void onStart() {
-		// TODO Auto-generated method stub
-		super.onStart();
-		
-	}
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onStop()
-	 */
-	@Override
-	protected void onStop() {
-		// TODO Auto-generated method stub
-		super.onStop();
+	public void cleanup(Particle pt) {
+		pt.renderObjects.remove(TARGET);
+		pt.renderObjects.remove(ORIGIN);
 	}
 	
+	@Override
+	public boolean update(Particle p) {
+		Vector3D tgt = (Vector3D)p.renderObjects.get(TARGET);
+		Vector3D org = (Vector3D)p.renderObjects.get(ORIGIN);
+		float sc = ((p.timeInCycle)/(float)timerLength);
+		p.loc.setXYZ(compute(tgt.x, org.x, sc),compute(tgt.y, org.y, sc),compute(tgt.z, org.z, sc));
+		return true;
+	}
+
+	private double compute(double tgt, double org, float sc) {
+		return org+(tgt-org)*sc;
+	}
+
 }

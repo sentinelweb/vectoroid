@@ -70,9 +70,10 @@ public class StrokesRenderer {
 			DrawingElement de = strokes.get(i);
 			if (!de.visible) {continue;}
 			Operator trans = r.animations.get(de);
-			usePoint.set(de.calculatedCentre.x*r.getVpd().zoom,de.calculatedCentre.y*r.getVpd().zoom);
+			//usePoint.set(de.calculatedCentre.x*r.getVpd().zoom,de.calculatedCentre.y/r.getVpd().zoom);
+			
 			if (trans!=null) {
-
+				/*
 				if (trans.rotation!=null) {
 					if (trans.translate!=null) {
 						PointUtil.addVector(usePoint, usePoint2, trans.translate);
@@ -81,12 +82,24 @@ public class StrokesRenderer {
 						canvas.rotate(trans.rotation,usePoint.x,usePoint.y);
 					}
 				}
-				if (trans.scale!=null) {
-					canvas.scale(trans.scale.x,trans.scale.y);
-				}
-				
+				*/
 				if (trans.translate!=null) {
-					canvas.translate(trans.translate.x,trans.translate.y);
+					if (trans.scale!=null) {
+						canvas.translate(
+								(trans.translate.x/1),
+								(trans.translate.y/1)
+							);
+					} else {
+						canvas.translate(
+								(trans.translate.x),
+								(trans.translate.y)
+							);
+					}
+				}
+				if (trans.scale!=null) {//
+					trans.scale.set(Math.abs(trans.scale.x),Math.abs(trans.scale.y));
+					getScaleOffset(trans);
+					canvas.scale(trans.scale.x,trans.scale.y,usePoint.x,usePoint.y);//,usePoint.x+trans.translate.x,usePoint.y+trans.translate.y
 				}
 				
 			}
@@ -99,13 +112,25 @@ public class StrokesRenderer {
 				}
 			} 
 			if (trans!=null) {
-				
-				if (trans.translate!=null) {
-					canvas.translate(-trans.translate.x,-trans.translate.y);
-				}
 				if (trans.scale!=null) {
-					canvas.scale(1/trans.scale.x,1/trans.scale.y);
+					getScaleOffset(trans);
+					canvas.scale(1/trans.scale.x,1/trans.scale.y,-usePoint.x,-usePoint.y);//,-usePoint.x-trans.translate.x,-usePoint.y-trans.translate.y
 				}
+				if (trans.translate!=null) {
+					if (trans.scale!=null) {
+						canvas.translate(
+							-(trans.translate.x)*1,
+							-(trans.translate.y)*1
+						);
+					}else {
+						canvas.translate(
+							-(trans.translate.x),
+							-(trans.translate.y)
+						);
+					}
+					//canvas.translate(-trans.translate.x*1/trans.scale.x,-trans.translate.y*1/trans.scale.y);
+				}
+				/*
 				if (trans.rotation!=null) {
 					if (trans.translate!=null) {
 						PointUtil.addVector(usePoint, usePoint2, trans.translate);
@@ -114,8 +139,15 @@ public class StrokesRenderer {
 						canvas.rotate(-trans.rotation,usePoint.x,usePoint.y);
 					}
 				}
+				*/
 			}
 		}
+	}
+
+	public void getScaleOffset(Operator trans) {
+		// needs the right calculation for 
+		usePoint.set(0,0);// 1024/2-1024/2*trans.scale.x,600/2-600/2*trans.scale.y
+		// usePoint.set(0,0);
 	}
 	// draw a single stroke
 	public void drawStroke(Canvas canvas, Stroke stroke) {//, boolean drawselected, boolean noTest

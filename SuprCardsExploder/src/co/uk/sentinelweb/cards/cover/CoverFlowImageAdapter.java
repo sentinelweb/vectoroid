@@ -36,6 +36,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -225,10 +226,9 @@ public class CoverFlowImageAdapter extends BaseAdapter implements ListAdapter {
 	 * the center.
 	 */
 	public float getScale(boolean focused, int offset) {
-		/* Formula: 1 / (2 ^ offset) */
 		return Math.max(0, 1.0f / (float) Math.pow(2, Math.abs(offset)));
 	}
-
+	
 	public void refresh(FileRepository fr) {
 		
 		mImagesFile =fr.getFiles(

@@ -1,6 +1,6 @@
-package co.uk.sentinelweb.vectoroid.example.basic;
- /*
-Vectoroid Example for Android
+package co.uk.sentinelweb.ps.motion;
+/*
+Vectoroid for Android
 Copyright (C) 2010-12 Sentinel Web Technologies Ltd
 All rights reserved.
  
@@ -32,66 +32,38 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+import co.uk.sentinelweb.ps.ParticleSystems.ParticleSystem.Particle;
+import co.uk.sentinelweb.ps.Vector3D;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.view.Window;
-import android.widget.TextView;
-import co.uk.sentinelweb.views.draw.view.DisplayView;
+public class LissajousMotion extends Motion {
+		public float a = 4;
+		public float b = 5;
+		public float delta = 90;
+		public float A = 100;
+		public float B = 100;
 
-public class VectoroidExampleActivity extends Activity {
-	DisplayView dv;
-	TextView t;
-	/** Called when the activity is first created. */
-	@Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE); 
-		setContentView(R.layout.main);
-        
-        dv = (DisplayView) findViewById(R.id.main_grafik);
-        t =  (TextView)findViewById(R.id.main_text);
-        try {
-    		dv.setAsset("hello.json");
-        	t.setText("Hello ...");
-		} catch (Exception e) {
-			e.printStackTrace();
-			t.setText("Error ..."+e.getMessage());
+		public LissajousMotion(int timerLength) {
+			super(timerLength);
 		}
-    }
-    
 
-	@Override
-	protected void onPause() {
-		// TODO Auto-generated method stub
-		super.onPause();
+		public LissajousMotion(float a, float b, float delta, float a2, float b2,int timerLength) {
+			super(timerLength);
+			this.a = a;
+			this.b = b;
+			this.delta = delta;
+			A = a2;
+			B = b2;
+		}
+
+		public boolean update(Particle pt) {
+			int angle = pt.timeInCycle + pt.index * 36;
+			pt.loc.x = A * (float) Math.sin(a * angle + delta) + pt.index * 10;// LookupTable.sinD
+			pt.loc.y = B * (float) Math.sin(b * angle) + pt.index * 10;// LookupTable
+
+			pt.trails.enqueue(pt.loc.copy());
+			pt.trailsRot.enqueue(new Vector3D(0, 0, 0));
+			return true;
+		}
 	}
 
-	@Override
-	protected void onRestart() {
-		// TODO Auto-generated method stub
-		super.onRestart();
-	}
-
-	@Override
-	protected void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
-	}
-
-	@Override
-	protected void onStart() {
-		// TODO Auto-generated method stub
-		super.onStart();
-		
-	}
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onStop()
-	 */
-	@Override
-	protected void onStop() {
-		// TODO Auto-generated method stub
-		super.onStop();
-	}
 	
-}

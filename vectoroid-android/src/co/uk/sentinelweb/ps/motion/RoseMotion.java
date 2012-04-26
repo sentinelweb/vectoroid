@@ -1,6 +1,6 @@
-package co.uk.sentinelweb.vectoroid.example.basic;
- /*
-Vectoroid Example for Android
+package co.uk.sentinelweb.ps.motion;
+/*
+Vectoroid for Android
 Copyright (C) 2010-12 Sentinel Web Technologies Ltd
 All rights reserved.
  
@@ -32,66 +32,35 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+import co.uk.sentinelweb.ps.ParticleSystems.ParticleSystem.Particle;
+import co.uk.sentinelweb.ps.PolarCoords;
+import co.uk.sentinelweb.ps.Vector3D;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.view.Window;
-import android.widget.TextView;
-import co.uk.sentinelweb.views.draw.view.DisplayView;
-
-public class VectoroidExampleActivity extends Activity {
-	DisplayView dv;
-	TextView t;
-	/** Called when the activity is first created. */
-	@Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE); 
-		setContentView(R.layout.main);
-        
-        dv = (DisplayView) findViewById(R.id.main_grafik);
-        t =  (TextView)findViewById(R.id.main_text);
-        try {
-    		dv.setAsset("hello.json");
-        	t.setText("Hello ...");
-		} catch (Exception e) {
-			e.printStackTrace();
-			t.setText("Error ..."+e.getMessage());
+public class RoseMotion  extends Motion{
+		public float k = 4;
+		public RoseMotion(int timerLength) {
+			super(timerLength);
 		}
-    }
-    
+		public RoseMotion(float k,int timerLength) {
+			super(timerLength);
+			this.k = k;
+		}
+			
 
-	@Override
-	protected void onPause() {
-		// TODO Auto-generated method stub
-		super.onPause();
+		public boolean update(Particle pt) {
+			float theta = (float) ((float) pt.timeInCycle / pt.timerLength * 2 * Math.PI) + pt.index * 36;
+			float r = (float) (200 * Math.sin(k * theta) + pt.index * 10);
+			PolarCoords p = new PolarCoords(r, theta);
+
+			pt.loc = new Vector3D(p.x(), p.y(), 0);
+			pt.loc.add(pt.vel);
+			pt.trails.enqueue(pt.loc.copy());
+
+			float theta_vel = 4f;
+			pt.rot.add(new Vector3D(theta_vel, 0, 0));
+			pt.trailsRot.enqueue(pt.rot.copy());
+			return true;
+		}
 	}
 
-	@Override
-	protected void onRestart() {
-		// TODO Auto-generated method stub
-		super.onRestart();
-	}
-
-	@Override
-	protected void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
-	}
-
-	@Override
-	protected void onStart() {
-		// TODO Auto-generated method stub
-		super.onStart();
-		
-	}
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onStop()
-	 */
-	@Override
-	protected void onStop() {
-		// TODO Auto-generated method stub
-		super.onStop();
-	}
 	
-}

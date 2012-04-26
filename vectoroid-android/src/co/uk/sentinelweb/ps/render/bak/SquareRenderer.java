@@ -1,6 +1,6 @@
-package co.uk.sentinelweb.vectoroid.example.basic;
- /*
-Vectoroid Example for Android
+package co.uk.sentinelweb.ps.render.bak;
+/*
+Vectoroid for Android
 Copyright (C) 2010-12 Sentinel Web Technologies Ltd
 All rights reserved.
  
@@ -32,66 +32,42 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+import co.uk.sentinelweb.ps.ParticleSystems.ParticleSystem.Particle;
+import co.uk.sentinelweb.ps.render.ParticleRenderer;
+import co.uk.sentinelweb.ps.Vector3D;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.view.Window;
-import android.widget.TextView;
-import co.uk.sentinelweb.views.draw.view.DisplayView;
-
-public class VectoroidExampleActivity extends Activity {
-	DisplayView dv;
-	TextView t;
-	/** Called when the activity is first created. */
-	@Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE); 
-		setContentView(R.layout.main);
-        
-        dv = (DisplayView) findViewById(R.id.main_grafik);
-        t =  (TextView)findViewById(R.id.main_text);
-        try {
-    		dv.setAsset("hello.json");
-        	t.setText("Hello ...");
-		} catch (Exception e) {
-			e.printStackTrace();
-			t.setText("Error ..."+e.getMessage());
+public class SquareRenderer extends ParticleRenderer {
+		public void init(Particle pt) {
 		}
-    }
-    
 
-	@Override
-	protected void onPause() {
-		// TODO Auto-generated method stub
-		super.onPause();
+		public void cleanup(Particle pt) {
+		}
+
+		public void render(Particle pt) {
+			float alpha = 0.6f;
+			float fadeOutTime = 30f;
+			if (pt.timer < fadeOutTime) {
+				alpha = 0.6f * (pt.timer / fadeOutTime);
+			}
+			// gl.glColor4f(0,1f, (float)pt.index/pt.ps.particles.size(),
+			// alpha);
+			for (int i = 0; i < pt.trails.size(); i += 10) {
+				// gl.glPushMatrix();
+				Vector3D theLoc = pt.trails.get(i);
+				// gl.glTranslatef(theLoc.x, theLoc.y, theLoc.z);
+
+				Vector3D theRot = pt.trailsRot.get(i);
+				if (theRot != null) {
+					// gl.glRotatef(theRot.x, 1,0, 0);
+					// gl.glRotatef(theRot.x, 0,1, 0);
+					// gl.glRotatef(theRot.x, 0,0, 1);
+
+					// s.drawSquare(5, 5);
+				}
+				// gl.glPopMatrix();
+			}
+		}
+
 	}
 
-	@Override
-	protected void onRestart() {
-		// TODO Auto-generated method stub
-		super.onRestart();
-	}
-
-	@Override
-	protected void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
-	}
-
-	@Override
-	protected void onStart() {
-		// TODO Auto-generated method stub
-		super.onStart();
-		
-	}
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onStop()
-	 */
-	@Override
-	protected void onStop() {
-		// TODO Auto-generated method stub
-		super.onStop();
-	}
 	
-}

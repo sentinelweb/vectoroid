@@ -55,7 +55,7 @@ public class CoverFlowActivity extends Activity {
 	AdapterView _adapterView;
 	private CoverFlowImageAdapter _coverImageAdapter;
 	int _selectedItemPosition =-1;
-	private boolean _isLoading =false;
+	private boolean _isLoading = false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +64,6 @@ public class CoverFlowActivity extends Activity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE); 
 		
 		setContentView(R.layout.loader);
-		
 		    
 		_adapterView =(AdapterView) findViewById(R.id.loader_coverflow);
 	    // _isCover = _adapterView instanceof CoverFlow;
@@ -98,12 +97,14 @@ public class CoverFlowActivity extends Activity {
 				}
 			}
 		});
-		findViewById(R.id.loader_hello).setOnClickListener(new OnClickListener() {
+		OnClickListener onClickListener = new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				openDrawing("hello.json");
+				openDrawing((String)v.getTag());
 			}
-		});
+		};
+		findViewById(R.id.loader_img_hello).setOnClickListener(onClickListener);
+		findViewById(R.id.loader_img_eye).setOnClickListener(onClickListener);
 		initCover();
 	}
 
@@ -117,8 +118,8 @@ public class CoverFlowActivity extends Activity {
     	
     	if(_coverImageAdapter.getCount()>0) {
 	    	 _adapterView.setOnItemSelectedListener(_itemSelectedListener);
-    		 ((CoverFlow) _adapterView).setSelection(0, true);
-    		 _adapterView.setOnItemClickListener(_coverClickListener);
+			 ((CoverFlow) _adapterView).setSelection(0, true);
+			 _adapterView.setOnItemClickListener(_coverClickListener);
 	    	 _selectedItemPosition=0;
 	     }
 	}
@@ -159,9 +160,7 @@ public class CoverFlowActivity extends Activity {
 		if (! _isLoading) {
 			_isLoading=true;
 			SaveFile saveFile = (SaveFile)_coverImageAdapter.getItem(_selectedItemPosition);
-			//CardGlobals._saveFile = saveFile;
-			Intent i = new Intent(CoverFlowActivity.this, SuprCardsExploderActivity.class);
-			i.setAction(SuprCardsExploderActivity.INTENT_ACTION_LOAD_FILE);
+			Intent i = new Intent( SuprCardsExploderActivity.INTENT_ACTION_LOAD_FILE);
 			i.putExtra(SuprCardsExploderActivity.INTENT_PARAM_LOAD_FILE_SET, saveFile.getSet().getId());
 			i.putExtra(SuprCardsExploderActivity.INTENT_PARAM_LOAD_FILE_DRAWING, saveFile.getSet().getDrawingIDs().get(0));
 			startActivity(i);
@@ -170,8 +169,7 @@ public class CoverFlowActivity extends Activity {
 	private void openDrawing(String asset) {
 		if (! _isLoading) {
 			_isLoading=true;
-			Intent i = new Intent(CoverFlowActivity.this, SuprCardsExploderActivity.class);
-			i.setAction(SuprCardsExploderActivity.INTENT_ACTION_LOAD_ASSET);
+			Intent i = new Intent( SuprCardsExploderActivity.INTENT_ACTION_LOAD_ASSET);
 			i.putExtra(SuprCardsExploderActivity.INTENT_PARAM_LOAD_FILE_DRAWING, asset);
 			startActivity(i);
 		}
@@ -180,14 +178,10 @@ public class CoverFlowActivity extends Activity {
 		if (! _isLoading) {
 			_isLoading=true;
 			SaveFile saveFile = (SaveFile)_coverImageAdapter.getItem(_selectedItemPosition);
-			//CardGlobals._saveFile = saveFile;
 			Intent i = new Intent(SuprCardsConstants.INTENT_ACTION_LOAD_FILE);
-			//PackageManager manager = getPackageManager();
-			//Intent i = manager.getLaunchIntentForPackage(SuprCardsConstants.PACKAGE);
 			i.setAction(SuprCardsConstants.INTENT_ACTION_LOAD_FILE);
-			//i.setAction(VectoroidExampleActivity.INTENT_ACTION_LOAD_FILE);
-			i.putExtra(SuprCardsExploderActivity.INTENT_PARAM_LOAD_FILE_SET, saveFile.getSet().getId());
-			i.putExtra(SuprCardsExploderActivity.INTENT_PARAM_LOAD_FILE_DRAWING, saveFile.getSet().getDrawingIDs().get(0));
+			i.putExtra(SuprCardsConstants.INTENT_PARAM_LOAD_FILE_SET, saveFile.getSet().getId());
+			i.putExtra(SuprCardsConstants.INTENT_PARAM_LOAD_FILE_DRAWING, saveFile.getSet().getDrawingIDs().get(0));
 			startActivity(i);
 		}
 	}
@@ -197,74 +191,35 @@ public class CoverFlowActivity extends Activity {
 		Intent i = manager.getLaunchIntentForPackage(SuprCardsConstants.PACKAGE);
 		startActivity(i);
 	}
-	
-	Runnable _finishRunnable = new Runnable() {
-		@Override
-		public void run() {
-			
-			//finish();
-		}
-	};
-	
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onPause()
-	 */
-	@Override
-	protected void onPause() {
-		// TODO Auto-generated method stub
-		super.onPause();
-	}
 
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onRestart()
-	 */
-	@Override
-	protected void onRestart() {
-		// TODO Auto-generated method stub
-		super.onRestart();
-	}
-
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onResume()
-	 */
-	@Override
-	protected void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
-	}
-
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onStart()
-	 */
 	@Override
 	protected void onStart() {
-		// TODO Auto-generated method stub
 		super.onStart();
 		_isLoading=false;
-		checkApp();
+		checkAppOrDisk();
+		if ( _coverImageAdapter!=null)_coverImageAdapter.refresh(SuprCardsConstants.getFileRepo(this));
 	}
 
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onStop()
-	 */
 	@Override
 	protected void onStop() {
-		// TODO Auto-generated method stub
 		super.onStop();
+		
 	}
 
-	private void checkApp() {
-		if (!SuprCardsConstants.appInstalled(this)) {
+	private void checkAppOrDisk() {
+		boolean nofiles = !SuprCardsConstants.appInstalled(this) && 
+				android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
+		if (nofiles) {
 			_adapterView.setVisibility(View.GONE);
 			findViewById(R.id.loader_msg).setVisibility(View.VISIBLE);
 			findViewById(R.id.loader_sc_edit).setVisibility(View.GONE);
-			findViewById(R.id.loader_hello).setVisibility(View.VISIBLE);
+			findViewById(R.id.loader_sc_none_ctnr).setVisibility(View.VISIBLE);
 			
 		} else {
 			_adapterView.setVisibility(View.VISIBLE);
 			findViewById(R.id.loader_msg).setVisibility(View.GONE);
 			findViewById(R.id.loader_sc_edit).setVisibility(View.VISIBLE);
-			findViewById(R.id.loader_hello).setVisibility(View.GONE);
+			findViewById(R.id.loader_sc_none_ctnr).setVisibility(View.GONE);
 			initCover();
 		}
 	}

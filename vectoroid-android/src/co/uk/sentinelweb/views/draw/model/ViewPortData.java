@@ -35,6 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import android.graphics.PointF;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import co.uk.sentinelweb.views.draw.util.PointUtil;
 
 public class ViewPortData {
 	public PointF topLeft=new PointF(-1,-1);// the drawing viewport topleft in drawing pixels, TOPLEFT IS NEGATED!!!
@@ -106,5 +107,31 @@ public class ViewPortData {
 		vpd.topLeft.set(r.left,r.top);
 		vpd.zoomCullingRectF.set(vpd.zoomSrcRectF);// maybe shuld just be huge?
 		return vpd;
+	}
+	
+	public void zoomOutVpd( float mult,int width, int height) {// this only works for centered vp
+		float origZoom=zoom;
+		zoom=zoom*mult;
+		//width/=mult;
+		//height/=mult;
+		widthHeightReference.set(width,height);
+		PointF _usePoint = new PointF();
+		_usePoint.set(width, height);
+		PointUtil.mulVector(_usePoint, _usePoint, 1/zoom);
+		PointUtil.subVector(widthHeightReference, _usePoint, _usePoint);// new win size
+		PointUtil.mulVector(_usePoint, _usePoint, 0.5f);// centering offset
+		PointUtil.addVector(topLeft, topLeft, _usePoint);
+		_usePoint.set(width*mult, height*mult);
+		PointUtil.addVector(topLeft, topLeft, _usePoint);
+		
+		//topLeft.set(width*(1+1/zoom)/2f,height*(1+1/zoom)/2f);
+		zoomSrcRectF.set(
+				topLeft.x,
+				topLeft.y,
+				(topLeft.x+width/zoom),
+				(topLeft.y+height/zoom)
+			);
+		zoomCullingRectF.set(zoomSrcRectF);
+		zoomSrcRect.set((int)zoomSrcRectF.left,(int)zoomSrcRectF.top,(int)zoomSrcRectF.right,(int)zoomSrcRectF.bottom);
 	}
 }

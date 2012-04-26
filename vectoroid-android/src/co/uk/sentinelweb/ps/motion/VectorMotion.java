@@ -1,6 +1,6 @@
-package co.uk.sentinelweb.vectoroid.example.basic;
- /*
-Vectoroid Example for Android
+package co.uk.sentinelweb.ps.motion;
+/*
+Vectoroid for Android
 Copyright (C) 2010-12 Sentinel Web Technologies Ltd
 All rights reserved.
  
@@ -32,66 +32,59 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+import co.uk.sentinelweb.ps.ParticleSystems.ParticleSystem.Particle;
+import co.uk.sentinelweb.ps.Vector3D;
 
-import android.app.Activity;
-import android.os.Bundle;
-import android.view.Window;
-import android.widget.TextView;
-import co.uk.sentinelweb.views.draw.view.DisplayView;
+/**
+ * This class can be used to use strokes as animation paths.
+ * @author robert
+ *
+ */
+public class VectorMotion extends Motion {
+		float[] x;
+		float[] y;
+		float z;
+		float length = -1;
 
-public class VectoroidExampleActivity extends Activity {
-	DisplayView dv;
-	TextView t;
-	/** Called when the activity is first created. */
-	@Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE); 
-		setContentView(R.layout.main);
-        
-        dv = (DisplayView) findViewById(R.id.main_grafik);
-        t =  (TextView)findViewById(R.id.main_text);
-        try {
-    		dv.setAsset("hello.json");
-        	t.setText("Hello ...");
-		} catch (Exception e) {
-			e.printStackTrace();
-			t.setText("Error ..."+e.getMessage());
+		public VectorMotion(float[] x, float[] y, float z,int timerLength) {
+			super(timerLength);
+			this.x = x;
+			this.y = y;
+			this.z = z;
+			length = getLength();
 		}
-    }
-    
 
-	@Override
-	protected void onPause() {
-		// TODO Auto-generated method stub
-		super.onPause();
+		public boolean update(Particle pt) {
+			// int index =
+			// this.x.length-1>pt.counter?pt.counter:this.x.length-1;
+			float index = ((pt.timeInCycle * (this.x.length - 2)) / 200f);
+			// if (index>=this.x.length-1) {return false;}
+			int div = (int) Math.floor(index / (this.x.length - 2));
+			index = index % (this.x.length - 2);
+			if (div % 2 == 1) {
+				index = this.x.length - 2 - index;
+			}
+			pt.loc.z = (float) z;
+			int stub = (int) Math.floor(index);
+			// stub=Math.min(stub, this.x.length-2);
+			float frac = index - stub;
+			pt.loc.x = x[stub] + frac * (x[stub + 1] - x[stub]);
+			pt.loc.y = y[stub] + frac * (y[stub + 1] - y[stub]);
+			// pt.loc.z -= 2;
+			pt.trails.enqueue(pt.loc.copy());
+			float thetaVel = 4f;
+			pt.rot.add(new Vector3D(thetaVel, 0, 0));
+			pt.trailsRot.enqueue(pt.rot.copy());
+			return true;
+		}
+
+		float getLength() {
+			float len = 0;
+			for (int i = 0; i < x.length - 1; i++) {
+				len += Math.sqrt((x[i + 1] - x[i]) * (x[i + 1] - x[i]) + (y[i + 1] - y[i]) * (y[i + 1] - y[i]));
+			}
+			return len;
+		}
 	}
 
-	@Override
-	protected void onRestart() {
-		// TODO Auto-generated method stub
-		super.onRestart();
-	}
-
-	@Override
-	protected void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
-	}
-
-	@Override
-	protected void onStart() {
-		// TODO Auto-generated method stub
-		super.onStart();
-		
-	}
-	/* (non-Javadoc)
-	 * @see android.app.Activity#onStop()
-	 */
-	@Override
-	protected void onStop() {
-		// TODO Auto-generated method stub
-		super.onStop();
-	}
 	
-}

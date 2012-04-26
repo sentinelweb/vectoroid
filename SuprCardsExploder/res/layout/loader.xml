@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--  /*
-SuprCards Explodr for Android
-Copyright (C) 2010-12 Sentinel Web Technologies Ltd
-All rights reserved.
- 
-This software is made available under a Dual Licence:
- 
-Use is permitted under LGPL terms for Non-commercial projects
-  
-see: LICENCE.txt for more information
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-    * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright
-      notice, this list of conditions and the following disclaimer in the
-      documentation and/or other materials provided with the distribution.
-    * Neither the name of the Sentinel Web Technologies Ltd. nor the
-      names of its contributors may be used to endorse or promote products
-      derived from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL SENTINEL WEB TECHNOLOGIES LTD BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+	SuprCards Explodr for Android
+	Copyright (C) 2010-12 Sentinel Web Technologies Ltd
+	All rights reserved.
+	 
+	This software is made available under a Dual Licence:
+	 
+	Use is permitted under LGPL terms for Non-commercial projects
+	  
+	see: LICENCE.txt for more information
+	
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
+	    * Redistributions of source code must retain the above copyright
+	      notice, this list of conditions and the following disclaimer.
+	    * Redistributions in binary form must reproduce the above copyright
+	      notice, this list of conditions and the following disclaimer in the
+	      documentation and/or other materials provided with the distribution.
+	    * Neither the name of the Sentinel Web Technologies Ltd. nor the
+	      names of its contributors may be used to endorse or promote products
+	      derived from this software without specific prior written permission.
+	
+	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+	ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+	WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+	DISCLAIMED. IN NO EVENT SHALL SENTINEL WEB TECHNOLOGIES LTD BE LIABLE FOR ANY
+	DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+	(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+	ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */ -->
 <RelativeLayout  xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="fill_parent" android:layout_height="fill_parent" 
     android:background="#fff" android:id="@+id/loader_root">
@@ -39,9 +39,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   <TextView android:id="@+id/loader_msg" android:layout_width="wrap_content" android:layout_height="wrap_content" android:visibility="gone"
       android:background="#88000000"  android:padding="10dp" android:textColor="#ffffff"  android:textStyle="bold" android:textSize="18dp"
        android:layout_centerHorizontal="true" android:text="This app requires SuprCards - use the button to get it. (Tap hello world for example ..)" android:layout_alignParentBottom="true"/>
-  <ImageView android:id="@+id/loader_hello" android:layout_width="wrap_content" android:layout_height="wrap_content" 
-     android:scaleType="centerInside" android:layout_centerInParent="true"
-     android:src="@drawable/hello" android:visibility="gone"/>
+  <LinearLayout android:id="@+id/loader_sc_none_ctnr" android:orientation="vertical" android:layout_width="wrap_content" 
+      android:layout_height="wrap_content" android:visibility="gone" android:layout_centerInParent="true">
+	  <ImageView android:id="@+id/loader_img_hello" android:layout_width="wrap_content" android:layout_height="120dp" 
+	     android:scaleType="centerInside" android:src="@drawable/hello" android:tag="hello.json" />
+	  <ImageView android:id="@+id/loader_img_eye" android:layout_width="wrap_content" android:layout_height="120dp" 
+	     android:scaleType="centerInside" android:tag="eye.json" android:src="@drawable/eye" />
+  </LinearLayout>
   <ImageView android:id="@+id/loader_sc_launch" android:layout_width="80dp" android:layout_height="80dp" 
       android:layout_alignParentLeft="true" android:src="@drawable/star_120"/>
   <ImageView android:id="@+id/loader_sc_edit" android:layout_width="60dp" android:layout_height="60dp" 
