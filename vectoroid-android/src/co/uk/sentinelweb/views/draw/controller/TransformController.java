@@ -34,9 +34,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 import java.util.ArrayList;
 
-import android.graphics.PointF;
-import android.util.Log;
-import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.model.Drawing;
 import co.uk.sentinelweb.views.draw.model.DrawingElement;
 import co.uk.sentinelweb.views.draw.model.Group;
@@ -44,6 +41,10 @@ import co.uk.sentinelweb.views.draw.model.PointVec;
 import co.uk.sentinelweb.views.draw.model.Stroke;
 import co.uk.sentinelweb.views.draw.model.TransformOperatorInOut;
 import co.uk.sentinelweb.views.draw.model.UpdateFlags;
+import co.uk.sentinelweb.views.draw.model.path.Arc;
+import co.uk.sentinelweb.views.draw.model.path.Bezier;
+import co.uk.sentinelweb.views.draw.model.path.PathData;
+import co.uk.sentinelweb.views.draw.model.path.Quadratic;
 import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer;
 
 public class TransformController {
@@ -83,26 +84,51 @@ public class TransformController {
 				pvtmp = sout.points.get(j);
 			transform(pv, pvtmp, t);
 			
+			/*
 			if (pv.beizer1!=null) {
 				transform(pv.beizer1, pvtmp.beizer1, t);
 			}
 			if (pv.beizer2!=null) {
 				transform(pv.beizer2, pvtmp.beizer2, t);
 			}
+			*/
 		}
 		sin.applyTransform(t,sout);
 	}
 	
 	
-	public static void transform(ArrayList<PointF> points,ArrayList<PointF> pointsOut, TransformOperatorInOut t) {
+	public static void transform(ArrayList<PathData> points,ArrayList<PathData> pointsOut, TransformOperatorInOut t) {
 		for (int j=points.size()-1;j>=0 ;j--) {
-			PointF pt2 = pointsOut.get(j);
+			PathData pt2 = pointsOut.get(j);
 			if (pt2!=null) {
-				PointF pt = points.get(j);
+				PathData pt = points.get(j);
 				//if (j==points.size()-1) {
 				//	Log.d(DVGlobals.LOG_TAG,"transform in:"+PointUtil.tostr(pt)+":"+pt.hashCode()+":"+t.scaleValue);
 				//}
 				t.operate(pt,pt2);
+				switch (pt.type) {
+					case BEZIER:
+						Bezier b1 = (Bezier)pt;
+						Bezier b2 = (Bezier)pt2;
+						t.operate( b1.control1, b2.control1 );
+						t.operate( b1.control2, b2.control2 );
+						break;
+					case QUAD:
+						Quadratic q1 = (Quadratic)pt;
+						Quadratic q2 = (Quadratic)pt2;
+						t.operate( q1.control1, q2.control1 );
+						break;
+					case ARC:
+			//			Arc a1 = (Arc)pt;
+			//			Arc a2 = (Arc)pt2;
+								//t.operate( a1.r, a2.r );
+			//			a2.r.x=a1.r.x*(float)t.scaleXValue;
+			//			a2.r.y=a1.r.y*(float)t.scaleYValue;
+						
+						
+						break;
+					
+				}
 				//if (j==points.size()-1) {
 			//		Log.d(DVGlobals.LOG_TAG,"transform out:"+PointUtil.tostr(pt2)+":"+pt.hashCode()+":"+t.scaleValue);
 				//}

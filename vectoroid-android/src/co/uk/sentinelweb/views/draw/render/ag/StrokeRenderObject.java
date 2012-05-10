@@ -60,6 +60,10 @@ import co.uk.sentinelweb.views.draw.model.StrokeDecoration.BreakType;
 import co.uk.sentinelweb.views.draw.model.StrokeDecoration.Tip;
 import co.uk.sentinelweb.views.draw.model.UpdateFlags;
 import co.uk.sentinelweb.views.draw.model.UpdateFlags.UpdateType;
+import co.uk.sentinelweb.views.draw.model.path.Arc;
+import co.uk.sentinelweb.views.draw.model.path.Bezier;
+import co.uk.sentinelweb.views.draw.model.path.PathData;
+import co.uk.sentinelweb.views.draw.model.path.Quadratic;
 import co.uk.sentinelweb.views.draw.render.RenderObject;
 import co.uk.sentinelweb.views.draw.util.PointUtil;
 
@@ -127,7 +131,7 @@ public class StrokeRenderObject extends RenderObject{
 		
 		if (s.type==Stroke.Type.TEXT_TTF && s.text!=null) { 
 			splitStr = s.text.split("\n");
-			fontTTF = FileRepository.getFileRepository(this.r.c).getFontController().getTTFont(s.fontName);
+			fontTTF = FileRepository.getFileRepository(this.r.c,null).getFontController().getTTFont(s.fontName);
 			
 			//if (s.calculatedBounds.width()==0) {
 			//DebugUtil.logCall("Stroke setBounds: "+s.points.get(0).size()+" : ", new Exception());
@@ -279,24 +283,67 @@ public class StrokeRenderObject extends RenderObject{
 		if (s.type!=Stroke.Type.TEXT_TTF) {
 			for (PointVec pv:s.points) {
 				path.incReserve(pv.size());
+				PathData lastPathData = null;
 				for (int i=0;i<pv.size();i++) {
+					PathData pd = pv.get(i);
 					if (i==0) {
-						path.moveTo(pv.get(i).x/* *zoom */, pv.get(i).y/* *zoom */);
+						path.moveTo(pd.x, pd.y);
+						
 					} else {
 						//Log.d(Globals.LOG_TAG,""+pv.beizer1);
+						/*
 						if (pv.beizer1==null || i>=pv.beizer1.size() || pv.beizer1.get(i)==null) {
-							path.lineTo(pv.get(i).x/* *zoom */, pv.get(i).y/* *zoom */);
+							path.lineTo(pv.get(i).x, pv.get(i).y);
 						} else {
 							PointF pt = pv.get(i);
 							PointF b1 = pv.beizer1.get(i);
 							PointF b2 = pv.beizer2.get(i);
 							if (pt!=null && b1!=null && b2!=null) {
-								path.cubicTo(b1.x/* *zoom */,b1.y/* *zoom */,b2.x/* *zoom */,b2.y/* *zoom */,pt.x/* *zoom */,pt.y/* *zoom */);
+								path.cubicTo(b1.x,b1.y,b2.x,b2.y,pt.x,pt.y);
 							} else {
-								path.lineTo(pt.x/* *zoom */, pt.y/* *zoom */);
+								path.lineTo(pt.x, pt.y);
 							}
 						}
+						*/
+						switch (pd.type) {
+							case POINT:path.lineTo(pd.x, pd.y);break;
+							case BEZIER:
+								Bezier b = (Bezier)pd;
+								//Log.d(VecGlobals.LOG_TAG, "PointVec bz : "+PointUtil.tostr(b.control1)+":"+PointUtil.tostr(b.control2)+":"+PointUtil.tostr(b));
+								path.cubicTo(b.control1.x,b.control1.y,b.control2.x,b.control2.y,pd.x, pd.y);
+								break;
+							case QUAD:
+								Quadratic q = (Quadratic)pd;
+								path.quadTo(q.control1.x,q.control1.y,pd.x, pd.y);
+								break;
+							case ARC:
+								//TODO have to run a conversion for arc :( make a squiggle in the mean time.
+								Arc a = (Arc)pd;
+								//path.arcTo(b.control1.x,b.control1.y,b.control2.x,b.control2.y,pd.x, pd.y);
+								
+								//path.arcTo(b.control1.x,b.control1.y,b.control2.x,b.control2.y,pd.x, pd.y);
+								/*
+								if (lastPathData!=null) {
+									a.arcTo(lastPathData,a.r.x,a.r.y,a.xrot,a.largeArc,a.sweep,a.x,a.y);
+									Log.d(VecGlobals.LOG_TAG, "SVG Arc rendr:"+":"+PointUtil.tostr(a.oval)+":"+PointUtil.tostr(a.startAndSweepAngle)+":"+a.xrot+":"+a.largeArc+":"+a.sweep);
+									if (!Float.isNaN(a.oval.left)) {
+										path.arcTo(a.oval, a.startAndSweepAngle.x, a.startAndSweepAngle.y);
+									}
+									//_useRect.set(lastPathData.x,lastPathData.y,a.x,a.y);
+									//Log.d(VecGlobals.LOG_TAG, "SVG Arc rendr:"+":"+PointUtil.tostr(_useRect));
+									//path.arcTo(_useRect, 0, 150);
+								} else {
+									path.moveTo(pd.x, pd.y);
+									path.lineTo(pd.x, pd.y+5);
+									path.lineTo(pd.x, pd.y-5);
+									path.lineTo(pd.x, pd.y);
+								}
+								*/
+								path.lineTo(pd.x, pd.y);
+								break;
+						}
 					} 
+					lastPathData=pd;
 				}
 				if (pv.size()>0 && pv.closed) {
 					path.lineTo(pv.get(0).x/* *zoom */, pv.get(0).y/* *zoom */);
@@ -305,6 +352,8 @@ public class StrokeRenderObject extends RenderObject{
 			if (s.points.size()==1 && s.points.get(0).closed ) {
 				path.close();
 			}
+			//path.setFillType(FillType.WINDING);
+			
 		} else if ( s.text!=null && !"".equals(s.text)) {
 			if (s.points.get(0)!=null && s.points.get(0).size()>0){
 				/*
@@ -414,6 +463,7 @@ public class StrokeRenderObject extends RenderObject{
 		fgFill.setStrokeCap(s.pen.cap);
 		fgFill.setStrokeJoin(s.pen.join);
 		fgOuter.setColor(s.pen.glowColour);
+
 		//fgOuter.setAlpha(pen.alpha);
 		fgOuter.setStrokeWidth(s.pen.glowWidth/* *zoom */);//*density
 		if (s.pen.glowWidth>0) { 

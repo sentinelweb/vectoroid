@@ -52,11 +52,8 @@ public class TransformOperatorInOut {
 	public double skewXValue = 0;
 	public double skewYValue = 0;
 	
-	private double[][] matrix3;
+	public double[][] matrix3;
 	private double[][] matrix2;
-	//public PointF transIn = new PointF();
-	//public PointF transOut = new PointF();
-	//public PointF cog = new PointF();
 	public PointF anchor = new PointF();
 	
 	public PointF trans = new PointF();
@@ -67,7 +64,6 @@ public class TransformOperatorInOut {
 		super();
 		_pointUtil = new PointUtil();
 	}
-	//public abstract void operate(PointF pin,PointF pout);
 	
 	public void generate() {
 		double[][] matrixRot = new double[2][2];

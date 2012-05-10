@@ -59,10 +59,11 @@ import android.util.Log;
 import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.controller.FontController.Font;
 import co.uk.sentinelweb.views.draw.file.FileRepository.Directory;
-import co.uk.sentinelweb.views.draw.file.export.json.gson.GSONDrawing;
-import co.uk.sentinelweb.views.draw.file.export.json.simple.JSONDrawing;
-import co.uk.sentinelweb.views.draw.file.export.json.simple.JSONSet;
-import co.uk.sentinelweb.views.draw.file.export.json.string.SJSONDrawing;
+import co.uk.sentinelweb.views.draw.file.export.json.JSONDrawingIO;
+import co.uk.sentinelweb.views.draw.file.export.json.v2.gson.GSONDrawing;
+import co.uk.sentinelweb.views.draw.file.export.json.v2.simple.JSONDrawing;
+import co.uk.sentinelweb.views.draw.file.export.json.v2.simple.JSONSet;
+import co.uk.sentinelweb.views.draw.file.export.json.v2.string.SJSONDrawing;
 import co.uk.sentinelweb.views.draw.model.Asset;
 import co.uk.sentinelweb.views.draw.model.Drawing;
 import co.uk.sentinelweb.views.draw.model.DrawingElement;
@@ -234,7 +235,7 @@ public class SaveFile {
 	*/
 	
 	
-	private void makeAssetList(Drawing d) {
+	public void makeAssetList(Drawing d) {
 		if (_assetList==null) {
 			_assetList=new ArrayList<Object>();
 		} else {_assetList.clear();}
@@ -323,54 +324,15 @@ public class SaveFile {
 		}
 		return null;
 	}
-	/* ********************************** drawing save/load ******************************************/
-	private boolean useGSON = true;
+	
+	/* ********************************** drawing save / load ******************************************/
 	public boolean saveJSON(Drawing d,ArrayList<Option> options) {
 		return saveJSON( d, options, null);
 	}
 	
 	public boolean saveJSON(Drawing d,ArrayList<Option> options, File file) {
-		try {
-			long st = System.currentTimeMillis();
-			this._options=options;
-			makeAssetList(d);
-			if (file==null) {
-				file = getDrawingFile(d.getId());
-			}
-			Writer out = new BufferedWriter(new FileWriter(file));
-			//Writer out = new FileWriter(file);
-			if (!useGSON) {
-				JSONObject o = toJSON(d);
-				out.write(o.toString(2));//2
-				out.flush();out.close();
-			} else {
-				try {
-					//GSONDrawing gd = new GSONDrawing(this);
-					//gd.toJSON(d, out);
-					SJSONDrawing sjd = new SJSONDrawing(this);
-					sjd.toJSON(d, out);
-					out.close();
-				} catch (Exception e) {
-					Log.d(VecGlobals.LOG_TAG, "gson load ex:"+file.getAbsolutePath(),e);
-					out.close();
-					file.delete();
-					out = new FileWriter(file);
-					JSONObject o = toJSON(d);
-					out.write(o.toString(2));//2
-					out.flush();
-					out.close();
-				}
-			}
-			Log.d(VecGlobals.LOG_TAG, "saveJSON: time :"+(System.currentTimeMillis()-st));
-			return true;
-		} catch (FileNotFoundException e) {
-			Log.d(VecGlobals.LOG_TAG, "saveJSON:FileNotFoundException:",e);
-		} catch (IOException e) {
-			Log.d(VecGlobals.LOG_TAG, "saveJSON:IOException:",e);
-		} catch (JSONException e) {
-			Log.d(VecGlobals.LOG_TAG, "saveJSON:JSONException:",e);
-		}
-		return false;
+		JSONDrawingIO jdio = new JSONDrawingIO(this);
+		return jdio.saveJSON(d, options, file);
 	}
 	
 	public Drawing loadJSON(String drawingId) {
@@ -378,84 +340,11 @@ public class SaveFile {
 	}
 	
 	public Drawing loadJSON(String drawingId, File file) {
-		try {
-			long st = System.currentTimeMillis();
-			if (file==null) {
-				file = new File(_dataDir, drawingId + JSON_FILE_EXT);
-			}
-			Drawing d = null;
-			boolean noGSON = true;//!useGSON;
-			if (noGSON) {
-				d = parseJSONSimple(file);
-			} else {
-				try {
-					InputStream is = new BufferedInputStream(new FileInputStream(file));
-					GSONDrawing gd = new GSONDrawing(this);
-					d=gd.fromJSON( is);
-				} catch (Exception e) {
-					Log.d(VecGlobals.LOG_TAG, "loadGSON: ex :",e);
-					d = parseJSONSimple(file);
-				}
-			}
-			Log.d(VecGlobals.LOG_TAG, "loadJSON: time :"+(System.currentTimeMillis()-st));
-			d.setId(drawingId);
-			return d;
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (JSONException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	private Drawing parseJSONSimple(File file) throws FileNotFoundException, IOException, JSONException {
-		Drawing d;
-		StringWriter sw = new StringWriter();
-		BufferedReader reader = new BufferedReader(	new FileReader(file));
-		String readline = "";
-		while ((readline = reader.readLine()) != null) { 
-			sw.append(readline);
-		}
-		String string = sw.toString();
-		return parseJSONSImple(string);
+		JSONDrawingIO jdio = new JSONDrawingIO(this);
+		return jdio.loadJSON(drawingId,  file);
 	}
 	
-	private Drawing parseJSONSimple(InputStream is) throws FileNotFoundException, IOException, JSONException {
-		Drawing d;
-		StringWriter sw = new StringWriter();
-		BufferedInputStream reader = new BufferedInputStream(	is);
-		String readline = "";
-		byte[] buffer = new byte[1000];
-		int offset=0;
-		int block=-1;
-		while ((block = reader.read(buffer, offset, buffer.length))>-1) { 
-			sw.append(new String(buffer,0,block));
-			offset+=block;
-		}
-		String string = sw.toString();
-		return parseJSONSImple(string);
-	}
-	
-	public Drawing parseJSONSImple(String string) throws JSONException {
-		Drawing d;
-		JSONObject o = new JSONObject(new JSONTokener(string));
-		d = fromJSON(o);
-		return d;
-	}
-	
-	public  JSONObject toJSON(Drawing d) {
-		JSONDrawing jsd = new JSONDrawing(this);
-		return jsd.toJSON(d);
-	}
-	
-	public  Drawing fromJSON(JSONObject o) {
-			JSONDrawing jsd = new JSONDrawing(this);
-			return jsd.fromJSON(o);
-	}
-
-	
+	/* ********************************** save / render  bitmaps ******************************************/
 	public void saveBitmaps (Drawing drawing) {
 		saveBitmaps(drawing,true,false);
 	}

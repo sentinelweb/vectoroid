@@ -54,7 +54,7 @@ import android.graphics.BitmapFactory.Options;
 import android.util.Log;
 import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.file.SaveFile.Option;
-import co.uk.sentinelweb.views.draw.file.export.json.JSONConst;
+import co.uk.sentinelweb.views.draw.file.export.json.v2.JSONConst;
 import co.uk.sentinelweb.views.draw.model.Asset;
 import co.uk.sentinelweb.views.draw.util.Base64;
 import co.uk.sentinelweb.views.draw.util.FileUtil;
