@@ -74,7 +74,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 				<configuration>
 					<sourceDirectory>${project.basedir}/src</sourceDirectory>
 					<sdk>
-						<path>/home/robert/bin/android-sdk-linux_x86</path>
 						<platform>8</platform>
 				  	</sdk>
 				</configuration>

@@ -35,6 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -46,43 +47,51 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import co.uk.sentinelweb.views.draw.file.export.json.gson.GSONDrawing;
-import co.uk.sentinelweb.views.draw.file.export.json.simple.JSONDrawing;
+import co.uk.sentinelweb.views.draw.file.export.json.JSONDrawingIO;
+import co.uk.sentinelweb.views.draw.file.export.json.v2.gson.GSONDrawing;
+import co.uk.sentinelweb.views.draw.file.export.json.v2.simple.JSONDrawing;
 import co.uk.sentinelweb.views.draw.model.Drawing;
 
 public class DrawingFileUtil {
 	public static boolean saveJSON(Drawing d,File file,SaveFile sv) {
-		try {
+		//try {
 			//File file = getClipJson(ci);
-			FileWriter out = new FileWriter(file);
-			JSONDrawing jsd = new JSONDrawing(sv);
-			JSONObject o = jsd.toJSON(d);
-			out.write(o.toString());
-			out.flush();
-			out.close();
-			return true;
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} 
-		return false;
+			//FileWriter out = new FileWriter(file);
+			//JSONDrawing jsd = new JSONDrawing(sv);
+			//JSONObject o = jsd.toJSON(d);
+			//out.write(o.toString());
+			//out.flush();
+			//out.close();
+			JSONDrawingIO jdio = new JSONDrawingIO(sv);
+			return jdio.saveJSON(d, null,file);
+//		} 
+//		catch (FileNotFoundException e) {
+//			e.printStackTrace();
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		} 
+//		return false;
 	}
 
 	public static Drawing loadJSON(File file,SaveFile sv) {
 		try {
 			//File file = getClipJson(ci);
-			StringWriter sw = new StringWriter();
-			BufferedReader reader = new BufferedReader(	new FileReader(file));
-			String readline = "";
-			while ((readline = reader.readLine()) != null) { 
-				sw.append(readline);
-			}
-			String string = sw.toString();
-			JSONObject o = new JSONObject(new JSONTokener(string));
-			JSONDrawing jsd = new JSONDrawing(sv);
-			Drawing d =jsd.fromJSON(o);
-			return d;
+			
+//			StringWriter sw = new StringWriter();
+//			BufferedReader reader = new BufferedReader(	new FileReader(file));
+//			String readline = "";
+//			while ((readline = reader.readLine()) != null) { 
+//				sw.append(readline);
+//			}
+//			String string = sw.toString();
+//			JSONObject o = new JSONObject(new JSONTokener(string));
+//			JSONDrawing jsd = new JSONDrawing(sv);
+			JSONDrawingIO jdio = new JSONDrawingIO(sv);
+			BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+			Drawing dd=jdio.loadJSON(bis);
+			return dd;
+			//Drawing d =jsd.fromJSON(o);
+			//return d;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -109,9 +118,12 @@ public class DrawingFileUtil {
 	public static Drawing loadJSON(InputStream is) {
 		try {
 			//File file = getClipJson(ci);
-			InputStream fis = new BufferedInputStream(is);
-			GSONDrawing gd = new GSONDrawing(null);
-			Drawing dd=gd.fromJSON( fis);
+			//InputStream fis = new BufferedInputStream(is);
+			//GSONDrawing gd = new GSONDrawing(null);
+			//Drawing dd=gd.fromJSON( fis);
+			JSONDrawingIO jdio = new JSONDrawingIO(null);
+			BufferedInputStream bis = new BufferedInputStream(is);
+			Drawing dd=jdio.loadJSON(bis);
 			return dd;
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

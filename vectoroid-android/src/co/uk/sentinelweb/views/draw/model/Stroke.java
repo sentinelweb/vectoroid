@@ -41,6 +41,7 @@ import android.graphics.RectF;
 import co.uk.sentinelweb.views.draw.model.TransformOperatorInOut.Axis;
 import co.uk.sentinelweb.views.draw.model.TransformOperatorInOut.Trans;
 import co.uk.sentinelweb.views.draw.model.UpdateFlags.UpdateType;
+import co.uk.sentinelweb.views.draw.model.path.PathData;
 import co.uk.sentinelweb.views.draw.render.RenderObject;
 import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer;
 import co.uk.sentinelweb.views.draw.util.PointUtil;
@@ -62,7 +63,6 @@ public class Stroke extends DrawingElement {
 	public String fontName = "";
 	public boolean holesEven = false;
 	
-	//public StrokeRenderObject renderObject ;
 	PointF _usePoint = new PointF();
 	public Stroke () {
 		//density = DispUtil.getDensity(context);
@@ -158,10 +158,10 @@ public class Stroke extends DrawingElement {
 		this.calculatedBounds = new RectF(1e8f,1e8f,-1e8f,-1e8f);
 		float ctr=0;
 		for (int i=points.size()-1;i>=0;i--) {
-			ArrayList<PointF> usePoints = points.get(i);
+			ArrayList<PathData> usePoints = points.get(i);
 			for (int j=usePoints.size()-1;j>=0;j--) {
 				PointF p = usePoints.get(j);
-
+				//TODO need to check arc point .. and bezier/quad ? calculate? or control points ... hmmm.
 				this.calculatedCOG.x += p.x;
 				this.calculatedCOG.y += p.y;
 				this.calculatedBounds.top=Math.min(this.calculatedBounds.top, p.y);

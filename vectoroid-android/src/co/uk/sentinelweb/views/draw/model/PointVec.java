@@ -34,20 +34,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 import java.util.ArrayList;
 
+import co.uk.sentinelweb.views.draw.model.path.PathData;
+
 import android.graphics.Path;
 import android.graphics.PointF;
 
-public class PointVec extends ArrayList<PointF> {
-	public ArrayList<PointF> beizer1;
-	public ArrayList<PointF> beizer2;
-	public ArrayList<Float> pressure;
-	public ArrayList<Long> time;
+public class PointVec extends ArrayList<PathData> {
+	
 	public boolean closed;
 	public boolean isHole;
 	
+	//TODO move to sro : used for rendering
 	public Path startTip = null;
 	public Path endTip = null;
-	//public Path path = null;// TODO move path rendering to here
+
 	public long startTime = -1;
 	
 	public PointVec duplicate(){
@@ -55,76 +55,19 @@ public class PointVec extends ArrayList<PointF> {
 		newpv.closed = closed;
 		newpv.isHole = isHole;
 		newpv.startTime = startTime;
-		
-		for (int i=size()-1;i>=0;i--) {
-			PointF p = get(i);
-			newpv.add(0,new PointF(p.x,p.y));
-		}
-		if (beizer1!=null) {
-			newpv.beizer1=new ArrayList<PointF>();
-			for (int i=beizer1.size()-1;i>=0;i--) {
-				PointF p = beizer1.get(i);
-				newpv.beizer1.add(0,p==null?null:new PointF(p.x,p.y));
-			}
-		}
-		if (beizer2!=null) {
-			newpv.beizer2=new ArrayList<PointF>();
-			for (int i=beizer2.size()-1;i>=0;i--) {
-				PointF p = beizer2.get(i);
-				newpv.beizer2.add(0,p==null?null:new PointF(p.x,p.y));
-			}
-		}
-		if (pressure!=null) {
-			newpv.pressure=new ArrayList<Float>();
-			for (int i=pressure.size()-1;i>=0;i--) {
-				Float pressurev = pressure.get(i);
-				newpv.pressure.add(0,pressurev);
-			}
-		}
-		if (time!=null) {
-			newpv.time=new ArrayList<Long>();
-			for (int i=time.size()-1;i>=0;i--) {
-				Long timev = time.get(i);
-				newpv.time.add(0,timev);
-			}
+		for (PathData p : this) {
+			newpv.add(p.duplicate());
 		}
 		return newpv;
 	}
-	
 	public void reverse() {
-		ArrayList<PointF> tmpArr=new ArrayList<PointF>();
-		ArrayList<ArrayList<PointF>> arrsToRev = new ArrayList<ArrayList<PointF>>();
-		arrsToRev.add(this);
-		arrsToRev.add(beizer1);
-		arrsToRev.add(beizer2);
-		//arrsToRev.add(pressure);
-		
-		for (int j=0;j<arrsToRev.size();j++) {
-			ArrayList<PointF> arrRev = arrsToRev.get(j);
-			if (arrRev==null) {continue;}
-			tmpArr.clear();
-			tmpArr.addAll(arrRev);
-			//for (PointF p : arrRev) {tmpArr.add(p);}
-			arrRev.clear();
-			for (int i=tmpArr.size()-1;i>=0;i--) {
-				arrRev.add(tmpArr.get(i));
-			}
-		}
-		//arrsToRev.add(time);
-		if (pressure!=null) {
-			ArrayList<Float> tmpArr2 = new ArrayList<Float>();
-			tmpArr2.addAll(pressure);
-			for (int i=tmpArr2.size()-1;i>=0;i--) {
-				pressure.add(tmpArr2.get(i));
-			}
-		}
-		//arrsToRev.add(time);
-		if (time!=null) {
-			ArrayList<Long> tmpArr1 = new ArrayList<Long>();
-			tmpArr1.addAll(time);
-			for (int i=tmpArr1.size()-1;i>=0;i--) {
-				time.add(tmpArr1.get(i));
-			}
+		ArrayList<PathData> tmpArr=new ArrayList<PathData>();
+		tmpArr.clear();
+		tmpArr.addAll(this);
+		clear();
+		for (int i=tmpArr.size()-1;i>=0;i--) {
+			add(tmpArr.get(i));
 		}
 	}
+
 }

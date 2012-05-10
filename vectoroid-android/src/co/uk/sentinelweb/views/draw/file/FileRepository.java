@@ -42,9 +42,9 @@ public class FileRepository {
 	private static final String MASTER_DIR = "co.uk.sentinelweb.views.draw";
 	//private static final String APP_DIR_DEFAULT = "DFTest";
 	public static String FR_TMP_FILE = "tmp";
-	public static String _base = null;
-	static FileRepository _fileRepository;
-	
+	//public static String _base = null;
+	//static FileRepository _fileRepository;
+	/*
 	public static FileRepository getFileRepository(Context c)  {
 		if (_fileRepository==null ) {
 			if ( _base==null) {
@@ -56,9 +56,8 @@ public class FileRepository {
 		}
 		return _fileRepository;
 	}
-	
+	*/
 	public static FileRepository getFileRepository(Context c, String s)  {
-		//TODO this shouldnt do checks all the time - store it as a singleton in the client app.
 		FileRepository fileRepository = null;
 		try {
 			fileRepository = new FileRepository( MASTER_DIR, s );
@@ -99,7 +98,6 @@ public class FileRepository {
 		this.appName = appName;
 		checkDirectories();
 		_fontController = new FontController(this);
-		
 	}
 	/**
 	 * @return the _home
@@ -124,6 +122,7 @@ public class FileRepository {
         } 
         return false; 
 	} 
+	
 	/**
 	 * Checks external storage is available
 	 * requires permission: 	&lt;uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/&gt;
@@ -148,28 +147,75 @@ public class FileRepository {
 					masterDir.mkdirs();
 				}
 			} else {return false;}
-			if (appDir==null) {
-				appDir = new File(getExternalDirectory(),getAppDirName());
-				if (!appDir.exists()) {
-					appDir.mkdirs();
-				}
-			} else {return false;}
-			
-			appSavesDir = checkExist(appDir, SAVES_DIRECTORY, appSavesDir);
-			appRawDir = checkExist(appDir, RAW_DIRECTORY, appRawDir);
-			appOutputDir = checkExist(appDir, OUTPUT_DIRECTORY, appOutputDir);
-			appTemplatesDir = checkExist(appDir, TEMPLATES_DIRECTORY, appTemplatesDir);
-			masterTTFDir = checkExist(masterDir, TTF_DIRECTORY, masterTTFDir);
-			masterTemplatesDir = checkExist(masterDir, TEMPLATES_DIRECTORY, masterTemplatesDir);
+			masterTTFDir = checkMasterChildExist( TTF_DIRECTORY, masterTTFDir);
+			masterTemplatesDir = checkMasterChildExist( TEMPLATES_DIRECTORY, masterTemplatesDir);
+
+			if (appName!=null ) {
+				if (appDir==null) {
+					appDir = new File(getExternalDirectory(),getAppDirName());
+					if (!appDir.exists()) {
+						appDir.mkdirs();
+					}
+				} else {return false;}
+				appSavesDir = checkAppChildExist( SAVES_DIRECTORY, appSavesDir);
+				appRawDir = checkAppChildExist( RAW_DIRECTORY, appRawDir);
+				appOutputDir = checkAppChildExist( OUTPUT_DIRECTORY, appOutputDir);
+				appTemplatesDir = checkAppChildExist( TEMPLATES_DIRECTORY, appTemplatesDir);
+			} 
+
 			return true;
 		}
 		return false;
 	}
 	
-	private File checkExist(File dir,String child,File theDir) {
-		if (dir==null|| !dir.exists()) {dir=checkExist(getExternalDirectory(),masterName,dir);}
+	private File checkMasterExist() {
+		if (!sdMounted()) {return null;}
+		if (masterDir==null) {
+			masterDir =  new File (getExternalDirectory(),masterName);
+		}
+		if (!masterDir.exists()) {
+			masterDir.mkdirs();
+		}
+		return masterDir;
+	}
+	private File checkMasterChildExist(String child,File theDir) {
+		if (!sdMounted()) {return null;}
+		if (masterDir==null|| !masterDir.exists()) {
+			masterDir =  new File (getExternalDirectory(),masterName);
+			if (!masterDir.exists()) {
+				masterDir.mkdirs();
+			}
+		}
 		if (theDir==null) {
-			theDir = new File (dir,child);
+			theDir = new File (masterDir,child);
+			if (!theDir.exists()) {
+				theDir.mkdirs();
+			}
+		}
+		return theDir;
+	}
+	
+	private File checkAppExist() {
+		if (!sdMounted()) {return null;}
+		if (appDir==null&& appName!=null) {
+			appDir =  new File (getExternalDirectory(),appName);
+		}
+		if (!appDir.exists()) {
+			appDir.mkdirs();
+		}
+		return appDir;
+	}
+	
+	private File checkAppChildExist(String child,File theDir) {
+		if (!sdMounted()) {return null;}
+		if (appDir==null|| !appDir.exists()) {
+			appDir =  new File (getExternalDirectory(),appName);
+			if (!appDir.exists()) {
+				appDir.mkdirs();
+			}
+		}
+		if (theDir==null) {
+			theDir = new File (appDir,child);
 			if (!theDir.exists()) {
 				theDir.mkdirs();
 			}
@@ -179,14 +225,14 @@ public class FileRepository {
 	
 	public File getDirectory(Directory d) {
 		switch(d) {
-			case HOME:return checkExist(getExternalDirectory(),masterName,masterDir);
-			case APP:return checkExist(getExternalDirectory(),appName,appDir);
-			case TTF:return checkExist(masterDir, TTF_DIRECTORY, masterTTFDir);
-			case TEMPLATE:return checkExist(masterDir, TEMPLATES_DIRECTORY,masterTemplatesDir);
-			case APP_TEMPLATE:return checkExist(appDir, TEMPLATES_DIRECTORY,appTemplatesDir);
-			case SAVES:return checkExist(appDir,SAVES_DIRECTORY,appSavesDir);
-			case RAW:return checkExist(appDir, RAW_DIRECTORY ,appRawDir);
-			case OUTPUT:return checkExist(appDir, OUTPUT_DIRECTORY, appOutputDir);
+			case HOME:return checkMasterExist();
+			case APP:return appName!=null?checkAppExist():null;
+			case TTF:return checkMasterChildExist( TTF_DIRECTORY, masterTTFDir);
+			case TEMPLATE:return checkMasterChildExist( TEMPLATES_DIRECTORY,masterTemplatesDir);
+			case APP_TEMPLATE:return appName!=null?checkAppChildExist( TEMPLATES_DIRECTORY,appTemplatesDir):null;
+			case SAVES:return appName!=null?checkAppChildExist(SAVES_DIRECTORY,appSavesDir):null;
+			case RAW:return appName!=null?checkAppChildExist( RAW_DIRECTORY ,appRawDir):null;
+			case OUTPUT:return appName!=null?checkAppChildExist( OUTPUT_DIRECTORY, appOutputDir):null;
 		}
 		return null;
 	}
@@ -197,19 +243,23 @@ public class FileRepository {
 	}
 	
 	public ArrayList<SaveFile> getFiles( Context c){
-		String[] fileNames = getDirectory(Directory.SAVES).list();
-		ArrayList<SaveFile> files = new ArrayList<SaveFile>();
-		if (fileNames!=null) {
-			for (String dir : fileNames) {
-				if (!FR_TMP_FILE.equals(dir) ) {
-					try {
-						files.add(new SaveFile(dir, this,c));
-					} catch (Exception e) {
+		File savesDir = getDirectory(Directory.SAVES);
+		if (savesDir!=null) {
+			String[] fileNames = savesDir.list();
+			ArrayList<SaveFile> files = new ArrayList<SaveFile>();
+			if (fileNames!=null) {
+				for (String dir : fileNames) {
+					if (!FR_TMP_FILE.equals(dir) ) {
+						try {
+							files.add(new SaveFile(dir, this,c));
+						} catch (Exception e) {
+						}
 					}
 				}
 			}
+			return files;
 		}
-		return files;
+		return null;
 	}
 	
 	public SaveFile makeNewFile(Context c, String name) throws Exception {

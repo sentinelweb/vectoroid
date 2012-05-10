@@ -81,6 +81,9 @@ public class FontController {
 			if (DEFAULT_FONT.equals(name)) {
 				return Typeface.DEFAULT;
 			} else if ((!_ttfonts.containsKey(name) || _ttfonts.get(name).get()==null) && _fr!=null && name!=null && !name.equals("")) {
+				if (_ttfontFiles==null || _ttfontFiles.size()==0) {
+					
+				}
 				File file = _ttfontFiles.get(name)._fontFile;//new File(fr.getDirectory(Directory.TTF),ttfontFiles.get(name));
 				Typeface t = Typeface.createFromFile(file);
 				SoftReference<Typeface> typeRef = new SoftReference<Typeface>(t);
@@ -101,22 +104,25 @@ public class FontController {
 	}
 	
 	public void scanFonts(Context c) {// NOTE context is optional 
-		_ttfontFiles.clear();
-		_ttFontsOrder.clear();
-		Font font = new Font(null);
-		_ttFontsOrder.add(font._fontName);
-		_ttfontFiles.put(font._fontName, font);
-		// make default preview if nessecary
-		File previewFile = getFontPreviewFile(font._fontName);
-		if (c!=null && !previewFile.exists()) {
-			makePreview(c, font);
-		}
 		File ttfdir = _fr.getDirectory(Directory.TTF);
-		File[] ttfFile = ttfdir.listFiles();
-		if (ttfFile!=null) {
-			for (File f: ttfFile) {
-				if (!f.isDirectory() && f.getName().toLowerCase().endsWith(".ttf")) {
-					scanFontFile(c,f);
+			if (ttfdir!=null) {
+			_ttfontFiles.clear();
+			_ttFontsOrder.clear();
+			Font font = new Font(null);
+			_ttFontsOrder.add(font._fontName);
+			_ttfontFiles.put(font._fontName, font);
+			// make default preview if nessecary
+			File previewFile = getFontPreviewFile(font._fontName);
+			if (c!=null && !previewFile.exists()) {
+				makePreview(c, font);
+			}
+			
+			File[] ttfFile = ttfdir.listFiles();
+			if (ttfFile!=null) {
+				for (File f: ttfFile) {
+					if (!f.isDirectory() && f.getName().toLowerCase().endsWith(".ttf")) {
+						scanFontFile(c,f);
+					}
 				}
 			}
 		}

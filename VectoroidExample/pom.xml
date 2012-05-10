@@ -93,7 +93,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 					<resourceDirectory>${project.build.directory}/res</resourceDirectory>
 					<libDirectory>${project.basedir}/lib</libDirectory>
 					<sdk>
-						<path>/home/robert/bin/android-sdk-linux_x86</path>
 						<platform>11</platform>
 					</sdk>
 					<deleteConflictingFiles>true</deleteConflictingFiles>

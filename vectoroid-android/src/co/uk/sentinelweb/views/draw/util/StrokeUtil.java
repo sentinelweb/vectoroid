@@ -39,6 +39,7 @@ import co.uk.sentinelweb.views.draw.model.DrawingElement;
 import co.uk.sentinelweb.views.draw.model.PointVec;
 import co.uk.sentinelweb.views.draw.model.Stroke;
 import co.uk.sentinelweb.views.draw.model.TransformOperatorInOut;
+import co.uk.sentinelweb.views.draw.model.path.PathData;
 import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer;
 
 public class StrokeUtil {
@@ -122,14 +123,14 @@ public class StrokeUtil {
 	public void genRect(PointVec curVec,RectF r) {
 		curVec.clear();
 		curVec.closed=true;
-		curVec.add(new PointF(r.left,r.top));
-		curVec.add(new PointF(r.right,r.top));
-		curVec.add(new PointF(r.right,r.bottom));
-		curVec.add(new PointF(r.left,r.bottom));
+		curVec.add(new PathData(r.left,r.top));
+		curVec.add(new PathData(r.right,r.top));
+		curVec.add(new PathData(r.right,r.bottom));
+		curVec.add(new PathData(r.left,r.bottom));
 	}
 	public static void genCircle(PointVec curVec) {
 		for (float i=0;i<2*Math.PI;i+=Math.PI/resolution) {
-			curVec.add(new PointF((float)Math.cos(i),(float)Math.sin(i)));
+			curVec.add(new PathData((float)Math.cos(i),(float)Math.sin(i)));
 		}
 	}
 	
@@ -138,7 +139,7 @@ public class StrokeUtil {
 		pv.closed=true;
 		double rot = Math.PI*2/sides;
 		for (float i=0;i<2*Math.PI;i+=rot) {
-			pv.add(new PointF((float)Math.cos(i-rot/4),(float)Math.sin(i-rot/4)));
+			pv.add(new PathData((float)Math.cos(i-rot/4),(float)Math.sin(i-rot/4)));
 		}
 	}
 	
@@ -147,8 +148,8 @@ public class StrokeUtil {
 		pv.closed=true;
 		double rot = Math.PI*2/sides;
 		for (float i=0;i<2*Math.PI;i+=rot) {
-			pv.add(new PointF((float)Math.cos(i-rot/2),(float)Math.sin(i-rot/2)));
-			pv.add(new PointF(mod*(float)Math.cos(i),mod*(float)Math.sin(i)));
+			pv.add(new PathData((float)Math.cos(i-rot/2),(float)Math.sin(i-rot/2)));
+			pv.add(new PathData(mod*(float)Math.cos(i),mod*(float)Math.sin(i)));
 		}
 	}
 	
@@ -162,20 +163,18 @@ public class StrokeUtil {
 		for (float i=0;i<2*Math.PI;i+=2*Math.PI/res) {
 			float r = (float)(Math.sin(sides*i-rot/4)+mod);
 			p.set(r,i);
-			pv.add(new PointF(p.x(),p.y()));
+			pv.add(new PathData(p.x(),p.y()));
 		}
 	}
 	
 	public static void generateHypocycloid(PointVec pv , int sides,float mod){
 		pv.clear();
 		pv.closed=true;
-		PolarCoords p = new PolarCoords(0, 0);
+		//PolarCoords p = new PolarCoords(0, 0);
 		int res = resolution;
 		if (res<sides*20) {res=sides*20;}
 		for (float angle=0;angle<2*Math.PI;angle+=2*Math.PI/res) {
-			//float r = (float)(Math.sin(sides*i-rot/2)+mod);
-			//p.set(r,i);
-			PointF pt = new PointF();
+			PathData pt = new PathData();
 			pt.x = (sides-1) *(float)Math.cos(angle)+mod*(float)Math.cos((sides-1)*angle);
 			pt.y = (sides-1) *(float)Math.sin(angle)-mod*(float)Math.sin((sides-1)*angle);
 			pv.add(pt);
@@ -189,9 +188,7 @@ public class StrokeUtil {
 		int res = resolution;
 		if (res<sides*20) {res=sides*20;}
 		for (float angle=0;angle<2*Math.PI;angle+=2*Math.PI/res) {
-			//float r = (float)(Math.sin(sides*i-rot/2)+mod);
-			//p.set(r,i);
-			PointF pt = new PointF();
+			PathData pt = new PathData();
 			pt.x = (sides+1) *(float)Math.cos(angle)-mod*(float)Math.cos((sides+1)*angle);
 			pt.y = (sides+1) *(float)Math.sin(angle)-mod*(float)Math.sin((sides+1)*angle);
 			pv.add(pt);
@@ -209,7 +206,7 @@ public class StrokeUtil {
 		for (float angle=0;angle<2*Math.PI;angle+=2*Math.PI/res) {
 			//float r = (float)(Math.sin(sides*i-rot/2)+mod);
 			//p.set(r,i);
-			PointF pt = new PointF();
+			PathData pt = new PathData();
 			pt.x=A * (float)Math.sin(a*angle+delta);
 			pt.y=B * (float)Math.sin(b*angle);
 			pv.add(pt);

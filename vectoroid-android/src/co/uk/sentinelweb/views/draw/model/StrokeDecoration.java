@@ -75,7 +75,7 @@ public class StrokeDecoration {
 			}
 		}
 		
-		public PathData getTmplFloatArray( ) {
+		public DecorationPathData getTmplFloatArray( ) {
 			switch (type) {
 				case NONE:return null;
 				case ARROW:return arrowPathData;
@@ -87,18 +87,18 @@ public class StrokeDecoration {
 			}
 		}
 	};
-	public static class PathData {
+	public static class DecorationPathData {
 		public float[] pts;
 		public char[] cmd;
 		public boolean closed;
-		public PathData(float[] pts, char[] cmd, boolean closed) {
+		public DecorationPathData(float[] pts, char[] cmd, boolean closed) {
 			super();
 			this.pts = pts;
 			this.cmd = cmd;
 			this.closed = closed;
 		}
 	}
-	public static final PathData arrowPathData = new PathData(
+	public static final DecorationPathData arrowPathData = new DecorationPathData(
 			new float[]{1,-1,0,1,-1,-1},
 			new char[] {'M','L','-'},
 			false
@@ -110,7 +110,7 @@ public class StrokeDecoration {
 		arrow.lineTo(-1,-1);
 		//arrow.close();
 	}
-	public static final PathData dblarrowPathData = new PathData(
+	public static final DecorationPathData dblarrowPathData = new DecorationPathData(
 			new float[]{1,-2,0,0,-1,-2,1,0,0,2,-1,0},
 			new char[] {'M','L','-','M','L','-'},
 			false
@@ -125,7 +125,7 @@ public class StrokeDecoration {
 		dblarrow.lineTo(0,2);
 		dblarrow.lineTo(-1,0);
 	}
-	public static final PathData diamondPathData = new PathData(
+	public static final DecorationPathData diamondPathData = new DecorationPathData(
 			new float[]{0,2,1f,0,0,-2,-1f,0},
 			new char[] {'M','L','-','-'},
 			true
@@ -139,7 +139,7 @@ public class StrokeDecoration {
 		diamond.lineTo(-1f,0);
 		diamond.close();
 	}
-	public static final PathData squarePathData = new PathData(
+	public static final DecorationPathData squarePathData = new DecorationPathData(
 			new float[]{1,1,1,-1,-1,-1,-1,1},
 			new char[] {'M','L','-','-'},
 			true
@@ -155,7 +155,7 @@ public class StrokeDecoration {
 	}
 	//public static  float[] circleFloat;
 	static int res = 20;
-	public static final PathData circlePathData = new PathData(
+	public static final DecorationPathData circlePathData = new DecorationPathData(
 			new float[res*4],
 			new char[res*2] ,
 			true
