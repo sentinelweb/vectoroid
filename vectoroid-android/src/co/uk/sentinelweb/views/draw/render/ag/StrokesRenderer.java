@@ -36,6 +36,7 @@ import java.util.ArrayList;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.util.Log;
@@ -43,7 +44,7 @@ import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.model.DrawingElement;
 import co.uk.sentinelweb.views.draw.model.Group;
 import co.uk.sentinelweb.views.draw.model.Stroke;
-import co.uk.sentinelweb.views.draw.render.Renderer.Operator;
+import co.uk.sentinelweb.views.draw.render.VecRenderer.Operator;
 import co.uk.sentinelweb.views.draw.util.BoundsUtil;
 import co.uk.sentinelweb.views.draw.util.PointUtil;
 
@@ -52,7 +53,7 @@ public class StrokesRenderer {
 	RectF useRect = new RectF();
 	AndGraphicsRenderer r;
 	//private ViewPort viewPort;
-	public boolean _debug=VecGlobals._isDebug && false;
+	public boolean _debug=VecGlobals._isDebug || false;
 	
 	PointF usePoint = new PointF();
 	PointF usePoint2 = new PointF();
@@ -63,12 +64,13 @@ public class StrokesRenderer {
 		strokeRenderer = new StrokeRenderer(c,r);
 		
 	}
-
+	ArrayList<Matrix> matrixStack = new ArrayList<Matrix> ();
 	// draw a vector of strokes
 	public void drawStrokes(Canvas canvas,ArrayList<DrawingElement> strokes) {//, boolean drawselected, boolean noTest
 		for (int i=0;i<strokes.size();i++) {
 			DrawingElement de = strokes.get(i);
 			if (!de.visible) {continue;}
+			
 			Operator trans = r.animations.get(de);
 			//usePoint.set(de.calculatedCentre.x*r.getVpd().zoom,de.calculatedCentre.y/r.getVpd().zoom);
 			
@@ -101,17 +103,34 @@ public class StrokesRenderer {
 					getScaleOffset(trans);
 					canvas.scale(trans.scale.x,trans.scale.y,usePoint.x,usePoint.y);//,usePoint.x+trans.translate.x,usePoint.y+trans.translate.y
 				}
-				
+				if (trans.m!=null) {
+					//canvas.setMatrix(trans.m);
+					Matrix m = canvas.getMatrix();
+					matrixStack.add(new Matrix(m));
+					m.postConcat(trans.m);
+					canvas.setMatrix(m);
+				}
 			}
+			
 			if (de instanceof Stroke) {
 				drawStroke(canvas, (Stroke) de );
 			} else if (de instanceof Group) {
 				Group g = (Group)de;
-				for (Stroke s : g.getStrokes() ) {
-					drawStroke(canvas, s );
-				}
+				//for (Stroke s : g.getAllStrokes() ) {
+				//	drawStroke(canvas, s );
+				//}
+				drawStrokes( canvas,g.elements);
 			} 
 			if (trans!=null) {
+				if (trans.m!=null) {
+					//if (trans.im==null) {
+					//	trans.im=new Matrix();
+					//	trans.m.invert(trans.im);
+					//}
+					Matrix m = matrixStack.remove(matrixStack.size()-1);
+					canvas.setMatrix(m);
+					
+				}
 				if (trans.scale!=null) {
 					getScaleOffset(trans);
 					canvas.scale(1/trans.scale.x,1/trans.scale.y,-usePoint.x,-usePoint.y);//,-usePoint.x-trans.translate.x,-usePoint.y-trans.translate.y

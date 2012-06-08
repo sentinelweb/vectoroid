@@ -73,13 +73,11 @@ public class GSONLayer extends JSONParent {
 			while (reader.hasNext()) {
 				String name = reader.nextName();
 				//Log.d(DVGlobals.LOG_TAG, "layer nextname:"+name);
-				if (JSONConst.JSON_ID.equals(name)) {
-					l.setId(reader.nextString());
-				} else if (JSONConst.JSON_VISIBLE.equals(name)) {
-					l.visible = reader.nextBoolean();
-				} else if (JSONConst.JSON_LOCKED.equals(name)) {
-					l.locked = reader.nextBoolean();
-				} else if (JSONConst.JSON_ELEMENTS.equals(name)) {
+				if (JSONConst.JSON_EL_TYPE.equals(name)) {
+					reader.skipValue();
+				} else if (GSONDrawingElement.fromJSON(gson, reader, l, name)) {
+
+				}  else if (JSONConst.JSON_ELEMENTS.equals(name)) {
 					reader.beginArray();
 					while (reader.hasNext()) {
 						//reader.beginObject();
@@ -100,8 +98,6 @@ public class GSONLayer extends JSONParent {
 						reader.endObject();
 					}
 					reader.endArray();
-				} else if (JSONConst.JSON_EL_TYPE.equals(name)) {
-					reader.skipValue();
 				} else {
 					reader.skipValue();
 				}

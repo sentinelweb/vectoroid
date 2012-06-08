@@ -54,10 +54,10 @@ import com.google.gson.stream.JsonReader;
 
 public class GSONDrawing extends JSONParent{
 	//public static float version = 3;
-	Gson gson;
-	GSONStroke gss;
-	GSONLayer gsl;
-	GSONGroup gsg;
+	public Gson gson;
+	public GSONStroke gss;
+	public GSONLayer gsl;
+	public GSONGroup gsg;
 	public GSONDrawing(SaveFile _saveFile) {
 		super(_saveFile);
 		GsonBuilder gsonb = new GsonBuilder();
@@ -126,8 +126,8 @@ public class GSONDrawing extends JSONParent{
 			while (reader.hasNext()) {
 				String name = reader.nextName();
 				//Log.d(DVGlobals.LOG_TAG, "nextname:"+name);
-				if (JSONConst.JSON_ID.equals(name)) {
-					d.setId(reader.nextString());
+				if (GSONDrawingElement.fromJSON(gson, reader, d, name)) {
+
 				} else if (JSONConst.JSON_VERSION.equals(name)) {
 					double ver = reader.nextDouble();
 					if (ver!=JSONConst.version) {
@@ -158,7 +158,6 @@ public class GSONDrawing extends JSONParent{
 						reader.endObject();
 					}
 					reader.endArray();
-					
 				} else if (JSONConst.JSON_LAYERS.equals(name)) {
 					reader.beginArray();
 					//reader.skipValue();

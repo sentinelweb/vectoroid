@@ -36,17 +36,14 @@ import java.util.ArrayList;
 
 import co.uk.sentinelweb.views.draw.model.path.PathData;
 
-import android.graphics.Path;
-import android.graphics.PointF;
-
 public class PointVec extends ArrayList<PathData> {
 	
 	public boolean closed;
 	public boolean isHole;
 	
 	//TODO move to sro : used for rendering
-	public Path startTip = null;
-	public Path endTip = null;
+	//public Path startTip = null;
+	//public Path endTip = null;
 
 	public long startTime = -1;
 	

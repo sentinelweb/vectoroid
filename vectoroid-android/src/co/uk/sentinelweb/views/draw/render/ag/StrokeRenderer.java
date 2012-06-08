@@ -53,6 +53,7 @@ import co.uk.sentinelweb.views.draw.model.PointVec;
 import co.uk.sentinelweb.views.draw.model.Stroke;
 import co.uk.sentinelweb.views.draw.model.StrokeDecoration.Tip;
 import co.uk.sentinelweb.views.draw.model.StrokeDecoration.Tip.Type;
+import co.uk.sentinelweb.views.draw.model.path.PathData;
 import co.uk.sentinelweb.views.draw.util.PointUtil;
 
 public class StrokeRenderer {
@@ -60,7 +61,7 @@ public class StrokeRenderer {
 	Rect _useRect = new Rect();
 	
 	public Paint noImgPaint = new Paint();
-	Paint dgbpaint = new Paint();
+	Paint dbgpaint = new Paint();
 	Paint _textPaint = new Paint();
 	Path _textPath = new Path();
 	PointF _textPoint = new PointF();
@@ -73,9 +74,9 @@ public class StrokeRenderer {
 		noImgPaint.setShader(new BitmapShader(tspdrawable.getBitmap(), TileMode.REPEAT, TileMode.REPEAT));
 		noImgPaint.setStyle(Style.FILL_AND_STROKE);
 		this.renderer=renderer;
-		dgbpaint.setColor(Color.RED);
-		dgbpaint.setStrokeWidth(1);
-		dgbpaint.setStyle(Style.STROKE);
+		dbgpaint.setColor(Color.RED);
+		dbgpaint.setStrokeWidth(1);
+		dbgpaint.setStyle(Style.STROKE);
 	}
 	
 	public void render(Canvas canvas , Stroke stroke) {
@@ -131,15 +132,15 @@ public class StrokeRenderer {
 			}
 		}
 	}
-	
+	/*
 	private String fillStr(Paint fgFill) {
 		return "text render:"+fgFill.getStyle()+" stroke:"+fgFill.getStrokeWidth()+": scale"+fgFill.getTextScaleX()+" size:"+fgFill.getTextSize();
 	}
-
+	*/
 	private void renderTip(Canvas canvas, Stroke s,Tip et,boolean start,boolean inner,StrokeRenderObject renderObject) {
 		if (et!=null && et.type!=Type.NONE) {
 			for (PointVec pv : s.points) {
-				Path p =start?pv.startTip:pv.endTip;
+				Path p =start?renderObject.startTips.get(pv):renderObject.endTips.get(pv);
 				if (p!=null) {
 					canvas.drawPath( p,inner?et.inner: et.outer ); 
 				}
@@ -167,15 +168,17 @@ public class StrokeRenderer {
 			float heightOffset = -sro.fgInner.getTextSize()*(sro.splitStr.length-1-i);
 			float xstart = 0;
 			float ystart = heightOffset;
-			if (stroke.points.size()==2 || (sro.textAngle>=MIN_ROTATION && sro.textAngle<=2*Math.PI-MIN_ROTATION)) {
+			if (stroke.points.size()>=2 || (sro.textAngle>=MIN_ROTATION && sro.textAngle<=2*Math.PI-MIN_ROTATION)) {//
 				xstart = -(float)Math.sin(sro.textAngle)*heightOffset;
 				ystart = (float)Math.cos(sro.textAngle)*heightOffset;
 				_textMatrix.reset();
 				_textMatrix.postTranslate(xstart,ystart);
 				_textPath.reset();
 				thePath.transform(_textMatrix, _textPath);
+				//Log.d(VecGlobals.LOG_TAG, "angle:"+ sro.textAngle);
 			} else {
 				_textPoint.set(stroke.calculatedBounds.left+xstart,stroke.calculatedBounds.bottom+ystart);
+				//Log.d(VecGlobals.LOG_TAG, "level"+ sro.textAngle);
 			}
 			loopMethod.onLoop(stroke,  sro.splitStr[i]);
 		}
@@ -258,6 +261,14 @@ public class StrokeRenderer {
 				} else {
 					renderer.getCanvas().drawTextOnPath(s, _textPath, 0,0, sro.fgInner);
 				}
+				// baseline debugging
+//				PathData st = stroke.points.get(0).get(0);
+//				PathData ed = stroke.points.get(0).get(1);
+//				PathData ed1 = stroke.points.get(0).get(2);
+//				PathData ed2 = stroke.points.get(0).get(3);
+//				renderer.getCanvas().drawLine(st.x, st.y,ed.x, ed.y, dbgpaint);
+//				renderer.getCanvas().drawLine(ed.x, ed.y,ed1.x, ed1.y, dbgpaint);
+//				renderer.getCanvas().drawLine(ed1.x, ed1.y,ed2.x, ed2.y, dbgpaint);
 			}
 			
 		}

@@ -34,9 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 import java.io.IOException;
 import java.io.Writer;
-import java.util.ArrayList;
 
-import android.graphics.PointF;
 import co.uk.sentinelweb.views.draw.file.SaveFile;
 import co.uk.sentinelweb.views.draw.file.export.json.v3.JSONConst;
 import co.uk.sentinelweb.views.draw.file.export.json.v3.JSONParent;

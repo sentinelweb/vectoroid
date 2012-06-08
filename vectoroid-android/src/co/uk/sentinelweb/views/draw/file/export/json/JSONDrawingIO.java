@@ -23,10 +23,9 @@ import android.util.Log;
 import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.file.SaveFile;
 import co.uk.sentinelweb.views.draw.file.SaveFile.Option;
+import co.uk.sentinelweb.views.draw.file.export.json.v2.simple.JSONDrawing;
 import co.uk.sentinelweb.views.draw.file.export.json.v3.JSONConst;
 import co.uk.sentinelweb.views.draw.file.export.json.v3.gson.GSONDrawing;
-import co.uk.sentinelweb.views.draw.file.export.json.v2.simple.JSONDrawing;
-import co.uk.sentinelweb.views.draw.file.export.json.v3.string.SJSONDrawing;
 import co.uk.sentinelweb.views.draw.model.Drawing;
 
 public class JSONDrawingIO {
@@ -179,13 +178,12 @@ public class JSONDrawingIO {
 		Drawing d;
 		StringWriter sw = new StringWriter();
 		BufferedInputStream reader = new BufferedInputStream(	is);
-		String readline = "";
 		byte[] buffer = new byte[1000];
-		int offset=0;
+		//int offset=0;
 		int block=-1;
 		while ((block = reader.read(buffer, 0, buffer.length))>-1) { 
 			sw.append(new String(buffer,0,block));
-			offset+=block;
+			//offset+=block;
 		}
 		String string = sw.toString();
 		return parseJSONV1Simple(string);

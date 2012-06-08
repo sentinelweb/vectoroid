@@ -144,12 +144,12 @@ public class SVGStatic {
 					continue;
 				}
 				PathData p = new PathData(getPoint(data));
-				if (p==null) {
-					Log.d(VecGlobals.LOG_TAG,"parsePoints: null point");
-					continue;
-				} else {
+				//if (p==null) {
+				//	Log.d(VecGlobals.LOG_TAG,"parsePoints: null point");
+				//	continue;
+				//} else {
 					s.currentVec.add(p);
-				}
+				//}
 			}
 		}
 	}
@@ -302,7 +302,11 @@ public class SVGStatic {
 				}
 				// from http://stackoverflow.com/questions/5287559/calculating-control-points-for-a-shorthand-smooth-svg-path-bezier-curve
 				p1 = new PointF();
-				PointF lastC2 = ((Bezier)curpv.get( curpv.size()-1)).control2;
+				PathData prev=curpv.get( curpv.size()-1);
+				PointF lastC2 = null;
+				if (prev instanceof Bezier) {
+					lastC2 = ((Bezier)prev).control2;
+				}
 				if (lastC2!=null) {
 					p1.set(2*lastPoint.x-lastC2.x,2*lastPoint.y-lastC2.y);
 				} else {

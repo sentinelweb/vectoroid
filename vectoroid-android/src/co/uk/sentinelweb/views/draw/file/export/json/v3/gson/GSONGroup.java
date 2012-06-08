@@ -72,12 +72,10 @@ public class GSONGroup extends JSONParent {
 			while (reader.hasNext()) {
 				String name = reader.nextName();
 				//Log.d(DVGlobals.LOG_TAG, "group nextname:"+name);
-				if (JSONConst.JSON_ID.equals(name)) {
-					g.setId(reader.nextString());
-				} else if (JSONConst.JSON_VISIBLE.equals(name)) {
-					g.visible = reader.nextBoolean();
-				} else if (JSONConst.JSON_LOCKED.equals(name)) {
-					g.locked = reader.nextBoolean();
+				if (JSONConst.JSON_EL_TYPE.equals(name)) {
+					reader.skipValue();
+				} else if (GSONDrawingElement.fromJSON(gson, reader, g, name)) {
+
 				} else if (JSONConst.JSON_ELEMENTS.equals(name)) {
 					reader.beginArray();
 					while (reader.hasNext()) {
@@ -99,8 +97,6 @@ public class GSONGroup extends JSONParent {
 						reader.endObject();
 					}
 					reader.endArray();
-				} else if (JSONConst.JSON_EL_TYPE.equals(name)) {
-					reader.skipValue();
 				} else {
 					reader.skipValue();
 				}

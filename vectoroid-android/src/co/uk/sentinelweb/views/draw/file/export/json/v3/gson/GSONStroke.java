@@ -83,12 +83,8 @@ public class GSONStroke extends JSONParent {
 				//Log.d(DVGlobals.LOG_TAG, "stroke nextname:"+name);
 				if (JSONConst.JSON_EL_TYPE.equals(name)) {
 					reader.skipValue();// should have been read a higher level
-				} else if (JSONConst.JSON_ID.equals(name)) {
-					s.setId(reader.nextString());
-				} else if (JSONConst.JSON_VISIBLE.equals(name) || "visble".equals(name)) {
-					s.visible = reader.nextBoolean();
-				} else if (JSONConst.JSON_LOCKED.equals(name)) {
-					s.locked = reader.nextBoolean();
+				} else if (GSONDrawingElement.fromJSON(gson, reader, s, name)) {
+
 				} else if (JSONConst.JSON_FONT_NAME.equals(name)) {
 					s.fontName = reader.nextString();
 				} else if (JSONConst.JSON_TEXT.equals(name)) {

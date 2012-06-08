@@ -32,19 +32,14 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringWriter;
-import java.io.Writer;
 import java.util.ArrayList;
 
 import org.json.JSONException;
@@ -60,10 +55,7 @@ import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.controller.FontController.Font;
 import co.uk.sentinelweb.views.draw.file.FileRepository.Directory;
 import co.uk.sentinelweb.views.draw.file.export.json.JSONDrawingIO;
-import co.uk.sentinelweb.views.draw.file.export.json.v2.gson.GSONDrawing;
-import co.uk.sentinelweb.views.draw.file.export.json.v2.simple.JSONDrawing;
 import co.uk.sentinelweb.views.draw.file.export.json.v2.simple.JSONSet;
-import co.uk.sentinelweb.views.draw.file.export.json.v2.string.SJSONDrawing;
 import co.uk.sentinelweb.views.draw.model.Asset;
 import co.uk.sentinelweb.views.draw.model.Drawing;
 import co.uk.sentinelweb.views.draw.model.DrawingElement;
@@ -87,6 +79,7 @@ public class SaveFile {
 	public static final String BMP_FILE_EXT = ".png";
 	public static final String TMP_FILE_EXT = ".tmp";
 	public static final String AUTOSAVE_FILE_EXT = ".auto";
+	public static final String NOMEDIA_EXT = ".nomedia";
 	
 	public enum Option {EMBED_ASSET}
 	public ArrayList<Option> _options = new ArrayList<SaveFile.Option>();
@@ -202,6 +195,7 @@ public class SaveFile {
 		if (!this._dataDir.exists()) {
 			this._dataDir.mkdirs();
 		}
+		_fr.makeNoMedia(_dataDir);
 		// copy assets from old manager
 		AssetManager oldAssetManager = _assetManager;
 		_assetManager = new AssetManager(this);
@@ -522,4 +516,5 @@ public class SaveFile {
 	public void delete() {
 		FileUtil.deleteWithChildren(_dataDir);
 	}
+
 }

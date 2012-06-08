@@ -39,9 +39,6 @@ public class JSONConst {
 	public static final String JSON_Y = "y";
 	public static final String JSON_X = "x";
 	
-	//shared
-	public static final String JSON_ID = "id";
-	
 	//drawing
 	public static final String JSON_SIZE = "size";
 	public static final String JSON_VERSION = "version";
@@ -65,9 +62,13 @@ public class JSONConst {
 	public static final String JSON_BMP_ALPHA = "bmpAlpha";
 	
 	// drawing element 
+	public static final String JSON_ID = "id";
 	public static final String JSON_LOCKED = "locked";
 	public static final String JSON_VISIBLE = "visible";
-	
+	public static final String JSON_CLIPRECT = "clipRect";
+	public static final String JSON_CLASS = "class";
+	public static final String JSON_OPACITY = "opacity";
+	public static final String JSON_NAMESPACED ="namespaced";
 	// stroke
 	public static final String JSON_TEXT = "text";
 	public static final String JSON_TEXTXSCALE = "textXScale";

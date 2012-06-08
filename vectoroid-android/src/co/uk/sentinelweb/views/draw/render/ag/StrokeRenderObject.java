@@ -32,6 +32,8 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+import java.util.HashMap;
+
 import android.graphics.Bitmap;
 import android.graphics.BlurMaskFilter;
 import android.graphics.ComposePathEffect;
@@ -64,10 +66,11 @@ import co.uk.sentinelweb.views.draw.model.path.Arc;
 import co.uk.sentinelweb.views.draw.model.path.Bezier;
 import co.uk.sentinelweb.views.draw.model.path.PathData;
 import co.uk.sentinelweb.views.draw.model.path.Quadratic;
-import co.uk.sentinelweb.views.draw.render.RenderObject;
+import co.uk.sentinelweb.views.draw.render.VecRenderObject;
+import co.uk.sentinelweb.views.draw.util.ConicPlotter;
 import co.uk.sentinelweb.views.draw.util.PointUtil;
 
-public class StrokeRenderObject extends RenderObject{
+public class StrokeRenderObject extends VecRenderObject{
 	
 
 	PointF _usePoint = new PointF();
@@ -90,6 +93,8 @@ public class StrokeRenderObject extends RenderObject{
 	public boolean dontDisplay = false;
 	public String[] splitStr=null;
 	public boolean fgOnly=false;
+	public HashMap<PointVec,Path> startTips;
+	public HashMap<PointVec,Path> endTips;
 	
 	public StrokeRenderObject(AndGraphicsRenderer r) {
 		super(r);
@@ -148,9 +153,10 @@ public class StrokeRenderObject extends RenderObject{
 			*/
 			float width=s.calculatedBounds.width();
 			float lineHeight=s.calculatedBounds.height()/splitStr.length;
+			PathData pathData = s.points.get(0).get(0);
 			if (s.points.get(0).size()==4) { 
-				width = PointUtil.dist(s.points.get(0).get(0), s.points.get(0).get(1));
-				lineHeight = PointUtil.dist(s.points.get(0).get(0), s.points.get(0).get(3))/splitStr.length;
+				width = PointUtil.dist(pathData, s.points.get(0).get(1));
+				lineHeight = PointUtil.dist(pathData, s.points.get(0).get(3))/splitStr.length;
 				//Log.d(Globals.LOG_TAG, "text calc bounds:'"+width+" x "+lineHeight);
 				//_usePoint.set(_useRect.left,_useRect.bottom);
 				//_usePoint2.set(_useRect.left+30,_useRect.bottom);
@@ -185,57 +191,46 @@ public class StrokeRenderObject extends RenderObject{
 			}
 			//Log.d(DVGlobals.LOG_TAG, "text calc bounds out:'"+lineHeight+" w "+textCalcwidth+" : xsc: "+s.textXScale);
 			if (s.points.get(0).size()>1) {
-				_usePoint.set(s.points.get(0).get(0).x+30,s.points.get(0).get(0).y);
-				this.textAngle = PointUtil.calcAngle2PI(_usePoint, s.points.get(0).get(0),s.points.get(0).get(1) );
+				_usePoint.set(pathData.x+3000,pathData.y);
+				this.textAngle = PointUtil.calcAngle2PI(_usePoint, pathData,s.points.get(0).get(1) );
 			} else {
 				this.textAngle = 0;
 			}
-			//TODO RM 131011: can take out the s.points.get(0).size()==1 cases - they shouldnt be hit..
+			// rm test fb snap to model
+			if (r._feedBackLevelSnappingToModel) {
+				//Log.d(VecGlobals.LOG_TAG, "text angle calc:'"+textAngle+" = "+(textAngle/Math.PI*180));
+				if (this.textAngle!=0 && (textAngle<StrokeRenderer.MIN_ROTATION|| textAngle>2*Math.PI-StrokeRenderer.MIN_ROTATION)) {
+					//pathData.set(p);
+					//float height = (float)-Math.sin(textAngle)*lineHeight*splitStr.length;
+					pathData.x=pathData.x - (float)Math.cos(textAngle)*lineHeight*splitStr.length/2f;//shunt angle*halfheight
+					s.points.get(0).get(1).set(pathData.x+textCalcwidth,pathData.y);
+					s.points.get(0).get(2).set(pathData.x+textCalcwidth,pathData.y-lineHeight*splitStr.length);
+					s.points.get(0).get(3).set(pathData.x,pathData.y-lineHeight*splitStr.length);
+					textAngle=0;
+					//Log.d(VecGlobals.LOG_TAG, "text angle flatten:"+textAngle);
+				}
+			}
 			if (s.textXScale>0 ){
 				if (s.points.get(0).size()==4) {
 					// need to add tangential width & height
-					_usePoint.set(s.points.get(0).get(0).x+30,s.points.get(0).get(0).y);
-					//float angle = PointUtil.calcAngle360(_usePoint, s.points.get(0).get(0),s.points.get(0).get(1) );
+					_usePoint.set(pathData.x+30,pathData.y);
 					_usePoint.set(textCalcwidth*s.textXScale*(float)Math.cos(textAngle),textCalcwidth*s.textXScale*(float)Math.sin(textAngle));
-					PointUtil.addVector(s.points.get(0).get(0), s.points.get(0).get(1), _usePoint);
+					PointUtil.addVector(pathData, s.points.get(0).get(1), _usePoint);
 					PointUtil.addVector(s.points.get(0).get(3), s.points.get(0).get(2), _usePoint);
 					
-				} /*else if (s.points.get(0).size()==1){
-					_usePoint2.set(textCalcwidth*s.textXScale,0);
-					s.points.get(0).add(new PointF());
-					PointUtil.addVector(s.points.get(0).get(0), s.points.get(0).get(1), _usePoint2);
-					_usePoint2.set(textCalcwidth*s.textXScale,-lineHeight*splitStr.length);
-					s.points.get(0).add(new PointF());
-					PointUtil.addVector(s.points.get(0).get(0), s.points.get(0).get(2), _usePoint2);
-					_usePoint2.set(0,-lineHeight*splitStr.length);
-					s.points.get(0).add(new PointF());
-					PointUtil.addVector(s.points.get(0).get(0), s.points.get(0).get(3), _usePoint2);
-				}*/
+				} 
 			} else {
 				if (s.points.get(0).size()==4) {
 					if (this.textAngle != 0) {
 						// need to add tangential width & height
 						_usePoint.set(lineHeight*(float)Math.sin(textAngle)*splitStr.length,-lineHeight*(float)Math.cos(textAngle)*splitStr.length);
-						PointUtil.addVector(s.points.get(0).get(0), s.points.get(0).get(3), _usePoint);
+						PointUtil.addVector(pathData, s.points.get(0).get(3), _usePoint);
 						PointUtil.addVector(s.points.get(0).get(1), s.points.get(0).get(2), _usePoint);
 					} else {
 						// not needed ?
 						
 					}
-				} /*else if (s.points.get(0).size()==1){
-				
-					_usePoint2.set(textCalcwidth,0);
-					s.points.get(0).add(new PointF());
-					PointUtil.addVector(s.points.get(0).get(0), s.points.get(0).get(1), _usePoint2);
-					_usePoint2.set(textCalcwidth,-lineHeight*splitStr.length);
-					s.points.get(0).add(new PointF());
-					PointUtil.addVector(s.points.get(0).get(0), s.points.get(0).get(2), _usePoint2);
-					_usePoint2.set(0,-lineHeight*splitStr.length);
-					s.points.get(0).add(new PointF());
-					PointUtil.addVector(s.points.get(0).get(0), s.points.get(0).get(3), _usePoint2);
-				}*/
-				//s.updateBoundsAndCOG();
-				//s.calculatedBounds.height()
+				} 
 			}
 			// modify text bounds here for below the line bitmaps - doesnt work :(
 			//_usePoint.set(0,3*textHeight/2);
@@ -323,6 +318,13 @@ public class StrokeRenderObject extends RenderObject{
 								
 								//path.arcTo(b.control1.x,b.control1.y,b.control2.x,b.control2.y,pd.x, pd.y);
 								/*
+								ConicPlotter cp =new ConicPlotter();
+								cp.setP(path);
+								cp.calcImplicitEllipseEquation(a.r.x, a.r.y, a.xrot, a.x, a.y);
+								cp.draw(a.x-a.r.x,a.y-a.r.y,a.x+a.r.x,a.y+a.r.y);
+								*/
+								//path.arcTo(new RectF(a.x-a.r.x,a.y-a.r.y,a.x+a.r.x,a.y+a.r.y), startAngle, sweepAngle);
+								
 								if (lastPathData!=null) {
 									a.arcTo(lastPathData,a.r.x,a.r.y,a.xrot,a.largeArc,a.sweep,a.x,a.y);
 									Log.d(VecGlobals.LOG_TAG, "SVG Arc rendr:"+":"+PointUtil.tostr(a.oval)+":"+PointUtil.tostr(a.startAndSweepAngle)+":"+a.xrot+":"+a.largeArc+":"+a.sweep);
@@ -338,8 +340,8 @@ public class StrokeRenderObject extends RenderObject{
 									path.lineTo(pd.x, pd.y-5);
 									path.lineTo(pd.x, pd.y);
 								}
-								*/
-								path.lineTo(pd.x, pd.y);
+								
+								//path.lineTo(pd.x, pd.y);
 								break;
 						}
 					} 
@@ -409,6 +411,7 @@ public class StrokeRenderObject extends RenderObject{
 	public void setPainters(Stroke s) {
 		//float zoom = r.getVpd().zoom;
 		fgInner.setStrokeWidth(s.pen.strokeWidth);//*density
+		//fgInner.setStrokeWidth(1);// RM : test
 		fgInner.setColor(s.pen.strokeColour);
 		//fgInner.setAlpha(Color.alpha(s.pen.strokeColour));
 		fgInner.setStyle(s.fill.type==Type.COLOUR_STROKE?Style.FILL_AND_STROKE:Style.STROKE);
@@ -526,11 +529,17 @@ public class StrokeRenderObject extends RenderObject{
 			et.m = new Matrix();
 			//float size = pen.strokeWidth;
 			float size = 15;
-			
+			if (et!=null ) {
+				if (start && startTips==null) {
+					startTips = new HashMap<PointVec, Path>();
+				} else if (!start &&  endTips==null) {
+					endTips = new HashMap<PointVec, Path>();
+				}
+			}
 			et.m.postScale(size*et.size/* *zoom */,size*et.size/* *zoom */);
 			for (PointVec pv : s.points) {
-				if (start) pv.startTip=makeTipPath(pv,s.pen.startTip,true,pv.startTip);
-				else  pv.endTip=makeTipPath(pv,s.pen.endTip,false,pv.endTip);
+				if (start) startTips.put(pv,makeTipPath(pv,s.pen.startTip,true,startTips.get(pv)));
+				else  endTips.put(pv,makeTipPath(pv,s.pen.endTip,false,endTips.get(pv)));
 				//pv.endTip=makeTipPath(pv,pen.endType,false,pv.endTip);
 			}
 		}

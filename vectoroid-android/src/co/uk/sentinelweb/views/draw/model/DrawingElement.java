@@ -32,34 +32,41 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+import java.util.HashMap;
+
 import android.graphics.PointF;
 import android.graphics.RectF;
-import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer;
+import android.view.View.OnClickListener;
+import co.uk.sentinelweb.views.draw.render.VecRenderObject;
+import co.uk.sentinelweb.views.draw.render.VecRenderer;
 import co.uk.sentinelweb.views.draw.util.OnAsyncListener;
 
 public abstract class DrawingElement {
-	public static int UPD_NO_FILL=1;
-	public static int UPD_FILL_NO_BITMAP=2;
-	public static int UPD_FILL_GRADIENT_ONLY=4;
-	
+	// stored attributes
 	protected String id = null;
+	public boolean locked = false;
+	public boolean visible = true;
 	
+	public RectF clipRect;
+	public String className;
+	public float opacity=1;
+	private HashMap<String,HashMap<String,Object>> nameSpaced = new HashMap<String,HashMap<String,Object>>();
+	//public String tag;
+	
+	// dynamic attribute (set via update)
 	public RectF calculatedBounds ;
 	public PointF calculatedCOG;
 	public PointF calculatedCentre;
 	public PointF calculatedDim;
 	
-	public boolean locked = false;
-	public boolean visible = true;
-	
+	// update listeners
 	OnAsyncListener updateListener;
 	
 	public DrawingElement duplicate() {
 		return duplicate(false);
 	}
 	public abstract DrawingElement duplicate(boolean shallow);
-	public abstract void update(boolean deep,AndGraphicsRenderer r,UpdateFlags flags);
-	//protected abstract void updateBoundsAndCOG();
+	public abstract void update(boolean deep,VecRenderer r,UpdateFlags flags);
 	protected abstract void updateBoundsAndCOG(boolean deep);
 	
 	public OnAsyncListener<?> getUpdateListener() {
@@ -123,4 +130,77 @@ public abstract class DrawingElement {
 		sb.append("\n");
 		return sb.toString();
 	}
+	
+	/**
+	 * @return
+	 */
+	public HashMap<String,HashMap<String, Object>> getNameSpaced() {
+		return nameSpaced;
+	}
+	
+	/**
+	 * @param nameSpace
+	 * @return
+	 */
+	public HashMap<String, Object> getNameSpaced(String nameSpace) {
+		return nameSpaced.get(nameSpace);
+	}
+	
+	/**
+	 * @param nameSpace
+	 * @param param
+	 * @return
+	 */
+	public Object getNameSpaced(String nameSpace,String param) {
+		HashMap<String, Object> params = nameSpaced.get(nameSpace);
+		if (params!=null) {
+			return params.get(param);
+		}
+		return null;
+	}
+	
+	/**
+	 * @param nameSpace
+	 * @param params
+	 */
+	public void setNameSpaced(String nameSpace,HashMap<String, Object> params) {
+		nameSpaced.put(nameSpace, params);
+	}
+	
+	/**
+	 * @param nameSpace
+	 * @param param
+	 * @param value
+	 */
+	public void addNameSpaced(String nameSpace,String param,Object value) {
+		HashMap<String, Object> params = nameSpaced.get(nameSpace);
+		if (params==null) {
+			params=new HashMap<String, Object>();
+			nameSpaced.put(nameSpace, params);
+		}
+		params.put(param, value);
+	}
+	
+	/**
+	 * @param nameSpace
+	 * @param param
+	 */
+	public void removeNameSpaced(String nameSpace,String param) {
+		HashMap<String, Object> params = nameSpaced.get(nameSpace);
+		if (params!=null) {
+			params.remove(param);
+		}
+	}
+	
+	/**
+	 * @param r
+	 * @return
+	 */
+	public  VecRenderObject delete(VecRenderer r) {
+		VecRenderObject vro = r.getObject(this);
+		r.removeFromCache(this);
+		return vro;
+	}
+	
+	public abstract void applyTransform(TransformOperatorInOut t, DrawingElement de) ;
 }

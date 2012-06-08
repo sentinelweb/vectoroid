@@ -121,7 +121,7 @@ public class StrokeIconRenderer {
 			if (de instanceof Stroke) {
 				strokes.add((Stroke)de);
 			} else if (de instanceof Group) {
-				strokes.addAll(((Group)de).getStrokes()); 
+				strokes.addAll(((Group)de).getAllStrokes()); 
 			}
 			
 			for (Stroke s : strokes) {

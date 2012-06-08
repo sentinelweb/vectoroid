@@ -32,70 +32,15 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-import java.util.Collection;
-import java.util.HashMap;
-
-import android.content.Context;
-import android.graphics.PointF;
 import co.uk.sentinelweb.views.draw.model.DrawingElement;
-import co.uk.sentinelweb.views.draw.model.Group;
-import co.uk.sentinelweb.views.draw.model.Stroke;
 import co.uk.sentinelweb.views.draw.model.UpdateFlags;
+import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer;
 
-public abstract class Renderer {
-	public Context c;
-	public HashMap<DrawingElement,RenderObject> renderObjects;
+public abstract class VecRenderObject {
+	protected AndGraphicsRenderer r;
+	public abstract void update(DrawingElement de, UpdateFlags flags);
 	
-	/* Operators - Experimental */
-	public static class Operator  {
-		public Float rotation = null;
-		public PointF translate = null;
-		public PointF scale =null;
-		//PointF skew = null;
+	public VecRenderObject(AndGraphicsRenderer r) {
+		this.r=r;
 	}
-	public HashMap<DrawingElement,Operator> animations;
-	
-	public abstract void update(DrawingElement de,UpdateFlags flags);
-	public abstract void render(DrawingElement de);
-	public abstract void setup();
-	
-	public abstract void setupViewPort();
-	public abstract void revertViewPort();
-	
-	public Renderer(Context c) {
-		this.c=c;
-		renderObjects=new HashMap<DrawingElement,RenderObject>();
-		animations=new HashMap<DrawingElement,Operator>();
-	}
-	
-	public void removeFromCache(Collection<DrawingElement> els) {
-		if (els!=null) {
-			for (DrawingElement de : els) {
-				removeFromCache(de);
-			}
-		}
-	}
-	
-	public void removeFromCache(DrawingElement oldDE) {
-		if (oldDE instanceof Stroke) {
-			renderObjects.remove(oldDE);
-			animations.remove(oldDE);
-		} else if (oldDE instanceof Group) {
-			renderObjects.remove(oldDE);
-			animations.remove(oldDE);
-			for (DrawingElement de : ((Group) oldDE).elements) {
-				removeFromCache(de);
-			}
-		}
-	}
-	
-	public void dropCache() {
-		renderObjects.clear();
-		animations.clear();
-	}
-	
-	public RenderObject getObject(DrawingElement de) {
-		return null;
-	}
-
 }

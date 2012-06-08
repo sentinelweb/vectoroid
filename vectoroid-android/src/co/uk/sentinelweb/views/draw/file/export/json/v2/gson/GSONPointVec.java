@@ -67,7 +67,7 @@ public class GSONPointVec {
 		
 		writer.endObject();
 	}
-	
+	/*
 	private void addPointStr(ArrayList<PointF> pv, JsonWriter writer,String tag) throws IOException {
 		if (pv!=null) {
 			_useSb.delete(0, _useSb.length());
@@ -79,7 +79,7 @@ public class GSONPointVec {
 			writer.name(tag).value(_useSb.toString().trim()); 
 		}
 	}
-	
+	*/
 	public PointVec fromJSON(Gson gson,JsonReader reader) {
 		PointVec pv = new PointVec();
 		try {

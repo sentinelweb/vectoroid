@@ -33,13 +33,15 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.util.Log;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.controller.FontController;
 
 public class FileRepository {
-	private static final String MASTER_DIR = "co.uk.sentinelweb.views.draw";
 	//private static final String APP_DIR_DEFAULT = "DFTest";
 	public static String FR_TMP_FILE = "tmp";
 	//public static String _base = null;
@@ -60,13 +62,21 @@ public class FileRepository {
 	public static FileRepository getFileRepository(Context c, String s)  {
 		FileRepository fileRepository = null;
 		try {
-			fileRepository = new FileRepository( MASTER_DIR, s );
+			fileRepository = new FileRepository( VecGlobals.MASTER_DIR, s );
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return fileRepository;  
 	}
-	
+	public static FileRepository getFileRepository(Context c)  {
+		FileRepository fileRepository = null;
+		try {
+			fileRepository = new FileRepository( VecGlobals.MASTER_DIR, null );
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return fileRepository;  
+	}
 	public static final String SAVES_DIRECTORY = ".saves";
 	public static final String RAW_DIRECTORY = "raw";
 	public static final String TTF_DIRECTORY = ".ttfonts";
@@ -274,6 +284,18 @@ public class FileRepository {
 
 	public void setFontController(FontController _fontController) {
 		this._fontController = _fontController;
+	}
+	public File makeNoMedia(File dir) {
+		File noMedia = new File(dir,SaveFile.NOMEDIA_EXT);
+		if (!noMedia.exists()) {
+			try {
+				noMedia.createNewFile();
+				return noMedia;
+			} catch (IOException e) {
+				Log.d(VecGlobals.LOG_TAG, "makeNoMedia",e);
+			}
+		}
+		return null;
 	}
 	
 }

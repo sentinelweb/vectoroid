@@ -35,5 +35,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 public class VecGlobals {
 	public static final String LOG_TAG = "Vectoroid";
 	public static boolean _isDebug = false;
+	public static final String MASTER_DIR = "co.uk.sentinelweb.views.draw";
 	
 }

@@ -40,9 +40,9 @@ import co.uk.sentinelweb.views.draw.model.Drawing;
 import co.uk.sentinelweb.views.draw.model.DrawingElement;
 import co.uk.sentinelweb.views.draw.model.Fill.Type;
 import co.uk.sentinelweb.views.draw.model.UpdateFlags;
-import co.uk.sentinelweb.views.draw.render.RenderObject;
+import co.uk.sentinelweb.views.draw.render.VecRenderObject;
 
-public class DrawingRenderObject extends RenderObject{
+public class DrawingRenderObject extends VecRenderObject{
 	
 	public Paint bgFill = null ;
 	public Bitmap bitmapMask = null;

@@ -145,13 +145,13 @@ public class Arc extends PathData {
 
          //Arc2D.Float arc = new Arc2D.Float();
          
-         x = cx - rx;
-         y = cy - ry;
+         float xo = cx - rx;
+         float yo = cy - ry;
          float width = rx * 2.0f;
          float height = ry * 2.0f;
          float  start = -angleStart;
          float  extent = -angleExtent;
-         oval.set(x,y,x+width,y+height);
+         oval.set(xo,yo,xo+width,yo+height);
          startAndSweepAngle.set(start,extent);
          //path.append(arc, true);
  }

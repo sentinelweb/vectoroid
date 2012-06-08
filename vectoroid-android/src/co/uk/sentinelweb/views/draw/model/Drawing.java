@@ -36,14 +36,12 @@ import java.util.ArrayList;
 
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.util.Log;
-import co.uk.sentinelweb.views.draw.VecGlobals;
-import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer;
+import co.uk.sentinelweb.views.draw.render.VecRenderer;
 import co.uk.sentinelweb.views.draw.render.ag.DrawingRenderObject;
 import co.uk.sentinelweb.views.draw.util.PointUtil;
 
 
-public class Drawing extends DrawingElement{
+public class Drawing extends DrawingElement implements IDrawingElementCollection{
 	
 	public PointF size = new PointF( 640f, 480f );
 	public ArrayList<DrawingElement> elements = new ArrayList<DrawingElement>();
@@ -88,7 +86,7 @@ public class Drawing extends DrawingElement{
 	}
 	
 	@Override
-	public void update(boolean deep, AndGraphicsRenderer r, UpdateFlags flags) {
+	public void update(boolean deep, VecRenderer r, UpdateFlags flags) {
 		if (deep) {
 			for (DrawingElement de : elements) {
 				de.update(deep,r,flags);
@@ -165,17 +163,18 @@ public class Drawing extends DrawingElement{
 		}
 	}
 	
+	@Override
 	public ArrayList<Stroke> getAllStrokes() {
 		ArrayList<Stroke> strokes = new ArrayList<Stroke>();
 		for (DrawingElement de : elements) {
 			if (de instanceof Group) {
-				strokes.addAll(((Group) de).getStrokes());
+				strokes.addAll(((Group) de).getAllStrokes());
 			} else {
 				strokes.add((Stroke)de);
 			}
 		}
 		for (Layer de : layers) {
-			strokes.addAll(de.getStrokes());
+			strokes.addAll(de.getAllStrokes());
 		}
 		return strokes;
 	}
@@ -196,4 +195,48 @@ public class Drawing extends DrawingElement{
 		}
 		return null;
 	}
+	/**
+	 * Searches an element in the elements & layers first and then goes depth first through the elements and layers
+	 * @return the drawingElement or null if not found or id is null
+	 */
+	@Override
+	public DrawingElement findById(String id) {
+		if (id==null) {return null;}
+		// search the current group first
+		for (DrawingElement de : elements) {
+			if (id.equals(de.id)) {
+				return de;
+			}
+		}
+		for (DrawingElement de : layers) {
+			if (id.equals(de.id)) {
+				return ((Layer)de).findById(id);
+			}
+		}
+		//then depth first
+		for (DrawingElement de : elements) {
+			if (de instanceof Group) {
+				return ((Group)de).findById(id);
+			}
+		}
+		for (DrawingElement de : layers) {
+				return ((Layer)de).findById(id);
+		}
+		return null;
+	}
+	public void applyTransform(TransformOperatorInOut t , DrawingElement tgtde) {
+		Drawing tgt = (Drawing) tgtde;
+		switch (t.axis) {
+			case PRESERVE_ASPECT:tgt.size.set(size.x*(float)t.scaleValue,size.y*(float)t.scaleValue);break;
+			case BOTH:tgt.size.set(size.x*(float)t.scaleXValue,size.y*(float)t.scaleYValue);break;
+			case X:tgt.size.set(size.x*(float)t.scaleXValue,size.y);break;
+			case Y:tgt.size.set(size.x,size.y*(float)t.scaleYValue);break;
+		}
+		
+	}
+	@Override
+	public DrawingElement element() {
+		return this;
+	}
+	
 }

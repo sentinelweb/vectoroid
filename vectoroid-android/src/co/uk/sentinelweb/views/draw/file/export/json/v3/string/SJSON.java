@@ -38,8 +38,6 @@ import java.util.Collection;
 
 import org.json.JSONObject;
 
-import co.uk.sentinelweb.views.draw.file.export.json.v3.JSONConst;
-import co.uk.sentinelweb.views.draw.model.DrawingElement;
 
 public class SJSON {
 	public static final String BEGIN_OBJ = "{";
@@ -98,21 +96,5 @@ public class SJSON {
 	}
 	public static void arraySep(Writer w, Collection<?> c,  int i) throws IOException {
 		if (i<c.size()-1) {SJSON.sep(w);}
-	}
-	public static void writeDE(Writer w,DrawingElement de,String type) throws IOException {
-		writeString( w,JSONConst.JSON_EL_TYPE,type);
-		sep(w);
-		if (de.getId()!=null && !"".equals(de.getId())) {
-			writeString( w,JSONConst.JSON_ID,de.getId());
-			sep(w);
-		}
-		if (!de.visible) {
-			writeBoolean( w,JSONConst.JSON_VISIBLE,de.visible);
-			sep(w);
-		}
-		if (de.locked) {
-			writeBoolean( w,JSONConst.JSON_LOCKED,de.locked);
-			sep(w);
-		}
 	}
 }

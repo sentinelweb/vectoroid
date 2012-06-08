@@ -89,7 +89,7 @@ public class JSONPointVec extends JSONParent{
 		}
 		return o;
 	}
-	
+	/*
 	private void addPointStr(ArrayList<PointF> pv, JSONObject o,String tag) throws JSONException {
 		if (pv!=null) {
 			_useSb.delete(0, _useSb.length());
@@ -100,6 +100,7 @@ public class JSONPointVec extends JSONParent{
 			o.put(tag, _useSb.toString().trim());
 		}
 	}
+	*/
 	/*
 	private void addJSONArray(ArrayList<PointF> pv, JSONObject o,String tag) throws JSONException {
 		if (pv!=null) {

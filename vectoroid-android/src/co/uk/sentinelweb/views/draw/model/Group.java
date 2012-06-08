@@ -37,10 +37,12 @@ import java.util.ArrayList;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import co.uk.sentinelweb.views.draw.model.UpdateFlags.UpdateType;
+import co.uk.sentinelweb.views.draw.render.VecRenderObject;
+import co.uk.sentinelweb.views.draw.render.VecRenderer;
 import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer;
 import co.uk.sentinelweb.views.draw.util.PointUtil;
 
-public class Group extends DrawingElement {	
+public class Group extends DrawingElement  implements IDrawingElementCollection{	
 	public ArrayList<DrawingElement> elements;
 	//private ArrayList<Stroke> _substrokes;
 	public Group() {
@@ -70,7 +72,7 @@ public class Group extends DrawingElement {
 	//	_substrokes=null;
 	//}
 	@Override
-	public void update(boolean deep, AndGraphicsRenderer r, UpdateFlags flags) {
+	public void update(boolean deep, VecRenderer r, UpdateFlags flags) {
 		//updateBoundsAndCOG(deep);
 		//_substrokes =  getStrokes(this);
 		if (deep) {
@@ -124,17 +126,18 @@ public class Group extends DrawingElement {
 		this.calculatedCentre = PointUtil.midpoint(this.calculatedBounds);
 	}
 	
-	public ArrayList<Stroke> getStrokes() {
-		return getStrokes(this);
+	@Override
+	public ArrayList<Stroke> getAllStrokes() {
+		return getAllStrokes(this);
 	}
 	
-	public ArrayList<Stroke> getStrokes(Group g) {
+	public static ArrayList<Stroke> getAllStrokes(Group g) {
 		ArrayList<Stroke> strokes = new ArrayList<Stroke>();
-		for (DrawingElement de : elements) {
+		for (DrawingElement de : g.elements) {
 			if (de instanceof Stroke) {
 				strokes.add((Stroke)de);
 			} else {
-				strokes.addAll(((Group)de).getStrokes());
+				strokes.addAll(((Group)de).getAllStrokes());
 			}
 		}
 		return strokes;
@@ -149,11 +152,43 @@ public class Group extends DrawingElement {
 		}
 		return depth;
 	}
+	
 	/**
 	 * @return the id
 	 */
 	public String getId() {
 		if (id==null) {id="Group_"+hashCode();}
 		return id;
+	}
+
+	/**
+	 * Searches an element in the group first and then goes depth first
+	 * @return the drawingElement or null if not found or id is null
+	 */
+	@Override
+	public DrawingElement findById(String id) {
+		if (id==null) {return null;}
+		// search the current group first
+		for (DrawingElement de : elements) {
+			if (id.equals(de.id)) {
+				return de;
+			}
+		}
+		//then depth first
+		for (DrawingElement de : elements) {
+			if (de instanceof Group) {
+				DrawingElement res =  ((Group)de).findById(id);
+				if (res!=null)  return res;
+			}
+		}
+		return null;
+	}
+	
+	public void applyTransform(TransformOperatorInOut t , DrawingElement tgtde) {// stub
+		Group tgt = (Group) tgtde;
+	}
+	@Override
+	public DrawingElement element() {
+		return this;
 	}
 }

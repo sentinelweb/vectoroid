@@ -12,5 +12,6 @@
   <modules>
     <module>vectoroid-android</module>
     <module>SuprCardsExploder</module>
+    <module>VectoroidExample</module>
   </modules>
 </project>

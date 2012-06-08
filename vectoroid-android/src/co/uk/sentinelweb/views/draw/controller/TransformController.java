@@ -50,7 +50,7 @@ import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer;
 public class TransformController {
 	public static void transform(DrawingElement de,DrawingElement de1,  TransformOperatorInOut t, AndGraphicsRenderer r) {
 		//if (DVGlobals._isDebug) Log.d(DVGlobals.LOG_TAG,"transform de:"+de.hashCode()+":"+de1.hashCode());
-		boolean updateAfter = de instanceof Drawing || de instanceof Group;
+		boolean updateAfter = de instanceof Drawing || de instanceof Group ;
 		if (!de.getClass().equals(de1.getClass())) {throw new RuntimeException("Only matching types please.");}
 		ArrayList<Stroke> processVec= new ArrayList<Stroke>();
 		ArrayList<Stroke> processVecTmp= new ArrayList<Stroke>();
@@ -58,8 +58,8 @@ public class TransformController {
 			processVec.addAll(((Drawing)de).getAllStrokes());
 			processVecTmp.addAll(((Drawing)de1).getAllStrokes());
 		} else if (de instanceof Group){
-			processVec.addAll(((Group)de).getStrokes());
-			processVecTmp.addAll(((Group)de1).getStrokes());
+			processVec.addAll(((Group)de).getAllStrokes());
+			processVecTmp.addAll(((Group)de1).getAllStrokes());
 		} else if (de instanceof Stroke) {
 			processVec.add((Stroke)de);
 			processVecTmp.add((Stroke)de);
@@ -69,6 +69,9 @@ public class TransformController {
 			Stroke tmp = processVecTmp.get(l);
 			transform(original,tmp, t);
 			if (!updateAfter) {tmp.update(false, r, UpdateFlags.ALL);}
+		}
+		if (de instanceof Drawing) {
+			((Drawing)de).applyTransform(t,de1);
 		}
 		if (updateAfter) {
 			de1.update(true, r, UpdateFlags.ALL);
@@ -119,13 +122,11 @@ public class TransformController {
 						t.operate( q1.control1, q2.control1 );
 						break;
 					case ARC:
-			//			Arc a1 = (Arc)pt;
-			//			Arc a2 = (Arc)pt2;
+						Arc a1 = (Arc)pt;
+						Arc a2 = (Arc)pt2;
 								//t.operate( a1.r, a2.r );
-			//			a2.r.x=a1.r.x*(float)t.scaleXValue;
-			//			a2.r.y=a1.r.y*(float)t.scaleYValue;
-						
-						
+						a2.r.x=a1.r.x*(float)t.scaleXValue;
+						a2.r.y=a1.r.y*(float)t.scaleYValue;
 						break;
 					
 				}

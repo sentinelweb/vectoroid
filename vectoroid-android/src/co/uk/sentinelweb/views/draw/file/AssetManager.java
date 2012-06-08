@@ -72,7 +72,11 @@ public class AssetManager {
 	public AssetManager(SaveFile _saveFile) {
 		super();
 		this._assetsDir = new File(_saveFile.getDataDir(),ASSETS_DIRECTORY);
-		if (!_assetsDir.exists()) {_assetsDir.mkdirs();}
+		if (!_assetsDir.exists()) {
+			_assetsDir.mkdirs();
+		}
+		File noMedia = _saveFile._fr.makeNoMedia(_assetsDir);
+		Log.d(VecGlobals.LOG_TAG, "AssetManager:makeNoMedia"+((noMedia!=null)?(noMedia.getAbsolutePath()+":"+noMedia.exists()):"isNull"));
 	}
 
 	public Asset makeAsset(Bitmap  b) {

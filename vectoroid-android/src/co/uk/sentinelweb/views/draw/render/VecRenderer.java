@@ -32,15 +32,74 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-import co.uk.sentinelweb.views.draw.model.DrawingElement;
-import co.uk.sentinelweb.views.draw.model.UpdateFlags;
-import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer;
+import java.util.Collection;
+import java.util.HashMap;
 
-public abstract class RenderObject {
-	protected AndGraphicsRenderer r;
-	public abstract void update(DrawingElement de, UpdateFlags flags);
+import android.content.Context;
+import android.graphics.Matrix;
+import android.graphics.PointF;
+import co.uk.sentinelweb.views.draw.model.DrawingElement;
+import co.uk.sentinelweb.views.draw.model.Group;
+import co.uk.sentinelweb.views.draw.model.Stroke;
+import co.uk.sentinelweb.views.draw.model.TransformOperatorInOut;
+import co.uk.sentinelweb.views.draw.model.UpdateFlags;
+
+public abstract class VecRenderer {
+	public Context c;
+	public HashMap<DrawingElement,VecRenderObject> renderObjects;
 	
-	public RenderObject(AndGraphicsRenderer r) {
-		this.r=r;
+	/* Operators - Experimental */
+	public static class Operator  {
+		public Float rotation = null;
+		public PointF translate = null;
+		public PointF scale =null;
+		public Matrix m=null;
+		public Matrix im=null;// cache inverse matrix
+		//PointF skew = null;
 	}
+	public HashMap<DrawingElement,Operator> animations;
+	
+	public abstract void update(DrawingElement de,UpdateFlags flags);
+	public abstract void render(DrawingElement de);
+	public abstract void setup();
+	
+	public abstract void setupViewPort();
+	public abstract void revertViewPort();
+	
+	public VecRenderer(Context c) {
+		this.c=c;
+		renderObjects=new HashMap<DrawingElement,VecRenderObject>();
+		animations=new HashMap<DrawingElement,Operator>();
+	}
+	
+	public void removeFromCache(Collection<DrawingElement> els) {
+		if (els!=null) {
+			for (DrawingElement de : els) {
+				removeFromCache(de);
+			}
+		}
+	}
+	
+	public void removeFromCache(DrawingElement oldDE) {
+		if (oldDE instanceof Stroke) {
+			renderObjects.remove(oldDE);
+			animations.remove(oldDE);
+		} else if (oldDE instanceof Group) {
+			renderObjects.remove(oldDE);
+			animations.remove(oldDE);
+			for (DrawingElement de : ((Group) oldDE).elements) {
+				removeFromCache(de);
+			}
+		}
+	}
+	
+	public void dropCache() {
+		renderObjects.clear();
+		animations.clear();
+	}
+	
+	public VecRenderObject getObject(DrawingElement de) {
+		return null;
+	}
+
 }

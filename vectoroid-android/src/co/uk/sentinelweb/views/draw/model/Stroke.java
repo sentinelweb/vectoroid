@@ -42,8 +42,8 @@ import co.uk.sentinelweb.views.draw.model.TransformOperatorInOut.Axis;
 import co.uk.sentinelweb.views.draw.model.TransformOperatorInOut.Trans;
 import co.uk.sentinelweb.views.draw.model.UpdateFlags.UpdateType;
 import co.uk.sentinelweb.views.draw.model.path.PathData;
-import co.uk.sentinelweb.views.draw.render.RenderObject;
-import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer;
+import co.uk.sentinelweb.views.draw.render.VecRenderObject;
+import co.uk.sentinelweb.views.draw.render.VecRenderer;
 import co.uk.sentinelweb.views.draw.util.PointUtil;
 
 public class Stroke extends DrawingElement {
@@ -63,7 +63,6 @@ public class Stroke extends DrawingElement {
 	public String fontName = "";
 	public boolean holesEven = false;
 	
-	PointF _usePoint = new PointF();
 	public Stroke () {
 		//density = DispUtil.getDensity(context);
 	}
@@ -119,8 +118,8 @@ public class Stroke extends DrawingElement {
 	}
 
 	@Override
-	public void update(boolean deep, AndGraphicsRenderer r, UpdateFlags flags) {
-		RenderObject sro = r.getObject(this);
+	public void update(boolean deep, VecRenderer r, UpdateFlags flags) {
+		VecRenderObject sro = r.getObject(this);
 		if (flags.updateTypes.contains(UpdateType.BOUNDS)) {
 			updateBoundsAndCOG(deep);
 			sro.update(this, UpdateFlags.BOUNDSONLY);
@@ -135,8 +134,6 @@ public class Stroke extends DrawingElement {
 		}
 
 		if (flags.updateTypes.contains(UpdateType.FILL) ) {
-
-			
 			UpdateFlags copy = UpdateFlags.FILLONLY.copy();
 			copy.fillTypes.retainAll(flags.fillTypes);
 			sro.update(this, copy);
@@ -178,7 +175,8 @@ public class Stroke extends DrawingElement {
 		this.calculatedCentre = PointUtil.midpoint(this.calculatedBounds);
 	}
 	
-	public void applyTransform(TransformOperatorInOut t , Stroke tgt) {
+	public void applyTransform(TransformOperatorInOut t , DrawingElement tgtde) {
+		Stroke tgt = (Stroke) tgtde;
 		if (fill.type==Fill.Type.GRADIENT && fill._gradient!=null && fill._gradient.data!=null) {
 			t.operate(fill._gradient.data.p1,tgt.fill._gradient.data.p1);
 			t.operate(fill._gradient.data.p2,tgt.fill._gradient.data.p2);
@@ -205,6 +203,12 @@ public class Stroke extends DrawingElement {
 			}
 		}
 	}
-	
+	/**
+	 * @return the id
+	 */
+	public String getId() {
+		if (id==null) {id="Stroke_"+hashCode();}
+		return id;
+	}
 	
 }

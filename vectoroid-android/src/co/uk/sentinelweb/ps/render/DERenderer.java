@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import android.graphics.PointF;
 import co.uk.sentinelweb.ps.ParticleSystems.ParticleSystem.Particle;
 import co.uk.sentinelweb.views.draw.model.DrawingElement;
-import co.uk.sentinelweb.views.draw.render.Renderer.Operator;
+import co.uk.sentinelweb.views.draw.render.VecRenderer.Operator;
 
 /**
  * This is a Flyweight Object for updating the animations array in the Vectoroid Renderer

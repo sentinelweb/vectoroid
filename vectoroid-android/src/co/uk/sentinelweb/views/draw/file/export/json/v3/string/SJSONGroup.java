@@ -49,7 +49,7 @@ public class SJSONGroup extends JSONParent {
 	
 	public void toJSON(Group g,Writer w,SJSONStroke jss) throws IOException{
 		SJSON.beginObj(w);
-		SJSON.writeDE(w, g,JSONConst.JSON_EL_TYPE_GROUP);
+		SJSONDrawingElement.writeDE(w, g,JSONConst.JSON_EL_TYPE_GROUP);
 		SJSON.writeID(w,JSONConst.JSON_ELEMENTS);
 		SJSON.beginArr(w);
 		for (int i=0;i<g.elements.size();i++) {

@@ -1,14 +1,9 @@
 package co.uk.sentinelweb.views.draw.view;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
-import org.xml.sax.InputSource;
-
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -23,7 +18,6 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.ImageView;
-import co.uk.sentinelweb.vectoroid.R;
 import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.file.DrawingFileUtil;
 import co.uk.sentinelweb.views.draw.file.SaveFile;
@@ -33,8 +27,6 @@ import co.uk.sentinelweb.views.draw.model.ViewPortData;
 import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer;
 import co.uk.sentinelweb.views.draw.util.DispUtil;
 import co.uk.sentinelweb.views.draw.util.OnAsyncListener;
-import co.uk.sentinelweb.views.draw.util.PointUtil;
-import co.uk.sentinelweb.views.draw.util.StrokeUtil;
 
 public class DisplayView extends ImageView {
 	

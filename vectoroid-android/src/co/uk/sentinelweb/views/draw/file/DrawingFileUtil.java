@@ -33,23 +33,15 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 
 import org.json.JSONException;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import co.uk.sentinelweb.views.draw.file.export.json.JSONDrawingIO;
-import co.uk.sentinelweb.views.draw.file.export.json.v2.gson.GSONDrawing;
-import co.uk.sentinelweb.views.draw.file.export.json.v2.simple.JSONDrawing;
 import co.uk.sentinelweb.views.draw.model.Drawing;
 
 public class DrawingFileUtil {

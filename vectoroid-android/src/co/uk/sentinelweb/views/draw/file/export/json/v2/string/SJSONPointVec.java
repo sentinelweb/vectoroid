@@ -68,7 +68,7 @@ public class SJSONPointVec extends JSONParent {
 			
 			SJSON.endObj(w);
 	}
-	
+	/*
 	private boolean addPointStr(Writer w,ArrayList<PointF> pv, String tag, boolean sep) throws IOException {
 		if (pv!=null) {
 			if (sep) {	SJSON.sep(w);	}
@@ -83,4 +83,5 @@ public class SJSONPointVec extends JSONParent {
 		}
 		return false;
 	}
+	*/
 }

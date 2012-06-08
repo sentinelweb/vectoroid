@@ -53,7 +53,7 @@ public class TransformOperatorInOut {
 	public double skewYValue = 0;
 	
 	public double[][] matrix3;
-	private double[][] matrix2;
+	public double[][] matrix2;
 	public PointF anchor = new PointF();
 	
 	public PointF trans = new PointF();
@@ -117,13 +117,16 @@ public class TransformOperatorInOut {
 		PointUtil.mulVector(trans,trans, -1);// invert
 		return trans;
 	}
+	
 	public void correctTranslation(PointF p) {
 		matrix3[0][2]=p.x+trans.x;
 		matrix3[1][2]=p.y+trans.y;
 	}
+	
 	public double[][] get2x2() {
 		return matrix2;
 	}
+	
 	public TransformOperatorInOut invert() {
 		TransformOperatorInOut t = new TransformOperatorInOut();
 		t.ops.addAll(ops);
@@ -151,6 +154,19 @@ public class TransformOperatorInOut {
 		return o;
 	}
 	
+	public static TransformOperatorInOut makeScale(PointF scale,RectF bounds) {
+		TransformOperatorInOut o = new TransformOperatorInOut() ;
+		//o.matrix=new double[][]{{scale,0},{0,scale}};
+		o.scaleValue=Math.abs(scale.x-1)<Math.abs(scale.y-1)?scale.x:scale.y;
+		o.scaleXValue=scale.x;
+		o.scaleYValue=scale.y;
+		o.axis=Axis.BOTH;
+		o.ops.add(Trans.SCALE);
+		o.anchor.set(new PointF((bounds.left+bounds.right)/2,(bounds.top+bounds.bottom)/2));
+		o.generate();
+		return o;
+	}
+	
 	public static TransformOperatorInOut makeScale(float scale,RectF bounds) {
 		//final usePoint=new PointF();
 		TransformOperatorInOut o = new TransformOperatorInOut() ;
@@ -164,6 +180,7 @@ public class TransformOperatorInOut {
 		o.generate();
 		return o;
 	}
+	
 	public static TransformOperatorInOut makeScaleAndTranslate(PointF trans, float scale, RectF bounds) {
 		TransformOperatorInOut o = new TransformOperatorInOut();
 		//o.matrix=new double[][]{{scale,0},{0,scale}};

@@ -35,20 +35,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import java.io.IOException;
 import java.util.ArrayList;
 
-import android.graphics.PointF;
 import android.util.Log;
 import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.file.export.json.v3.JSONConst;
-import co.uk.sentinelweb.views.draw.file.export.json.v3.JSONUtil;
 import co.uk.sentinelweb.views.draw.file.export.json.v3.SVGStatic;
 import co.uk.sentinelweb.views.draw.model.PointVec;
 import co.uk.sentinelweb.views.draw.model.Stroke;
-import co.uk.sentinelweb.views.draw.model.path.Bezier;
 import co.uk.sentinelweb.views.draw.model.path.PathData;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 
 public class GSONPointVec {
 	

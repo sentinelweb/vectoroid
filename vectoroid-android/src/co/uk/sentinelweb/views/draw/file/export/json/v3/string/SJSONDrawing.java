@@ -63,11 +63,12 @@ public class SJSONDrawing extends JSONParent{
 	public void toJSON(Drawing d,Writer w) throws IOException{
 		SJSON.beginObj(w);
 		
-		SJSON.writeString(w,JSONConst.JSON_ID, d.getId());
-		SJSON.sep(w);
-		
 		SJSON.writeFloat(w,JSONConst.JSON_VERSION, JSONConst.version);
 		SJSON.sep(w);
+		
+		//SJSON.writeString(w,JSONConst.JSON_ID, d.getId());
+		//SJSON.sep(w);
+		SJSONDrawingElement.writeDE(w, d,null);
 		
 		SJSON.writeID(w,JSONConst.JSON_SIZE);
 		SJSON.writeJSON(w, JSONStatic.toJSON(d.size));

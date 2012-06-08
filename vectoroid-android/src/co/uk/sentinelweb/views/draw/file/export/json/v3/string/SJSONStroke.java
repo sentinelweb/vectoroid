@@ -58,7 +58,7 @@ public class SJSONStroke extends JSONParent {
 	
 	public void toJSON(Stroke s,Writer w) throws IOException{
 			SJSON.beginObj(w);
-			SJSON.writeDE(w, s, JSONConst.JSON_EL_TYPE_STROKE);
+			SJSONDrawingElement.writeDE(w, s, JSONConst.JSON_EL_TYPE_STROKE);
 			
 			SJSON.writeString(w, JSONConst.JSON_TYPE, s.type.toString());
 			SJSON.sep(w);

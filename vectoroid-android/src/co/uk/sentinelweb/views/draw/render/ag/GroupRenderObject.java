@@ -35,9 +35,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import co.uk.sentinelweb.views.draw.model.DrawingElement;
 import co.uk.sentinelweb.views.draw.model.Group;
 import co.uk.sentinelweb.views.draw.model.UpdateFlags;
-import co.uk.sentinelweb.views.draw.render.RenderObject;
+import co.uk.sentinelweb.views.draw.render.VecRenderObject;
 
-public class GroupRenderObject extends RenderObject {
+public class GroupRenderObject extends VecRenderObject {
 	
 	public GroupRenderObject(AndGraphicsRenderer r) {
 		super(r);

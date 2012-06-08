@@ -51,7 +51,7 @@ public class SJSONLayer extends JSONParent{
 	
 	public void toJSON(Layer l,Writer w,SJSONGroup ssg,SJSONStroke jss) throws IOException{
 		SJSON.beginObj(w);
-		SJSON.writeDE(w, l,JSONConst.JSON_EL_TYPE_LAYER);
+		SJSONDrawingElement.writeDE(w, l,JSONConst.JSON_EL_TYPE_LAYER);
 		SJSON.writeID(w,JSONConst.JSON_ELEMENTS);
 		SJSON.beginArr(w);
 		for (int i=0;i<l.elements.size();i++) {

@@ -32,8 +32,6 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
-import java.util.HashMap;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.PointF;
@@ -47,17 +45,17 @@ import co.uk.sentinelweb.views.draw.model.Layer;
 import co.uk.sentinelweb.views.draw.model.Stroke;
 import co.uk.sentinelweb.views.draw.model.UpdateFlags;
 import co.uk.sentinelweb.views.draw.model.ViewPortData;
-import co.uk.sentinelweb.views.draw.render.RenderObject;
-import co.uk.sentinelweb.views.draw.render.Renderer;
+import co.uk.sentinelweb.views.draw.render.VecRenderObject;
+import co.uk.sentinelweb.views.draw.render.VecRenderer;
 import co.uk.sentinelweb.views.draw.util.DispUtil;
 
-public class AndGraphicsRenderer extends Renderer {
+public class AndGraphicsRenderer extends VecRenderer {
 	public enum DrawingMode {DISPLAY,WRITE}
 	protected float density=1;
 	public boolean _debug=VecGlobals._isDebug && false;
 	private ViewPortData _vpd ;
 	public StrokesRenderer sr ;
-	
+	public boolean _feedBackLevelSnappingToModel=false;
 	Canvas canvas;
 	protected DrawingMode mode = DrawingMode.DISPLAY;
 	public AndGraphicsRenderer(Context c) {
@@ -68,14 +66,12 @@ public class AndGraphicsRenderer extends Renderer {
 
 	@Override
 	public void update(DrawingElement de,UpdateFlags flags) {
-		RenderObject ro = getObject(de);
+		VecRenderObject ro = getObject(de);
 		ro.update(de, flags);
 	}
 
 	@Override
 	public void render(DrawingElement de) {
-		RenderObject ro = renderObjects.get(de);
-		//ro.update(de);
 		if (de instanceof Drawing) {
 			Drawing drawing = (Drawing)de;
 			//float z = _vpd.zoom;
@@ -131,8 +127,8 @@ public class AndGraphicsRenderer extends Renderer {
 		this._vpd = _vpd;
 	}
 	@Override
-	public RenderObject getObject(DrawingElement de) {
-		RenderObject ro = renderObjects.get(de);
+	public VecRenderObject getObject(DrawingElement de) {
+		VecRenderObject ro = renderObjects.get(de);
 		if (ro==null) {
 			//DebugUtil.logCall("getObject:",new Exception());
 			if (de instanceof Stroke) {
