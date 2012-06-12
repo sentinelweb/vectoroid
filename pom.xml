@@ -4,14 +4,15 @@
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>co.uk.sentinelweb.views.draw</groupId>
+  <groupId>co.uk.sentinelweb.vectoroid</groupId>
   <artifactId>VectoroidParent</artifactId>
-  <version>0.8</version>
+  <version>0.81</version>
   <packaging>pom</packaging>
 
   <modules>
     <module>vectoroid-android</module>
-    <module>SuprCardsExploder</module>
     <module>VectoroidExample</module>
+    <module>SuprCardsExploder</module>
+   <module>SuprCardsExploderOpenApp</module>
   </modules>
 </project>

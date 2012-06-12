@@ -36,9 +36,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>co.uk.sentinelweb.cards</groupId>
+	<groupId>co.uk.sentinelweb.vectoroid.ex</groupId>
 	<artifactId>SuprCardsExploderLib</artifactId>
-	<version>0.8</version>
+	<version>0.81</version>
 	<packaging>apklib</packaging>
 	<name>Super Cards Exploder Lib</name>
 	<description>This is a demo app to show object animation in Vectoroid</description>
@@ -53,9 +53,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-            <groupId>co.uk.sentinelweb.views.draw</groupId>
+            <groupId>co.uk.sentinelweb.vectoroid</groupId>
             <artifactId>Vectoroid</artifactId>
-            <version>0.8</version>
+            <version>0.81</version>
        	 	<type>apklib</type>
         </dependency>
 	    <dependency>

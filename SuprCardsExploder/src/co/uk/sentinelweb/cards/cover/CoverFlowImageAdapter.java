@@ -60,7 +60,7 @@ import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import android.widget.ListAdapter;
 import co.uk.sentinelweb.cards.SuprCardsConstants;
-import co.uk.sentinelweb.example.cards.explode.R;
+import co.uk.sentinelweb.vectoroid.explode.R;
 import co.uk.sentinelweb.views.draw.file.FileRepository;
 import co.uk.sentinelweb.views.draw.file.SaveFile;
 

@@ -36,11 +36,11 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>co.uk.sentinelweb.views.draw</groupId>
+    <groupId>co.uk.sentinelweb.vectoroid</groupId>
     <artifactId>Vectoroid</artifactId>
     <packaging>apklib</packaging>
     <name>Vectoroid Library</name>
-	<version>0.8</version>
+	<version>0.81</version>
 	<description>This the Vectoroid APK library for Android</description>
 	<url>http://www.vectoroid.com</url>
 	

@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+Note copy this file to SuprCards/misc when changed it is not in version control here
+ -->
+
 <!--  /*
-Vectoroid Example for Android
+SuprCards Explodr for Android
 Copyright (C) 2010-12 Sentinel Web Technologies Ltd
 All rights reserved.
  
@@ -32,16 +36,17 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */ -->
+<!-- mvn clean install -f pom_rel.xml -Dsentineljarsign -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" 
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>co.uk.sentinelweb.vectoroid.ex</groupId>
-	<artifactId>VectoroidExample</artifactId>
-	<version>0.8</version>
+	<artifactId>SuprCardsExploderOpenApp</artifactId>
+	<version>0.80</version>
 	<packaging>apk</packaging>
-	<name>Vectoroid Example</name>
-	<description>This is a demo app to load a drawing - the hello world example</description>
+	<name>Super Cards Exploder</name>
+	<description>This is a demo app to show object animation in Vectoroid</description>
 	<url>http://www.vectoroid.com</url>
 	
 	<dependencies>
@@ -52,13 +57,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 			<version>2.3.3</version>
 			<scope>provided</scope>
 		</dependency>
+		
 		<dependency>
             <groupId>co.uk.sentinelweb.vectoroid</groupId>
             <artifactId>Vectoroid</artifactId>
             <version>0.81</version>
        	 	<type>apklib</type>
         </dependency>
-		
+        
+		 <dependency>
+	      <groupId>co.uk.sentinelweb.vectoroid.ex</groupId>
+	      <artifactId>SuprCardsExploderLib</artifactId>
+	      <version>0.81</version>
+	      <type>apklib</type>
+	    </dependency>
+	    
 	    <dependency>
 	      <groupId>com.google.code.gson</groupId>
 	      <artifactId>gson</artifactId>
@@ -75,7 +88,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		<jsse.jar.path>${env.JAVA_HOME}/jre/lib/jsse.jar</jsse.jar.path>
 		
 		<versionString>${project.version}.example</versionString>
-		<vendor>EXAMPLE</vendor>
+		<vendor>BUILD</vendor>
 	</properties>
 
 	<build>
@@ -97,7 +110,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 					</sdk>
 					<deleteConflictingFiles>true</deleteConflictingFiles>
 					<undeployBeforeDeploy>true</undeployBeforeDeploy>
-					
+					<zipalign>
+						<verbose>true</verbose>
+						<skip>false</skip>
+						<inputApk>${project.build.directory}/${project.artifactId}-${project.version}.apk</inputApk>
+						<outputApk>${project.build.directory}/${project.artifactId}_v${versionString}_${vendor}_z.apk</outputApk>
+					</zipalign>
 					<sign>
 						<debug>false</debug>
 					</sign>
@@ -105,7 +123,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 				<extensions>true</extensions>
 				<executions>
-					
+					<execution>
+						<id>zipalign</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>zipalign</goal>
+						</goals>
+					</execution>
 				</executions>
 			</plugin>
 
@@ -117,6 +141,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 					<target>1.5</target>
 				</configuration>
 			</plugin>
+			
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
 				<executions>
@@ -127,7 +152,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 						</goals>
 					</execution>
 				</executions>
-			</plugin>
+			</plugin> 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jarsigner-plugin</artifactId>
@@ -154,7 +179,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 				</executions>
 			</plugin>
 		</plugins>
-		<resources>
+	 	<resources>
 			<resource>
 				<filtering>false</filtering>
 				<directory>${basedir}</directory>
@@ -174,8 +199,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 				<targetPath>${project.build.directory}/res</targetPath>
 			</resource>
 			<resource>
-				<filtering>false</filtering>
-				<directory>${basedir}/assets</directory>
+				<filtering>true</filtering>
+				<directory>${basedir}/res</directory>
 				<targetPath>${project.build.directory}/assets</targetPath>
 			</resource>
 		</resources>
@@ -189,6 +214,31 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 				<versionString>${project.version}.example</versionString>
 			</properties>
 		</profile>
-		
+		<profile>
+			<id>amazon</id>
+			<properties>
+				<vendor>AMAZON</vendor>
+				<versionString>${project.version}</versionString>
+			</properties>
+		</profile>
+		<profile>
+			<id>google</id>
+			<properties>
+				<vendor>GOOGLE</vendor>
+				<versionString>${project.version}</versionString>
+			</properties>
+			<build>
+				<resources>
+					<resource>
+					  <filtering>true</filtering>
+					  <directory>${basedir}/resources</directory>
+						<includes>
+		      				<include>AndroidManifest.xml</include>
+		    			</includes>
+					  <targetPath>${project.build.directory}</targetPath>
+					</resource>
+				</resources>
+			</build>
+		</profile>
 	</profiles>
 </project>

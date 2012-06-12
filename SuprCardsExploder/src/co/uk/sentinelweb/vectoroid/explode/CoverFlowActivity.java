@@ -1,4 +1,4 @@
-package co.uk.sentinelweb.example.cards.explode;
+package co.uk.sentinelweb.vectoroid.explode;
 /*
 SuprCards Explodr for Android
 Copyright (C) 2010-12 Sentinel Web Technologies Ltd
