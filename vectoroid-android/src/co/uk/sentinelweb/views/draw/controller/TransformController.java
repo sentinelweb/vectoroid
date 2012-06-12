@@ -125,8 +125,8 @@ public class TransformController {
 						Arc a1 = (Arc)pt;
 						Arc a2 = (Arc)pt2;
 								//t.operate( a1.r, a2.r );
-						a2.r.x=a1.r.x*(float)t.scaleXValue;
-						a2.r.y=a1.r.y*(float)t.scaleYValue;
+						//a2.r.x=a1.r.x*(float)t.scaleXValue;
+						//a2.r.y=a1.r.y*(float)t.scaleYValue;
 						break;
 					
 				}

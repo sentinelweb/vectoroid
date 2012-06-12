@@ -324,7 +324,7 @@ public class StrokeRenderObject extends VecRenderObject{
 								cp.draw(a.x-a.r.x,a.y-a.r.y,a.x+a.r.x,a.y+a.r.y);
 								*/
 								//path.arcTo(new RectF(a.x-a.r.x,a.y-a.r.y,a.x+a.r.x,a.y+a.r.y), startAngle, sweepAngle);
-								
+								/*
 								if (lastPathData!=null) {
 									a.arcTo(lastPathData,a.r.x,a.r.y,a.xrot,a.largeArc,a.sweep,a.x,a.y);
 									Log.d(VecGlobals.LOG_TAG, "SVG Arc rendr:"+":"+PointUtil.tostr(a.oval)+":"+PointUtil.tostr(a.startAndSweepAngle)+":"+a.xrot+":"+a.largeArc+":"+a.sweep);
@@ -340,8 +340,8 @@ public class StrokeRenderObject extends VecRenderObject{
 									path.lineTo(pd.x, pd.y-5);
 									path.lineTo(pd.x, pd.y);
 								}
-								
-								//path.lineTo(pd.x, pd.y);
+								*/
+								path.lineTo(pd.x, pd.y);
 								break;
 						}
 					} 
