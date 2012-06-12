@@ -1,10 +1,17 @@
-Vectoroid for Android
+Vectoroid for Android (Update 12 Jun 2012)
 
 This is a library to use drawings made in vectoroid apps.
 
 It can be used to manipluate and animate the vectors drawn by people for whatever purpose, art, fun, games, presentations, etc.
 
 This software is Dual-Licenced see LICENCE.txt for more information.
+
+DEPENDENCIES:
+The GSON librbary is bundled, to install locally use:
+mvn install:install-file -Dfile=vectoroid-android/libs/gson-2.1.jar   -DgroupId=com.google.code.gson -DartifactId=gson -Dversion=2.1 -Dpackaging=jar
+
+BUILD :
+mvn clean install
 
 Projects
 
@@ -15,6 +22,7 @@ http://www.vectoroid.com
 VectoroidExample
 The simplest hello world example - loads a drawing from assets
 https://play.google.com/store/apps/details?id=co.uk.sentinelweb.vectoroid.example.basic
+APK is in target
 
 SuprCardsExploder
 This 'explodes' drawings made in SuprCards - the first drawing app. 
@@ -22,6 +30,7 @@ It is available on market.
 https://play.google.com/store/apps/details?id=co.uk.sentinelweb.example.cards.explode
 
 The demo explodes the hello world drawing.
-
-
+SuprCardsExploderOpenApp
+Housing for SuprCardsExploder
+APK is in target
 
