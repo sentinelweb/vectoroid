@@ -38,7 +38,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>co.uk.sentinelweb.vectoroid.ex</groupId>
 	<artifactId>VectoroidExample</artifactId>
-	<version>0.8</version>
+	<version>0.82</version>
 	<packaging>apk</packaging>
 	<name>Vectoroid Example</name>
 	<description>This is a demo app to load a drawing - the hello world example</description>
@@ -55,7 +55,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 		<dependency>
             <groupId>co.uk.sentinelweb.vectoroid</groupId>
             <artifactId>Vectoroid</artifactId>
-            <version>0.81</version>
+            <version>0.82</version>
        	 	<type>apklib</type>
         </dependency>
 		
@@ -97,7 +97,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 					</sdk>
 					<deleteConflictingFiles>true</deleteConflictingFiles>
 					<undeployBeforeDeploy>true</undeployBeforeDeploy>
-					
+					<zipalign>
+						<verbose>true</verbose>
+						<skip>false</skip>
+						<inputApk>${project.build.directory}/${project.artifactId}-${project.version}.apk</inputApk>
+						<outputApk>${project.build.directory}/${project.artifactId}_v${versionString}_${vendor}_z.apk</outputApk>
+					</zipalign>
 					<sign>
 						<debug>false</debug>
 					</sign>
@@ -105,7 +110,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 				<extensions>true</extensions>
 				<executions>
-					
+					<execution>
+						<id>zipalign</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>zipalign</goal>
+						</goals>
+					</execution>
 				</executions>
 			</plugin>
 

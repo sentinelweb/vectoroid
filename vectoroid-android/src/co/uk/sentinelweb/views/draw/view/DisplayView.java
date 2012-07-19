@@ -1,7 +1,11 @@
 package co.uk.sentinelweb.views.draw.view;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+
+import org.xml.sax.InputSource;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -21,6 +25,7 @@ import android.widget.ImageView;
 import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.file.DrawingFileUtil;
 import co.uk.sentinelweb.views.draw.file.SaveFile;
+import co.uk.sentinelweb.views.draw.file.svg.importer.SVGParser;
 import co.uk.sentinelweb.views.draw.model.Drawing;
 import co.uk.sentinelweb.views.draw.model.UpdateFlags;
 import co.uk.sentinelweb.views.draw.model.ViewPortData;
@@ -55,6 +60,8 @@ public class DisplayView extends ImageView {
 	OnClickListener _swipeLeftListener;
 	OnClickListener _swipeRightListener;
 	float _swipeDist = 200;
+	String svgPath=null;
+	
 	public DisplayView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		init(context,attrs);
@@ -197,17 +204,12 @@ public class DisplayView extends ImageView {
 	public void setAsset(String assetPath) {
 		loadState=LOADSTATE_LOADING;
 		_isAsset = true;
-		/*
 		if (assetPath!=null) {
-			new LoadSVGTask().execute(assetPath);
-		} else {
-			d=null;
-			loadState=LOADSTATE_UNLOADED;
-			invalidate();
-		}
-		*/
-		if (assetPath!=null) {
-			new LoadDrawingTask().execute(assetPath);
+			if (assetPath.toLowerCase().endsWith("svg")) {
+				new LoadSVGTask().execute(assetPath);
+			} else {
+				new LoadDrawingTask().execute(assetPath);
+			} 
 		} else {
 			d=null;
 			loadState=LOADSTATE_UNLOADED;
@@ -232,7 +234,12 @@ public class DisplayView extends ImageView {
 		this._saveFile=saveFile;
 		_isAsset = false;
 		if (f!=null && f.exists()) {
-			new LoadDrawingTask().execute(f.getAbsolutePath());
+			//new LoadDrawingTask().execute(f.getAbsolutePath());
+			if (f.getAbsolutePath().toLowerCase().endsWith("svg")) {
+				new LoadSVGTask().execute(f.getAbsolutePath());
+			} else {
+				new LoadDrawingTask().execute(f.getAbsolutePath());
+			} 
 		} else {
 			d=null;
 			loadState=LOADSTATE_UNLOADED;
@@ -264,79 +271,79 @@ public class DisplayView extends ImageView {
 	}
 	
 
-//	private class LoadSVGTask extends AsyncTask<String, Integer, Long> {
-//		@Override
-//		protected Long doInBackground(String... params) {
-//			String uri = params[0];
-//			DisplayView.this.svgPath=uri;
-//			if (DVGlobals._isDebug) Log.d(DVGlobals.LOG_TAG, "SVGImageView.this.svgPath: "+DisplayView.this.svgPath);
-//			if (svgPath!=null) {
-//				try {
-//					loadState=LOADSTATE_LOADING;
-//					this.publishProgress(loadState);
-//					d=null;
-//					agr.dropCache();
-//					System.gc();
-//					InputStream is = null;
-//					if (_isAsset) {
-//						is = getContext().getResources().getAssets().open(svgPath);
-//					} else {
-//						try {
-//							is = new FileInputStream(new File(svgPath));
-//						} catch (Exception e) {
-//							e.printStackTrace();
-//						}
-//					}
-//					if (is!=null) {
-//						InputSource isc = new InputSource(is);
-//						SVGParser svgp = new SVGParser();
-//						d = svgp.parseSAX(isc);
-//						is.close();
-//						loadState=LOADSTATE_UPDATING;
-//						this.publishProgress(loadState);
-//						d.update(true, agr, UpdateFlags.ALL);
+	private class LoadSVGTask extends AsyncTask<String, Integer, Long> {
+		@Override
+		protected Long doInBackground(String... params) {
+			String uri = params[0];
+			DisplayView.this.svgPath=uri;
+			if (VecGlobals._isDebug) Log.d(VecGlobals.LOG_TAG, "SVGImageView.this.svgPath: "+DisplayView.this.svgPath);
+			if (svgPath!=null) {
+				try {
+					loadState=LOADSTATE_LOADING;
+					this.publishProgress(loadState);
+					d=null;
+					agr.dropCache();
+					System.gc();
+					InputStream is = null;
+					if (_isAsset) {
+						is = getContext().getResources().getAssets().open(svgPath);
+					} else {
+						try {
+							is = new FileInputStream(new File(svgPath));
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+					if (is!=null) {
+						InputSource isc = new InputSource(is);
+						SVGParser svgp = new SVGParser();
+						d = svgp.parseSAX(isc);
+						is.close();
+						loadState=LOADSTATE_UPDATING;
+						this.publishProgress(loadState);
+						d.update(true, agr, UpdateFlags.ALL);
 //						d.computeBounds(drawingBounds);
-//						
-//						//if (DVGlobals._isDebug) Log.d(DVGlobals.LOG_TAG, "LoadSVGTask:drawing bounds:"+PointUtil.tostr(d.calculatedBounds)+":"+PointUtil.tostr(d.size)+PointUtil.tostr(drawingBounds));
-//						
+						
+						//if (DVGlobals._isDebug) Log.d(DVGlobals.LOG_TAG, "LoadSVGTask:drawing bounds:"+PointUtil.tostr(d.calculatedBounds)+":"+PointUtil.tostr(d.size)+PointUtil.tostr(drawingBounds));
+						
 //						if (_correctBounds) {
 //							correctBounds();
 //						}
-//						loadState=LOADSTATE_LOADED;
-//						this.publishProgress(loadState);
-//					}
-//					
-//				} catch (IOException e) {
-//					if (DVGlobals._isDebug) Log.d(DVGlobals.LOG_TAG, "Load failed:"+DisplayView.this.svgPath,e);
-//					loadState=LOADSTATE_FAILED;
-//					this.publishProgress(loadState);
-//				}
-//			}
-//			return null;
-//		}
-//
-//		/* (non-Javadoc)
-//		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
-//		 */
-//		@Override
-//		protected void onPostExecute(Long result) {
-//			invalidate();
-//			if (onLoadListener!=null) {
-//				onLoadListener.onAsync(loadState);
-//			}
-//		}
-//
-//		/* (non-Javadoc)
-//		 * @see android.os.AsyncTask#onProgressUpdate(Progress[])
-//		 */
-//		@Override
-//		protected void onProgressUpdate(Integer... values) {
-//			invalidate();
-//			if (loadState!=LOADSTATE_LOADED && onLoadListener!=null) {
-//				onLoadListener.onAsync(loadState);
-//			}
-//		}
-//	}
+						loadState=LOADSTATE_LOADED;
+						this.publishProgress(loadState);
+					}
+					
+				} catch (IOException e) {
+					if (VecGlobals._isDebug) Log.d(VecGlobals.LOG_TAG, "Load failed:"+DisplayView.this.svgPath,e);
+					loadState=LOADSTATE_FAILED;
+					this.publishProgress(loadState);
+				}
+			}
+			return null;
+		}
+
+		/* (non-Javadoc)
+		 * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
+		 */
+		@Override
+		protected void onPostExecute(Long result) {
+			invalidate();
+			if (onLoadListener!=null) {
+				onLoadListener.onAsync(loadState);
+			}
+		}
+
+		/* (non-Javadoc)
+		 * @see android.os.AsyncTask#onProgressUpdate(Progress[])
+		 */
+		@Override
+		protected void onProgressUpdate(Integer... values) {
+			invalidate();
+			if (loadState!=LOADSTATE_LOADED && onLoadListener!=null) {
+				onLoadListener.onAsync(loadState);
+			}
+		}
+	}
 	private class LoadDrawingTask extends AsyncTask<String , Integer, Long> {
 
 		@Override

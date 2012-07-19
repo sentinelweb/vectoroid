@@ -55,6 +55,7 @@ public class Drawing extends DrawingElement implements IDrawingElementCollection
 	public void copyFrom(Drawing d) {
 		size.set(d.size);
 		background=d.background.duplicate();
+		id=d.id;
 		elements.clear();
 		for (DrawingElement de : d.elements) {
 			elements.add(de);
@@ -69,6 +70,7 @@ public class Drawing extends DrawingElement implements IDrawingElementCollection
 	// THIS DOES NOT CALL UPDATE (as its used for undo)
 	public DrawingElement duplicate(boolean shallow) {
 		Drawing d = new Drawing();
+		d.id=id;
 		d.size.set(this.size);
 		d.background=this.background.duplicate();
 		d.setId(this.getId());

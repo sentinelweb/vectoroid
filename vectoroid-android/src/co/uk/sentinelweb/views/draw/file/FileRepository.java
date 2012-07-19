@@ -34,12 +34,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 
 import android.content.Context;
 import android.util.Log;
 import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.controller.FontController;
+import co.uk.sentinelweb.views.draw.util.FileUtil;
 
 public class FileRepository {
 	//private static final String APP_DIR_DEFAULT = "DFTest";
@@ -297,5 +299,18 @@ public class FileRepository {
 		}
 		return null;
 	}
-	
+	public static void checkFontAssetInstalled(Context a , String fileName) {
+		FileRepository fileRepository = getFileRepository(a);
+		FontController _fontController2 = fileRepository._fontController;
+		String substring = fileName.substring(0,fileName.lastIndexOf("."));
+		_fontController2._ttfontFiles.containsKey(substring);
+		if (!_fontController2._ttfontFiles.containsKey(substring)) {
+			try {
+				InputStream is = a.getResources().getAssets().open(fileName);
+				FileUtil.copy(is, new File(fileRepository.getDirectory(Directory.TTF),fileName));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 }

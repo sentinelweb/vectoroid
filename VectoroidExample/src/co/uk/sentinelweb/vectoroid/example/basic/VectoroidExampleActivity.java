@@ -35,30 +35,74 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import co.uk.sentinelweb.views.draw.util.OnAsyncListener;
 import co.uk.sentinelweb.views.draw.view.DisplayView;
 
 public class VectoroidExampleActivity extends Activity {
 	DisplayView dv;
 	TextView t;
+	ProgressBar progress;
+	String currentAssetName = "hello.json";
 	/** Called when the activity is first created. */
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE); 
 		setContentView(R.layout.main);
-        
+		progress = (ProgressBar) findViewById(R.id.main_progress);
+		
         dv = (DisplayView) findViewById(R.id.main_grafik);
+        dv.setOnLoadListener(_drawingLoadListener);
+        dv.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				if (currentAssetName.equals("hello.json")) {
+					currentAssetName="Vectoroid_robot.svg";
+				} else {
+					currentAssetName="hello.json";
+				}
+				loadAsset(currentAssetName);
+			}
+		});
         t =  (TextView)findViewById(R.id.main_text);
-        try {
-    		dv.setAsset("hello.json");
-        	t.setText("Hello ...");
+        loadAsset(currentAssetName);
+    }
+
+	OnAsyncListener<Integer> _drawingLoadListener = new OnAsyncListener<Integer>(){
+		@Override
+		public void onAsync(Integer request) {
+			if (request==DisplayView.LOADSTATE_LOADED ||request==DisplayView.LOADSTATE_FAILED) {
+				progress.setVisibility(View.GONE);
+			} else {
+				progress.setVisibility(View.VISIBLE);
+			}
+		}
+	};
+	
+	private void loadAsset(String name) {
+		try {
+			//if (name.endsWith("json")) {
+				dv.setAsset(name);
+//			} else {
+//				InputStream is = getResources().getAssets().open(name);
+//				InputSource isc = new InputSource(is);
+//				SVGParser svgp = new SVGParser();
+//				Drawing d = svgp.parseSAX(isc);
+//				d.update(true, dv.getRenderer(), UpdateFlags.ALL);// shouldnt be nessecary - test
+//				dv.setDrawing(d,false);
+//			}
+			t.setText(name);
 		} catch (Exception e) {
 			e.printStackTrace();
 			t.setText("Error ..."+e.getMessage());
 		}
-    }
+	}
     
 
 	@Override

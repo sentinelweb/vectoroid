@@ -41,4 +41,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 	<TextView  android:id="@+id/main_text" android:layout_width="wrap_content" android:layout_height="wrap_content" 
 	    android:background="#88000000" android:textColor="#ffffff" android:textStyle="bold" android:textSize="18dp" 
 	    android:padding="5dp" />
+	<ProgressBar android:id="@+id/main_progress" android:layout_width="wrap_content" android:layout_height="wrap_content" 
+	    android:layout_alignParentRight="true"/>
 </RelativeLayout>

@@ -88,6 +88,7 @@ public class Stroke extends DrawingElement {
 		Stroke s = new Stroke();
 		s.pen=pen.duplicate();
 		s.fill=fill.duplicate();
+		s.id=id;
 		s.type=type;
 		s.text=text;
 		s.fontName=fontName;

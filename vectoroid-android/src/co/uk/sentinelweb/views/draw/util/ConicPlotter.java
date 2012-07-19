@@ -1,8 +1,8 @@
 package co.uk.sentinelweb.views.draw.util;
 
-import co.uk.sentinelweb.views.draw.VecGlobals;
 import android.graphics.Path;
 import android.util.Log;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 /* EXPERIMENTAL!!!! ARC CONSTRUCTION
  * Credit:
  * http://stackoverflow.com/questions/8201842/get-points-of-svg-xaml-arc

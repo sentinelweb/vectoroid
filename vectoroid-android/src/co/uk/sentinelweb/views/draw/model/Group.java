@@ -64,6 +64,7 @@ public class Group extends DrawingElement  implements IDrawingElementCollection{
 				//duplicate.update();
 			}
 		}
+		g.id=id;
 		g.locked=locked;
 		g.visible=visible;
 		return g;

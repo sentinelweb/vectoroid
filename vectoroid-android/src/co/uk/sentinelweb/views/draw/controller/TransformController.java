@@ -48,6 +48,23 @@ import co.uk.sentinelweb.views.draw.model.path.Quadratic;
 import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer;
 
 public class TransformController {
+	// TODO a bit more inneffifcient than collating all the strokes
+	public static void transform(ArrayList<DrawingElement> deList,ArrayList<DrawingElement> deList1,  TransformOperatorInOut t, AndGraphicsRenderer r) {
+		for (int i=0;i<deList.size();i++) {
+			DrawingElement de = deList.get(i);
+			DrawingElement de1 = null;
+			if (deList1.size()<=i) {
+				de1 = de.duplicate();
+				deList1.add(de1);
+			}
+			de1 = deList1.get(i);
+			if (de1==null) {
+				de1 = de.duplicate();
+				deList1.add(de1);
+			}
+			transform( de, de1,   t,  r);
+		}
+	}
 	public static void transform(DrawingElement de,DrawingElement de1,  TransformOperatorInOut t, AndGraphicsRenderer r) {
 		//if (DVGlobals._isDebug) Log.d(DVGlobals.LOG_TAG,"transform de:"+de.hashCode()+":"+de1.hashCode());
 		boolean updateAfter = de instanceof Drawing || de instanceof Group ;
@@ -64,17 +81,22 @@ public class TransformController {
 			processVec.add((Stroke)de);
 			processVecTmp.add((Stroke)de);
 		}
-		for (int l=processVec.size()-1;l>=0;l--) {
-			Stroke original = processVec.get(l);
-			Stroke tmp = processVecTmp.get(l);
-			transform(original,tmp, t);
-			if (!updateAfter) {tmp.update(false, r, UpdateFlags.ALL);}
-		}
+		transform(processVec, processVecTmp, t, updateAfter, r);
 		if (de instanceof Drawing) {
 			((Drawing)de).applyTransform(t,de1);
 		}
 		if (updateAfter) {
 			de1.update(true, r, UpdateFlags.ALL);
+		}
+	}
+	public static void transform(ArrayList<Stroke> processVec,
+			ArrayList<Stroke> processVecTmp, TransformOperatorInOut t,
+			boolean updateAfter, AndGraphicsRenderer r) {
+		for (int l=processVec.size()-1;l>=0;l--) {
+			Stroke original = processVec.get(l);
+			Stroke tmp = processVecTmp.get(l);
+			transform(original,tmp, t);
+			if (!updateAfter) {tmp.update(false, r, UpdateFlags.ALL);}
 		}
 	}
 	// note for points transform this will need a point selection

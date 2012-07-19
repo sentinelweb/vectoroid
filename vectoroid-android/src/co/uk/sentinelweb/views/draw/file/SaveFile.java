@@ -386,7 +386,7 @@ public class SaveFile {
 		}
 	}
 
-	public boolean renderFull(Drawing drawing, AndGraphicsRenderer agr,File f)	 {
+	public static boolean renderFull(Drawing drawing, AndGraphicsRenderer agr,File f)	 {
 		
 		try {
 			ViewPortData vpd = ViewPortData.getFullDrawing(drawing);

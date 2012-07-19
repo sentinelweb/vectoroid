@@ -59,6 +59,8 @@ import co.uk.sentinelweb.ps.motion.StandardMotion;
 import co.uk.sentinelweb.ps.render.DERenderer;
 import co.uk.sentinelweb.views.draw.file.FileRepository;
 import co.uk.sentinelweb.views.draw.file.SaveFile;
+import co.uk.sentinelweb.views.draw.model.DrawingElement;
+import co.uk.sentinelweb.views.draw.model.IDrawingElementCollection;
 import co.uk.sentinelweb.views.draw.model.Layer;
 import co.uk.sentinelweb.views.draw.util.OnAsyncListener;
 import co.uk.sentinelweb.views.draw.view.DisplayView;
@@ -69,13 +71,14 @@ public class SuprCardsExploderActivity extends Activity {
 	public static final String INTENT_PARAM_LOAD_FILE_SET = "set";
 	public static final String INTENT_PARAM_LOAD_FILE_DRAWING = "drawing";
 	
-	TextView _textView;
+	protected TextView _textView;
+	protected DisplayView _displayView;
+	
+	protected String _currentSet = null;
 	Handler _handler;
 	boolean _doAnimate = false;
-	String _currentSet = null;
 	
 	ParticleSystems ps;
-	DisplayView _displayView;
 	
 	int frameCounter = 0;
 	long animStartTime = 0;
@@ -238,17 +241,23 @@ public class SuprCardsExploderActivity extends Activity {
 		animStartTime=SystemClock.uptimeMillis();  
 		frameCounter=0;
 		// We get the first layer - the is the drawing layer in SuprCards
+		ArrayList<DrawingElement> els;
 		Layer l = _displayView.getDrawing().getLayer(SuprCardsConstants.DRAW_LAYER_NAME);
+		if (l==null) {
+			els=new ArrayList<DrawingElement>(_displayView.getDrawing().getAllStrokes());
+		} else {
+			els=l.elements;
+		}
 		// We get an arrayList of Motion objects (see below) for the particles to perform
 		ArrayList<co.uk.sentinelweb.ps.motion.Motion> ms=getMotionList();
 		// The drawingElement renederer renders a whole Layer.
 		// More renderes to be completed for (strokes, etc)
 		// This renderer animates relative to the topLeft of the element in the layer
-		DERenderer ren = new DERenderer(l.elements);
+		DERenderer ren = new DERenderer(els);
 		if (!ps.dead()) {ps.kill();	}// kill the exisiing particle systems if needed (it shouldn't)
 		// ParticleSystem holds the particles see below for creating particles dynamically.
 		ParticleSystems.ParticleSystem ps2 = ps.new ParticleSystem(
-				l.elements.size(), 
+				els.size(), 
 				new Vector3D(0,0,0),
 				ms, 
 				ren, 1);

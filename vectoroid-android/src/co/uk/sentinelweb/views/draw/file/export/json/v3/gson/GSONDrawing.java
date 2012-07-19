@@ -125,7 +125,7 @@ public class GSONDrawing extends JSONParent{
 			reader.peek();
 			while (reader.hasNext()) {
 				String name = reader.nextName();
-				//Log.d(DVGlobals.LOG_TAG, "nextname:"+name);
+				Log.d(VecGlobals.LOG_TAG, "nextname:"+name);
 				if (GSONDrawingElement.fromJSON(gson, reader, d, name)) {
 
 				} else if (JSONConst.JSON_VERSION.equals(name)) {
