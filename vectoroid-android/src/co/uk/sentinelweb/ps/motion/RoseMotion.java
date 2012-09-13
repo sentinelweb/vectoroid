@@ -52,13 +52,15 @@ public class RoseMotion  extends Motion{
 			float r = (float) (200 * Math.sin(k * theta) + pt.index * 10);
 			PolarCoords p = new PolarCoords(r, theta);
 
-			pt.loc = new Vector3D(p.x(), p.y(), 0);
+			pt.loc.setXYZ(p.x(), p.y(), 0);
 			pt.loc.add(pt.vel);
-			pt.trails.enqueue(pt.loc.copy());
-
-			float theta_vel = 4f;
-			pt.rot.add(new Vector3D(theta_vel, 0, 0));
-			pt.trailsRot.enqueue(pt.rot.copy());
+			if (pt.trails.size()>0) {
+				pt.trails.enqueue(pt.loc.copy());
+				
+				float theta_vel = 4f;
+				pt.rot.add(new Vector3D(theta_vel, 0, 0));
+				pt.trailsRot.enqueue(pt.rot.copy());
+			}
 			return true;
 		}
 	}

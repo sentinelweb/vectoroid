@@ -500,5 +500,6 @@ public class DisplayView extends ImageView {
 	public void setSwipeRightListener(OnClickListener _swipeRightListener) {
 		this._swipeRightListener = _swipeRightListener;
 	}
+
 	
 }

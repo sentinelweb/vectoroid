@@ -32,9 +32,12 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import co.uk.sentinelweb.views.draw.controller.TransformController;
+import co.uk.sentinelweb.views.draw.controller.FontController.Font;
+import co.uk.sentinelweb.views.draw.file.FileRepository;
 import co.uk.sentinelweb.views.draw.model.DrawingElement;
 import co.uk.sentinelweb.views.draw.model.PointVec;
 import co.uk.sentinelweb.views.draw.model.Stroke;
@@ -211,5 +214,64 @@ public class StrokeUtil {
 			pt.y=B * (float)Math.sin(b*angle);
 			pv.add(pt);
 		}
+	}
+	
+	public static void makeRect(Stroke s,RectF r) {
+		s.type=Stroke.Type.LINE;
+		PointVec curVec = s.currentVec;
+		curVec.clear();
+		curVec.closed=true;
+		curVec.add(new PathData(r.left,r.top));
+		curVec.add(new PathData(r.right,r.top));
+		curVec.add(new PathData(r.right,r.bottom));
+		curVec.add(new PathData(r.left,r.bottom));
+	}
+	
+	//TODO need a method that takes a font
+	public static Stroke makeTextRec(String text, RectF r) {//,String fontName
+		Stroke s = new Stroke(true);
+		s.type=Stroke.Type.TEXT_TTF;
+		Paint pt = new Paint();
+		pt.setTextSize(r.height());
+		//if (fontName!=null) {
+		//	s.fontName=fontName;
+		//	pt.setTypeface(FileRepository.getFileRepository(null));
+		//}
+		s.textXScale = pt.measureText(text)/r.width();
+		s.text=text;
+		PointVec curVec = s.currentVec;
+		curVec.clear();
+		curVec.closed=true;
+		float left = Math.min(r.left, r.right);
+		float right = Math.max(r.left, r.right);
+		float top = Math.min(r.top, r.bottom);
+		float bottom = Math.max(r.top, r.bottom);
+		curVec.add(new PathData(left,bottom));
+		curVec.add(new PathData(right,bottom));
+		curVec.add(new PathData(right,top));
+		curVec.add(new PathData(left,top));
+		return s;
+	}
+	
+	public static Stroke makeText( String text,PointF p,float size) {
+		Stroke s = new Stroke(true);
+		s.type=Stroke.Type.TEXT_TTF;
+		PointVec curVec = s.points.get(0);
+		Paint pt  =new Paint();
+		pt.setTextSize(size);
+		float wid = pt.measureText(text);
+		curVec.clear();
+		curVec.closed=true;
+		float left = p.x;
+		//float right = Math.max(r.left, r.right);
+		//float top = Math.min(r.top, r.bottom);
+		float bottom = p.y;
+		float right = left+wid;
+		float top = bottom-size;
+		curVec.add(new PathData(left,bottom));
+		curVec.add(new PathData(right,bottom));
+		curVec.add(new PathData(right,top));
+		curVec.add(new PathData(left,top));
+		return s;
 	}
 }

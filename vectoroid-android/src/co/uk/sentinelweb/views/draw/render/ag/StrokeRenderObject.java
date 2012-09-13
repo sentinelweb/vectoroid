@@ -134,8 +134,10 @@ public class StrokeRenderObject extends VecRenderObject{
 	
 	public void setBounds (Stroke s) {
 		
-		if (s.type==Stroke.Type.TEXT_TTF && s.text!=null) { 
-			splitStr = s.text.split("\n");
+		if (s.type==Stroke.Type.TEXT_TTF  ) { 
+			if (s.text!=null) {
+				splitStr = s.text.split("\n");
+			} else {splitStr = new String[]{""};}
 			fontTTF = FileRepository.getFileRepository(this.r.c,null).getFontController().getTTFont(s.fontName);
 			
 			//if (s.calculatedBounds.width()==0) {
@@ -398,8 +400,8 @@ public class StrokeRenderObject extends VecRenderObject{
 					Log.d(VecGlobals.LOG_TAG, "mkopath txt 2 :shouldnt be here... ");
 					path.moveTo((point0.x), point0.y);
 					path.lineTo((point0.x+s.calculatedBounds.width()), point0.y);
-					path.lineTo((point0.x+s.calculatedBounds.width()), (point0.y-getDefaultTextHeight()));
-					path.lineTo((point0.x), (point0.y-getDefaultTextHeight()));
+					//path.lineTo((point0.x+s.calculatedBounds.width()), (point0.y-getDefaultTextHeight()));
+					//path.lineTo((point0.x), (point0.y-getDefaultTextHeight()));
 				} else {
 					dontDisplay=true;
 				}
@@ -447,6 +449,10 @@ public class StrokeRenderObject extends VecRenderObject{
 			fgInner.setTextScaleX(xscale);
 			fgOuter.setTextScaleX(xscale);
 			fgFill.setTextScaleX(xscale);
+			
+			fgInner.setSubpixelText(true);// RM 250812 - this is untested !! check performance ...
+			fgOuter.setSubpixelText(true);// RM 250812 - this is untested !! check performance ...
+			fgFill.setSubpixelText(true);// RM 250812 - this is untested !! check performance ...
 			
 		}
 		//fgInner.setAlpha(pen.alpha);

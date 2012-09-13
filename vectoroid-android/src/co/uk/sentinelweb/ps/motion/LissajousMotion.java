@@ -59,9 +59,10 @@ public class LissajousMotion extends Motion {
 			int angle = pt.timeInCycle + pt.index * 36;
 			pt.loc.x = A * (float) Math.sin(a * angle + delta) + pt.index * 10;// LookupTable.sinD
 			pt.loc.y = B * (float) Math.sin(b * angle) + pt.index * 10;// LookupTable
-
-			pt.trails.enqueue(pt.loc.copy());
-			pt.trailsRot.enqueue(new Vector3D(0, 0, 0));
+			if (pt.trails.size()>0) {
+				pt.trails.enqueue(pt.loc.copy());
+				pt.trailsRot.enqueue(new Vector3D(0, 0, 0));
+			}
 			return true;
 		}
 	}

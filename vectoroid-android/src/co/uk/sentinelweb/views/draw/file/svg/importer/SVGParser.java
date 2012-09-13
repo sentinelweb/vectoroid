@@ -120,7 +120,7 @@ public class SVGParser {
 	PointF _usePointF = new PointF();
 	RectF _useRectF = new RectF();
 	PointUtil _pointUtil = new PointUtil();
-   static class ParseContext {
+    static class ParseContext {
 		boolean isDefs = false;
 		ArrayList<SVGTagObject> scope=new ArrayList<SVGTagObject>();
 		HashMap<String,SVGTagObject> idMap=new HashMap<String,SVGTagObject>();

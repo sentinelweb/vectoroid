@@ -52,9 +52,11 @@ public class CrazyMotion extends Motion {
 			pt.rot.add(rot);
 			pt.vel.add(pt.acc);
 			pt.loc.add(pt.vel);
-			pt.loc.add(new Vector3D(0, amp * (float) (Math.sin(pt.timer / (float) pt.timerLength * freq)), 0));// LookupTable.
-			pt.trails.enqueue(pt.loc.copy());
-			pt.trailsRot.enqueue(pt.rot.copy());
+			pt.loc.add(0, amp * (float) (Math.sin(pt.timer / (float) pt.timerLength * freq)), 0);// LookupTable.
+			if (pt.trails.size()>0) {
+				pt.trails.enqueue(pt.loc.copy());
+				pt.trailsRot.enqueue(pt.rot.copy());
+			}
 			return true;
 		}
 	}

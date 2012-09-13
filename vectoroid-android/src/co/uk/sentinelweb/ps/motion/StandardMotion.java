@@ -56,8 +56,10 @@ public class StandardMotion extends Motion {
 		public boolean update(Particle pt) {
 			pt.vel.add(pt.acc);
 			pt.loc.add(pt.vel);
-			pt.trails.enqueue(pt.loc.copy());
-			pt.trailsRot.enqueue(pt.rot.copy());
+			if (pt.trails.size()>0) {
+				pt.trails.enqueue(pt.loc.copy());
+				pt.trailsRot.enqueue(pt.rot.copy());
+			}
 			return true;
 		}
 	}

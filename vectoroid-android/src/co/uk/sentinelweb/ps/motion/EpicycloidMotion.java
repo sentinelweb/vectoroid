@@ -54,8 +54,10 @@ public class EpicycloidMotion extends Motion {
 			pt.loc.x = r * (k + 1) * (float) Math.cos(angle) - r * (float) Math.cos((k + 1) * angle);
 			pt.loc.y = r * (k + 1) * (float) Math.sin(angle) - r * (float) Math.sin((k + 1) * angle);
 			pt.loc.z = 0;
-			pt.trails.enqueue(pt.loc.copy());
-			pt.trailsRot.enqueue(new Vector3D(0, 0, 0));
+			if (pt.trails.size()>0) {
+				pt.trails.enqueue(pt.loc.copy());
+				pt.trailsRot.enqueue(new Vector3D(0, 0, 0));
+			}
 			return true;
 		}
 	}

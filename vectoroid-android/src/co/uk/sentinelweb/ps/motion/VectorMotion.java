@@ -71,10 +71,12 @@ public class VectorMotion extends Motion {
 			pt.loc.x = x[stub] + frac * (x[stub + 1] - x[stub]);
 			pt.loc.y = y[stub] + frac * (y[stub + 1] - y[stub]);
 			// pt.loc.z -= 2;
-			pt.trails.enqueue(pt.loc.copy());
-			float thetaVel = 4f;
-			pt.rot.add(new Vector3D(thetaVel, 0, 0));
-			pt.trailsRot.enqueue(pt.rot.copy());
+			if (pt.trails.size()>0) {
+				pt.trails.enqueue(pt.loc.copy());
+				float thetaVel = 4f;
+				pt.rot.add(new Vector3D(thetaVel, 0, 0));
+				pt.trailsRot.enqueue(pt.rot.copy());
+			}
 			return true;
 		}
 

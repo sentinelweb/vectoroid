@@ -36,23 +36,33 @@ import java.util.HashSet;
 
 import co.uk.sentinelweb.ps.ParticleSystems.ParticleSystem.Particle;
 
+/**
+ * Waits for all particles to sync up - constantly adds them to the set until they are all there -i.e. the previous motion has released all particles
+ * @author robert
+ *
+ */
 public class SyncMotion extends Motion {
 	HashSet<Particle> pcounter = new HashSet<Particle>();
-	
+	float bugout = -1;
 	public SyncMotion() {
 		super(1);
 		useTimer=false;
 	}
-
+	public SyncMotion(int bugout) {
+		super(1);
+		useTimer=false;
+		this.bugout=bugout;
+	}
 	@Override
 	public boolean update(Particle p) {
 		pcounter.add(p);
 		p.acc.setXYZ(0,0,0);
 		p.vel.setXYZ(0,0,0);
 		//p.acc.setXYZ(0,0,0);
-		boolean retVal = pcounter.size()!=p.ps.particles.size();
+		//boolean retVal = pcounter.size()!=p.ps.particles.size();
 		//Log.d(Globals.TAG, "SyncMotion:"+retVal);
-		return pcounter.size()!=p.ps.particles.size();
+		if (this.bugout>-1 && p.timeInCycle>this.bugout) return false;
+		else return pcounter.size()!=p.ps.particles.size();
 	}
 	
 	//public void cleanup() {

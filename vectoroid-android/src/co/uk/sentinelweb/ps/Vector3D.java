@@ -118,26 +118,48 @@ public class Vector3D implements Serializable{
 	    z -= v.z;
 	    return this;
 	  }
+	  public Vector3D sub(double x,double y,double z) {
+	    this.x -= x;
+	    this.y -= y;
+	    this.z -= z;
+	    return this;
+	  }
 	  public Vector3D add(double n) {
-		    x += n;
-		    y += n;
-		    z += n;
-		    return this;
-		  }
+	    x += n;
+	    y += n;
+	    z += n;
+	    return this;
+	  }
+	  public Vector3D add(double x,double y,double z) {
+	    this.x += x;
+	    this.y += y;
+	    this.z += z;
+	    return this;
+	  }
 	  public Vector3D mult(double n) {
 	    x *= n;
 	    y *= n;
 	    z *= n;
 	    return this;
 	  }
-
+	  public Vector3D mult(double x,double y,double z) {
+	    this.x *= x;
+	    this.y *= y;
+	    this.z *= z;
+	    return this;
+	  }
 	  public Vector3D div(double n) {
 	    x /= n;
 	    y /= n;
 	    z /= n;
 	    return this;
 	  }
-	  
+	  public Vector3D div(double x,double y,double z) {
+	    this.x /= x;
+	    this.y /= y;
+	    this.z /= z;
+	    return this;
+	  }
 	  /*public float dot(Vector3D v) {
 	    //implement DOT product
 	  }*/

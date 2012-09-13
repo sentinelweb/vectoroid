@@ -59,12 +59,12 @@ public class EpitrochoidMotion extends Motion {
 			pt.loc.y = (R + r) * (float) Math.sin(angle) - d * (float) Math.sin((R + r) / r * angle);
 
 			// pt.loc.z -= 2;
-			pt.trails.enqueue(pt.loc.copy());
-
-			float theta_vel = 4f;
-			pt.rot.add(new Vector3D(theta_vel, 0, 0));
-			pt.trailsRot.enqueue(pt.rot.copy());
-			// pt.trailsRot.enqueue(new Vector3D(0,0,0)) ;
+			if (pt.trails.size()>0) {
+				pt.trails.enqueue(pt.loc.copy());
+				float theta_vel = 4f;
+				pt.rot.add(new Vector3D(theta_vel, 0, 0));
+				pt.trailsRot.enqueue(pt.rot.copy());
+			}
 			return true;
 		}
 	}

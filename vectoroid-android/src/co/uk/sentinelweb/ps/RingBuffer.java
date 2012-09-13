@@ -62,9 +62,11 @@ public class RingBuffer<Item> implements Iterable<Item> {
     public int size()        { return N;      }
 
     public void enqueue(Item item) {
-    	pos = (pos + 1) % a.length;     // wrap-around
-        a[pos] = item;
-        if (N<a.length)N++;
+    	if (a.length>0) {
+	    	pos = (pos + 1) % a.length;     // wrap-around
+	        a[pos] = item;
+	        if (N<a.length)N++;
+    	}
     }
 
     public Iterator<Item> iterator() { return new RingBufferIterator(); }
@@ -86,9 +88,11 @@ public class RingBuffer<Item> implements Iterable<Item> {
     }
 
     public Item get(int i) {//get the ith pos back for the most rrecently added;
-    	int buffPos= pos-i;
-        if (buffPos<0 ) {buffPos+=N;}
-    	return  a[buffPos];
+    	if (a.length>0) {
+	    	int buffPos= pos-i;
+	        if (buffPos<0 ) {buffPos+=N;}
+	    	return  a[buffPos];
+    	} else throw new NoSuchElementException();
     }
 
 

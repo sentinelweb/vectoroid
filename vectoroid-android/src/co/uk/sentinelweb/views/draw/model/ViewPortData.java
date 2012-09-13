@@ -89,7 +89,7 @@ public class ViewPortData {
 		return vpd;
 	}
 	
-	public static ViewPortData getFragmentViewPort(DrawingElement de){
+	public static ViewPortData getFragmentViewPort(DrawingElement de){// should be getElementViewPort
 		ViewPortData vpd = new ViewPortData();
 		vpd.zoom=1;
 		vpd.zoomSrcRect.set((int)de.calculatedBounds.left,(int)de.calculatedBounds.top,(int)de.calculatedBounds.right,(int)de.calculatedBounds.bottom);//0,0,(int)de.calculatedBounds.width(),(int)de.calculatedBounds.height()

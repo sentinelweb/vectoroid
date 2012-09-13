@@ -52,8 +52,10 @@ public class RandomAcceleratorMotion extends Motion {
 			}
 			pt.vel.add(pt.acc.copy().mult((pt.ps.getTime() - pt.lastUpdateTime) / 10));
 			pt.loc.add(pt.vel);
-			pt.trails.enqueue(pt.loc.copy());
-			pt.trailsRot.enqueue(new Vector3D(0, 0, 0));
+			if (pt.trails.size()>0) {
+				pt.trails.enqueue(pt.loc.copy());
+				pt.trailsRot.enqueue(new Vector3D(0, 0, 0));
+			}
 			return true;
 		}
 	}
