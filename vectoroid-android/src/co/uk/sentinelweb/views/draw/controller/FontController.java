@@ -86,10 +86,12 @@ public class FontController {
 				}
 				File file = _ttfontFiles.get(name)._fontFile;//new File(fr.getDirectory(Directory.TTF),ttfontFiles.get(name));
 				Typeface t = Typeface.createFromFile(file);
+				if (VecGlobals._isDebug) Log.d(VecGlobals.LOG_TAG, "create TTF Font : "+ name);
 				SoftReference<Typeface> typeRef = new SoftReference<Typeface>(t);
 				_ttfonts.put(name, typeRef);
 				return t;
 			} else if (_ttfonts.containsKey(name) && _ttfonts.get(name).get()!=null && !name.equals("")) {
+				if (VecGlobals._isDebug) Log.d(VecGlobals.LOG_TAG, "cache TTF Font : "+ name);
 				return _ttfonts.get(name).get();
 			} else { return Typeface.DEFAULT;}
 			

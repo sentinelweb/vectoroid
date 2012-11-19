@@ -112,7 +112,7 @@ public class UpdateFlags {
 	
 	public static UpdateFlags FILLPAINTONLY = new UpdateFlags();
 	static {
-		FILLPAINTONLY.updateTypes.remove(UpdateType.PAINT);
+		FILLPAINTONLY.updateTypes.remove(UpdateType.BOUNDS);
 		FILLPAINTONLY.updateTypes.remove(UpdateType.PATH);
 		FILLPAINTONLY.runListeners=false;
 	}

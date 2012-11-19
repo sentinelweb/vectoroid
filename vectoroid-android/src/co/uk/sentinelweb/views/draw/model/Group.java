@@ -37,9 +37,7 @@ import java.util.ArrayList;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import co.uk.sentinelweb.views.draw.model.UpdateFlags.UpdateType;
-import co.uk.sentinelweb.views.draw.render.VecRenderObject;
 import co.uk.sentinelweb.views.draw.render.VecRenderer;
-import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer;
 import co.uk.sentinelweb.views.draw.util.PointUtil;
 
 public class Group extends DrawingElement  implements IDrawingElementCollection{	

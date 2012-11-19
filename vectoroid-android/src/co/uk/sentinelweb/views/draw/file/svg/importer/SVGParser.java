@@ -10,7 +10,6 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
-import org.xmlpull.v1.XmlPullParser;
 
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -31,6 +30,7 @@ import co.uk.sentinelweb.views.draw.model.PointVec;
 import co.uk.sentinelweb.views.draw.model.Stroke;
 import co.uk.sentinelweb.views.draw.model.Stroke.Type;
 import co.uk.sentinelweb.views.draw.model.TransformOperatorInOut;
+import co.uk.sentinelweb.views.draw.model.TransformOperatorInOut.Trans;
 import co.uk.sentinelweb.views.draw.model.path.PathData;
 import co.uk.sentinelweb.views.draw.util.DebugUtil;
 import co.uk.sentinelweb.views.draw.util.PointUtil;
@@ -156,7 +156,7 @@ public class SVGParser {
 			// create the reader (scanner)
 			xmlreader = parser.getXMLReader();
 			// instantiate our handler
-			Log.d(VecGlobals.LOG_TAG, "ns aware: "+parser.isNamespaceAware());
+			//Log.d(VecGlobals.LOG_TAG, "ns aware: "+parser.isNamespaceAware());
 			// assign our handler
 			xmlreader.setContentHandler(svgSAXHandler);
 			//xmlreader.setProperty("http://xml.org/sax/features/namespace-prefixes", true);
@@ -170,7 +170,7 @@ public class SVGParser {
 			return null;
 		}
 	}
-	
+	/*
 	public Drawing parseXPP(XmlPullParser xpp) {
 		SVGPullParser svgpp = new SVGPullParser(this);
 		try {
@@ -183,6 +183,7 @@ public class SVGParser {
 			return null;
 		}
 	}
+	*/
 	/*
 	public Drawing parse(InputSource is) {
 		try {
@@ -265,13 +266,13 @@ public class SVGParser {
 	
 	/* -----------------BUILD DRAWING --------------------------------------------------------------------- */
 	private Drawing makeDrawing(SVGTagObject root) {
-		Log.d(VecGlobals.LOG_TAG, "drawing root tag"+root);
+		//Log.d(VecGlobals.LOG_TAG, "drawing root tag"+root);
 		if (root!=null) {
 			try {
 				Drawing d = new Drawing();
 				d.size.set(parseInt(root.atts,ATT_WID,800),parseInt(root.atts,ATT_HGT,600));
 				makeElements(root,d.elements);
-				Log.d(VecGlobals.LOG_TAG, "drawing elements"+d.elements.size());
+				//Log.d(VecGlobals.LOG_TAG, "drawing elements"+d.elements.size());
 				return d;
 			} catch (Exception e) {
 				//DebugUtil.logCall("svgparser: exception building drawing", e);
@@ -316,7 +317,7 @@ public class SVGParser {
 					s.type = Type.FREE;
 					String pathStr = child.atts.get(ATT_D);
 					//parsePath(s,pathStr);
-					SVGStatic.parsePath1(s,pathStr);
+					SVGStatic.parsePath1(s, pathStr);
 					s.updateBoundsAndCOG();
 					fillInStroke( child,  s);
 					de=s;
@@ -359,9 +360,9 @@ public class SVGParser {
 					float cx =  parseFloat(child.atts.get(ATT_CX), 0);
 					float cy =  parseFloat(child.atts.get(ATT_CY), 0);
 					float r =  parseFloat(child.atts.get(ATT_R), 0);
-					Log.d(VecGlobals.LOG_TAG, "circle:"+cx+":"+cy+":"+r);
+					//Log.d(VecGlobals.LOG_TAG, "circle:"+cx+":"+cy+":"+r);
 					_useRectF.set(cx-r,cy-r,cx+r,cy+r);
-					StrokeUtil.fitStroke(s,_useRectF);
+					StrokeUtil.fitStroke(curVec,_useRectF);
 					s.updateBoundsAndCOG();
 					fillInStroke( child,  s);
 					de=s;
@@ -377,7 +378,7 @@ public class SVGParser {
 					float ry =  parseFloat(child.atts.get(ATT_RY), 0);
 					
 					_useRectF.set(cx-rx,cy-ry,cx+rx,cy+ry);
-					StrokeUtil.fitStroke(s,_useRectF);
+					StrokeUtil.fitStroke(curVec,_useRectF);
 					s.updateBoundsAndCOG();
 					fillInStroke( child,  s);
 					de=s;
@@ -502,7 +503,7 @@ public class SVGParser {
 					float fontSize=parseFloat(removeUnits(fontSizeStr), 10);
 					String fontFamilyStr = getStyleOrAtt(flowReigon,STYLE_FONT_FAMILY);
 					if (fontFamilyStr!=null) {s.fontName=fontFamilyStr.replaceAll(" ", "_");}
-					Log.d(VecGlobals.LOG_TAG,"FLOWREIGON fontSize: "+fontSizeStr+"=="+fontSize);
+					//Log.d(VecGlobals.LOG_TAG,"FLOWREIGON fontSize: "+fontSizeStr+"=="+fontSize);
 					PointVec pv = s.currentVec;
 					pv.add(new PathData(x,y+0));
 					pv.add(new PathData(x+20,y+0));
@@ -628,7 +629,7 @@ public class SVGParser {
 			color1=Color.parseColor(fcolorStr);
 		} catch (RuntimeException e) {
 			String trim = fcolorStr.toLowerCase().trim();
-			Log.d(VecGlobals.LOG_TAG, "color ex:"+trim);
+			//Log.d(VecGlobals.LOG_TAG, "color ex:"+trim);
 			if (trim.length()==4) {// check for 3 color color string
 				color1=Color.argb(
 						255,
@@ -735,9 +736,9 @@ public class SVGParser {
 					gd.p1.set(x1,y1);
 					gd.p2.set(x2,y2);
 					if (gtag.atts.get(ATT_GRADTRANS)!=null) {
-						 double[][] m = getTransform(gtag.atts.get(ATT_GRADTRANS));
-						 _pointUtil.mul3(gd.p1,gd.p1,m);
-						 _pointUtil.mul3(gd.p2,gd.p2,m);
+						 TransformOperatorInOut t = getTransform(gtag.atts.get(ATT_GRADTRANS));
+						 _pointUtil.mul3(gd.p1,gd.p1,t.matrix3);
+						 _pointUtil.mul3(gd.p2,gd.p2,t.matrix3);
 					}
 					g.data=gd;
 					//s.fill.setGradient(g);
@@ -754,9 +755,9 @@ public class SVGParser {
 					gd.p1.set(cx,cy);
 					gd.p2.set(cx+r,cy);
 					if (gtag.atts.get(ATT_GRADTRANS)!=null) {
-						 double[][] m = getTransform(gtag.atts.get(ATT_GRADTRANS));
-						 _pointUtil.mul3(gd.p1,gd.p1,m);
-						 _pointUtil.mul3(gd.p2,gd.p2,m);
+						TransformOperatorInOut t = getTransform(gtag.atts.get(ATT_GRADTRANS));
+						 _pointUtil.mul3(gd.p1,gd.p1,t.matrix3);
+						 _pointUtil.mul3(gd.p2,gd.p2,t.matrix3);
 						 
 					}
 					g.data=gd;
@@ -798,18 +799,22 @@ public class SVGParser {
 	private void applyTransformToDE(SVGTagObject child, DrawingElement de) {
 		if (child.atts.containsKey(ATT_TRANSFORM)) {
 			String tfmStr = child.atts.get(ATT_TRANSFORM);
-			double[][] m = getTransform(tfmStr);
+			TransformOperatorInOut t = getTransform(tfmStr);
+//			if (t.rotateValue!=0) {
+//				t.anchor.set(de.calculatedCentre);
+//				t.generate();
+//			}
 			if (de instanceof Stroke) {
-				applyTransform((Stroke)de,m);
+				applyTransform((Stroke)de,t);
 			} else if (de instanceof Group) {
 				for (Stroke de1 : ((Group)de).getAllStrokes()) {
-					applyTransform(de1,m);
+					applyTransform(de1,t);
 				}
 			}
 		}
 	}
 
-	private void applyTransform(DrawingElement de, double[][] m) {//double[][] matrix, PointF p 
+	private void applyTransform(DrawingElement de, TransformOperatorInOut t) {//double[][] matrix, PointF p 
 		if (de instanceof Stroke) {
 			Stroke s = (Stroke) de;
 			s.updateBoundsAndCOG();
@@ -826,19 +831,22 @@ public class SVGParser {
 					}
 				}
 				*/
-				TransformOperatorInOut t = new TransformOperatorInOut();
-				t.matrix3=m;
+				//TransformOperatorInOut t = new TransformOperatorInOut();
+				//t.matrix3=m;
 				TransformController.transform(pv, pv, t);
 			}
+			/*
 			if (s.fill.type==Fill.Type.GRADIENT) {
 				GradientData gd = s.fill._gradient.data;
-				_pointUtil.mul3(gd.p1,gd.p1,m);
-				_pointUtil.mul3(gd.p2,gd.p2,m);
+				_pointUtil.mul3(gd.p1,gd.p1,t.matrix3);
+				_pointUtil.mul3(gd.p2,gd.p2,t.matrix3);
 				
 			}
+			
+			*/
+			s.applyTransform(t, s);
 			if (s.type==Type.TEXT_TTF) {
-				double xscale = m[0][0]/m[1][1];
-				s.textXScale*=xscale;
+				s.textXScale*=t.scaleXValue;
 			}
 			/*
 			if (s.pen.scalePen) {
@@ -852,11 +860,11 @@ public class SVGParser {
 			*/
 			//Log.d(Globals.LOG_TAG, "transform applied:"+Arrays.toString(matrix));
 		} else if (de instanceof Group) {
-			applyTransform((Group) de, m);//matrix,p
+			applyTransform((Group) de, t);//matrix,p
 		}
 	}
 	
-	private double[][] getTransform(String string) {
+	private TransformOperatorInOut getTransform(String string) {
 		if (string!=null) {
 			//Log.d(DVGlobals.LOG_TAG, "parsing transform:"+string);
 			double mat[][] = null;
@@ -876,16 +884,23 @@ public class SVGParser {
 				}
 				mat=new double[3][3];
 				mat[0][0]=1;mat[1][1]=1;mat[2][2]=1;
+				TransformOperatorInOut t = new TransformOperatorInOut();
 				//Matrix m = new Matrix();
+				t.matrix3=mat;
 				if (TRANSFORM_TRANS.equals(type)) {
 					mat[0][2]=parseFloat(vals[0], 0);
 					mat[1][2]=parseFloat(vals[1], 0);
+					t.trans.set((float)mat[0][2],(float)mat[1][2]);
 				} else if (TRANSFORM_SCALE.equals(type)){
 					mat[0][0]=parseFloat(vals[0], 0);
 					mat[1][1]=parseFloat(vals[1], 0);
+					t.scaleXValue = mat[0][0];
+					t.scaleYValue = mat[1][1];
 				} else if (TRANSFORM_SKEW.equals(type)){
 					mat[0][1]=parseFloat(vals[0], 0);
 					mat[1][0]=parseFloat(vals[1], 0);
+					t.skewXValue = mat[0][1];
+					t.skewYValue = mat[1][0];
 				} else if (TRANSFORM_MATRIX.equals(type)){
 					mat[0][0]=parseFloat(vals[0], 0);
 					mat[1][0]=parseFloat(vals[1], 0);
@@ -893,13 +908,46 @@ public class SVGParser {
 					mat[1][1]=parseFloat(vals[3], 0);
 					mat[0][2]=parseFloat(vals[4], 0);
 					mat[1][2]=parseFloat(vals[5], 0);
+					//t.scaleXValue = mat[0][0]/mat[1][1];
+					//t.scaleYValue = mat[1][0]/mat[0][1];
+					// can recover scaling if noof diagonal factors - not sure how to recover the lot - complicated?
+					if (mat[1][0]==0 && mat[0][1]==0) {
+						t.scaleXValue = mat[0][0];
+						t.scaleYValue = mat[1][1];
+						// take the closest to 1
+						t.choseScaleClosestTo1();
+						t.ops.add(Trans.SCALE);
+					} else {
+						// TODO insert maths;
+						// TODO this assumes no skew ? - need a check
+						// ref: http://stackoverflow.com/questions/4361242/extract-rotation-scale-values-from-2d-transformation-matrix
+						double rot1 = Math.atan2(-mat[0][1], mat[0][0]);
+						double rot2 = Math.atan2(mat[1][0], mat[1][1]);
+						//Log.d(VecGlobals.LOG_TAG, "parsed transform : rot:"+rot1+"="+rot2+" - "+Math.abs(rot1-rot2));
+						if (Math.abs(rot1-rot2)<0.000001) {// valid rotation matrix
+							t.scaleXValue =Math.sqrt(mat[0][0]*mat[0][0]+mat[0][1]*mat[0][1]);
+							t.scaleYValue =Math.sqrt(mat[1][0]*mat[1][0]+mat[1][1]*mat[1][1]);
+							t.choseScaleClosestTo1();
+							t.ops.add(Trans.SCALE);
+							
+							// TODO rotation value
+							//t.rotateValue = rot1;// -b/a
+						}
+					}
+					if (mat[0][2]!=0 || mat[1][2]!=0) {
+						t.ops.add(Trans.MOVE);
+						t.trans.set((float)mat[0][2],(float)mat[1][2]);
+					}
 				}
-				//Log.d(DVGlobals.LOG_TAG, "parsed transform:"+mat[0][0]+":"+mat[0][1]+":"+mat[1][0]+":"+mat[1][1]+":"+mat[2][0]+":"+mat[2][1]);
-				return mat;
+				//t.scaleValue=Math.abs(t.scaleXValue-1)<Math.abs(t.scaleYValue-1)?t.scaleXValue:t.scaleYValue;
+				//Log.d(VecGlobals.LOG_TAG, "parsed transform: orig:"+ctnt+" || parsed:"+t.toString());
+				return t;
 			}
 		}
 		return null;
 	}
+
+
 
 	
 	
@@ -990,7 +1038,7 @@ public class SVGParser {
 	
 	public void parseStyleTag(SVGTagObject lastTag) {// called from parser
 		if (lastTag.text!=null && !"".equals(lastTag.text)) {
-			Log.d(VecGlobals.LOG_TAG, "classParse:"+lastTag.text);
+			//Log.d(VecGlobals.LOG_TAG, "classParse:"+lastTag.text);
 			String[] split = lastTag.text.split("\\}");
 			for (String styleDef:split) {
 				styleDef = styleDef.trim();
@@ -1001,7 +1049,7 @@ public class SVGParser {
 						nmTag = nmTag.substring(1);
 						HashMap<String, String> styleSet = new HashMap<String, String>();
 						String classContent = splitNameContent[1].trim();
-						Log.d(VecGlobals.LOG_TAG, "class:"+nmTag+" = "+classContent);
+						//Log.d(VecGlobals.LOG_TAG, "class:"+nmTag+" = "+classContent);
 						addStyles(styleSet, classContent);
 						_parseContext.classMap.put(nmTag, styleSet);
 					}

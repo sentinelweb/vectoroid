@@ -45,7 +45,7 @@ import co.uk.sentinelweb.views.draw.model.TransformOperatorInOut;
 import co.uk.sentinelweb.views.draw.model.UpdateFlags;
 
 public abstract class VecRenderer {
-	public Context c;
+	//public Context c;
 	public HashMap<DrawingElement,VecRenderObject> renderObjects;
 	
 	/* Operators - Experimental */
@@ -66,8 +66,8 @@ public abstract class VecRenderer {
 	public abstract void setupViewPort();
 	public abstract void revertViewPort();
 	
-	public VecRenderer(Context c) {
-		this.c=c;
+	public VecRenderer() {//Context c
+		//this.c=c;
 		renderObjects=new HashMap<DrawingElement,VecRenderObject>();
 		animations=new HashMap<DrawingElement,Operator>();
 	}

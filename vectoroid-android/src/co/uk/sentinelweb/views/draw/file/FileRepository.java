@@ -61,7 +61,7 @@ public class FileRepository {
 		return _fileRepository;
 	}
 	*/
-	public static FileRepository getFileRepository(Context c, String s)  {
+	public static FileRepository getFileRepository( String s)  {
 		FileRepository fileRepository = null;
 		try {
 			fileRepository = new FileRepository( VecGlobals.MASTER_DIR, s );
@@ -70,7 +70,7 @@ public class FileRepository {
 		}
 		return fileRepository;  
 	}
-	public static FileRepository getFileRepository(Context c)  {
+	public static FileRepository getFileRepository()  {
 		FileRepository fileRepository = null;
 		try {
 			fileRepository = new FileRepository( VecGlobals.MASTER_DIR, null );
@@ -250,7 +250,7 @@ public class FileRepository {
 	}
 	
 	public SaveFile getSaveFile(String name, Context c) throws Exception{
-		SaveFile s = new SaveFile(name,this,c);
+		SaveFile s = new SaveFile(name,this);//,c
 		return s;
 	}
 	
@@ -263,7 +263,7 @@ public class FileRepository {
 				for (String dir : fileNames) {
 					if (!FR_TMP_FILE.equals(dir) ) {
 						try {
-							files.add(new SaveFile(dir, this,c));
+							files.add(new SaveFile(dir, this));//,c
 						} catch (Exception e) {
 						}
 					}
@@ -275,7 +275,7 @@ public class FileRepository {
 	}
 	
 	public SaveFile makeNewFile(Context c, String name) throws Exception {
-		SaveFile s = new SaveFile(name,this, c);
+		SaveFile s = new SaveFile(name,this);//, c
 		s.saveSet();
 		return s;
 	}
@@ -299,11 +299,13 @@ public class FileRepository {
 		}
 		return null;
 	}
-	public static void checkFontAssetInstalled(Context a , String fileName) {
-		FileRepository fileRepository = getFileRepository(a);
+	public static void checkFontAssetInstalled(String fileName) {
+		FileRepository fileRepository = getFileRepository();
 		FontController _fontController2 = fileRepository._fontController;
 		String substring = fileName.substring(0,fileName.lastIndexOf("."));
 		_fontController2._ttfontFiles.containsKey(substring);
+		//TODO move to a listener
+		/*
 		if (!_fontController2._ttfontFiles.containsKey(substring)) {
 			try {
 				InputStream is = a.getResources().getAssets().open(fileName);
@@ -312,5 +314,6 @@ public class FileRepository {
 				e.printStackTrace();
 			}
 		}
+		*/
 	}
 }

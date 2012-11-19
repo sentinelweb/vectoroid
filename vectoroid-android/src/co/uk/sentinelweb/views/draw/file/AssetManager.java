@@ -92,7 +92,7 @@ public class AssetManager {
 			File assetFile = getAssetFile(a);
 			FileOutputStream out = new FileOutputStream(assetFile);
 			Bitmap b = a.getBitmap();
-			Log.d(VecGlobals.LOG_TAG, "saveAssetBitmap: "+b+":"+assetFile);
+			//Log.d(VecGlobals.LOG_TAG, "saveAssetBitmap: "+b+":"+assetFile);
 			if (b!=null) {
 				b.compress(Bitmap.CompressFormat.PNG, 90,out);
 				out.flush();

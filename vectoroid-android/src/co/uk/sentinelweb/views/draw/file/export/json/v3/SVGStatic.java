@@ -16,7 +16,7 @@ import co.uk.sentinelweb.views.draw.model.StrokeDecoration.DecorationPathData;
 import co.uk.sentinelweb.views.draw.model.path.Arc;
 import co.uk.sentinelweb.views.draw.model.path.Bezier;
 import co.uk.sentinelweb.views.draw.model.path.PathData;
-import co.uk.sentinelweb.views.draw.model.path.Quadratic;
+import co.uk.sentinelweb.views.draw.model.path.Quartic;
 import co.uk.sentinelweb.views.draw.util.DebugUtil;
 import co.uk.sentinelweb.views.draw.util.PointUtil;
 
@@ -78,7 +78,7 @@ public class SVGStatic {
 						lastCmd="C";
 						break;
 					case QUAD:
-						Quadratic q = (Quadratic)p;
+						Quartic q = (Quartic)p;
 						if (!"Q".equals(lastCmd)) {
 							outBuffer.append("Q");
 						}
@@ -325,7 +325,7 @@ public class SVGStatic {
 					p1=getPoint(parsedPathData.get(0), parsedPathData.get(1));
 					p=getPoint(parsedPathData.get(2), parsedPathData.get(3));
 				}
-				Quadratic q = new Quadratic(p, p1);
+				Quartic q = new Quartic(p, p1);
 				curpv.add(q);
 				lastPoint.set(p);
 				break;
@@ -337,13 +337,13 @@ public class SVGStatic {
 				}
 				// from http://stackoverflow.com/questions/5287559/calculating-control-points-for-a-shorthand-smooth-svg-path-bezier-curve
 				p1 = new PointF();
-				PointF lastC1 = ((Quadratic)curpv.get( curpv.size()-1)).control1;
+				PointF lastC1 = ((Quartic)curpv.get( curpv.size()-1)).control1;
 				if (lastC1!=null) {
 					p1.set(2*lastPoint.x-lastC1.x,2*lastPoint.y-lastC1.y);
 				} else {
 					p1.set(p);
 				}
-				Quadratic q1 = new Quadratic(p, p1);
+				Quartic q1 = new Quartic(p, p1);
 				curpv.add(q1);
 				lastPoint.set(p);
 				break;
@@ -354,7 +354,7 @@ public class SVGStatic {
 				p=getPoint(parsedPathData.get(5), parsedPathData.get(6));p.set(lastPoint.x+p.x,lastPoint.y+p.y);
 			case 'A': 
 				if ( p==null ) {
-					p=getPoint(parsedPathData.get(0), parsedPathData.get(1));
+					p=getPoint(parsedPathData.get(5), parsedPathData.get(6));
 				}
 				Arc a = new Arc(
 						p, 
@@ -365,8 +365,8 @@ public class SVGStatic {
 						parseFloat(parsedPathData.get(4), 0)==1
 				);
 				curpv.add(a);
+				//Log.d(VecGlobals.LOG_TAG, "SVG Arc:"+":p:"+PointUtil.tostr(a)+" :r:"+PointUtil.tostr(a.r)+" :rot:"+a.xrot+":"+a.largeArc+":"+a.sweep+": pathdata:"+parsedPathData.toString()+" :lastpoint:"+PointUtil.tostr(lastPoint));
 				lastPoint.set(p);
-				Log.d(VecGlobals.LOG_TAG, "SVG Arc:"+":"+PointUtil.tostr(a)+":"+PointUtil.tostr(a.r)+":"+a.xrot+":"+a.largeArc+":"+a.sweep);
 				break;
 			default:Log.d(VecGlobals.LOG_TAG, currentMode+" not handled.");break;
 				

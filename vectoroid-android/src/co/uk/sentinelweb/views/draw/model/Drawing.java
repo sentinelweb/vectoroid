@@ -36,8 +36,8 @@ import java.util.ArrayList;
 
 import android.graphics.PointF;
 import android.graphics.RectF;
+import co.uk.sentinelweb.views.draw.render.VecRenderObject;
 import co.uk.sentinelweb.views.draw.render.VecRenderer;
-import co.uk.sentinelweb.views.draw.render.ag.DrawingRenderObject;
 import co.uk.sentinelweb.views.draw.util.PointUtil;
 
 
@@ -99,8 +99,10 @@ public class Drawing extends DrawingElement implements IDrawingElementCollection
 		}
 		//update(deep, r, UpdateFlags.FILLONLY);
 		updateBoundsAndCOG( false );
-		DrawingRenderObject dro = (DrawingRenderObject)r.getObject(this);
-		dro.update(this, flags);
+		VecRenderObject dro = (VecRenderObject)r.getObject(this);
+		if (dro!=null) {
+			dro.update(this, flags);
+		}
 	}
 	
 	public void updateBoundsAndCOG(boolean deep) {

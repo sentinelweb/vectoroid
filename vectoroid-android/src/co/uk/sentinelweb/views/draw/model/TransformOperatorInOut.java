@@ -102,7 +102,9 @@ public class TransformOperatorInOut {
 	public final void operate(PointF pin,PointF pout){
 		_pointUtil.mul3(pin,pout,matrix3);
 	}
-	
+	public void choseScaleClosestTo1() {
+		this.scaleValue = Math.abs(this.scaleXValue-1)<Math.abs(this.scaleYValue-1)?this.scaleXValue:this.scaleYValue;
+	}
 	/**
 	 * Calculates a difference vector between the transformed origin and the original origin (anchor)
 	 * @param matrix 2x2 
@@ -195,6 +197,21 @@ public class TransformOperatorInOut {
 		o.trans=trans;
 		o.generate();
 		return o;
+	}
+	
+	public String toString() {
+		StringBuilder s = new StringBuilder();
+		s.append("tio:sc");
+		s.append(scaleValue);
+		s.append(":");
+		s.append(scaleXValue);
+		s.append(":");
+		s.append(scaleYValue);
+		s.append("::tr:");
+		s.append(PointUtil.tostr(trans));
+		s.append("::mat:");
+		s.append(PointUtil.tostr(matrix3));
+		return s.toString();
 	}
 	
 }

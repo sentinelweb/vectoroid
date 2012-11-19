@@ -32,18 +32,21 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+import java.util.ArrayList;
+
 import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import co.uk.sentinelweb.views.draw.controller.TransformController;
-import co.uk.sentinelweb.views.draw.controller.FontController.Font;
-import co.uk.sentinelweb.views.draw.file.FileRepository;
 import co.uk.sentinelweb.views.draw.model.DrawingElement;
 import co.uk.sentinelweb.views.draw.model.PointVec;
 import co.uk.sentinelweb.views.draw.model.Stroke;
 import co.uk.sentinelweb.views.draw.model.TransformOperatorInOut;
+import co.uk.sentinelweb.views.draw.model.path.Arc;
+import co.uk.sentinelweb.views.draw.model.path.Bezier;
 import co.uk.sentinelweb.views.draw.model.path.PathData;
-import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer;
+import co.uk.sentinelweb.views.draw.model.path.Quartic;
+import co.uk.sentinelweb.views.draw.render.VecRenderer;
 
 public class StrokeUtil {
 	private static int resolution = 200;
@@ -51,9 +54,9 @@ public class StrokeUtil {
 	 * @param s Stroke
 	 * @param r Scaling rect
 	 */
-	public static void fitStroke(Stroke s,RectF r) {
+	public static void fitStroke(ArrayList<PathData> curVec,RectF r) {
 		
-		PointVec curVec = s.points.get(0);
+		//PointVec curVec = s.points.get(0);
 		
 		float left = Math.min(r.right,r.left);
 		float right = Math.max(r.right,r.left);
@@ -88,20 +91,20 @@ public class StrokeUtil {
 		s.updateBoundsAndCOG();
 	}
 	
-	public static void translate(DrawingElement de, PointF p,AndGraphicsRenderer agr) {
+	public static void translate(DrawingElement de, PointF p,VecRenderer agr) {
 		TransformOperatorInOut t = TransformOperatorInOut.makeTranslate(p);
 		TransformController.transform(de, de, t, agr);
 	}
 	
-	public static void scale(DrawingElement de, float sc,AndGraphicsRenderer agr) {
+	public static void scale(DrawingElement de, float sc,VecRenderer agr) {
 		TransformOperatorInOut t = TransformOperatorInOut.makeScale(sc,de.calculatedBounds);
 		TransformController.transform(de, de, t, agr);
 	}
-	public static void scale(DrawingElement de, float sc,RectF bounds, AndGraphicsRenderer agr) {
+	public static void scale(DrawingElement de, float sc,RectF bounds, VecRenderer agr) {
 		TransformOperatorInOut t = TransformOperatorInOut.makeScale(sc,bounds);
 		TransformController.transform(de, de, t, agr);
 	}
-	public static void scaleAndTrans(DrawingElement de, float sc,PointF p,AndGraphicsRenderer agr) {
+	public static void scaleAndTrans(DrawingElement de, float sc,PointF p,VecRenderer agr) {
 		TransformOperatorInOut t = TransformOperatorInOut.makeScaleAndTranslate(p, sc,de.calculatedBounds);
 		TransformController.transform(de, de, t, agr);
 	}
@@ -256,6 +259,7 @@ public class StrokeUtil {
 	public static Stroke makeText( String text,PointF p,float size) {
 		Stroke s = new Stroke(true);
 		s.type=Stroke.Type.TEXT_TTF;
+		s.text=text;
 		PointVec curVec = s.points.get(0);
 		Paint pt  =new Paint();
 		pt.setTextSize(size);
@@ -273,5 +277,70 @@ public class StrokeUtil {
 		curVec.add(new PathData(right,top));
 		curVec.add(new PathData(left,top));
 		return s;
+	}
+	
+	public static void genArc(Arc arc) {
+		float interval = (arc.startAndSweepAngle.y)/(arc.boundsCheck.size()-1);
+		//Log.d(VecGlobals.LOG_TAG, "genArc:"+arc.startAndSweepAngle.x+":"+arc.startAndSweepAngle.y+":"+interval+" sz:"+arc.boundsCheck.size());
+		float start = (arc.startAndSweepAngle.x*(float)Math.PI/180);//(float)Math.toRadians(arc.startAndSweepAngle.x);
+		float sweep = (arc.startAndSweepAngle.y*(float)Math.PI/180);//(float)Math.toRadians(arc.startAndSweepAngle.y);
+		
+		interval =  sweep/(arc.boundsCheck.size()-1);//(float)Math.toRadians(interval);
+		int ctr=0;
+		float i=0;
+		for (i=start;
+				ctr<arc.boundsCheck.size();
+				i+=interval) {
+			arc.boundsCheck.get(ctr).set((float)Math.cos(i),(float)Math.sin(i));
+			//Log.d(VecGlobals.LOG_TAG, "genArc:"+ctr+":"+PointUtil.tostr(arc.boundsCheck.get(ctr)));
+			ctr++;
+		}
+		//Log.d(VecGlobals.LOG_TAG, "genArc:end i:"+i);
+		//TODO merge fit&rotate ops together to optimise
+		fitStroke(arc.boundsCheck, arc.oval);
+		if (arc.xrot>0) {
+			TransformOperatorInOut t = new TransformOperatorInOut();
+			t.rotateValue = arc.xrot;
+			t.anchor.set(PointUtil.midpoint(arc.oval));
+			t.generate();
+			TransformController.transform(arc.boundsCheck, arc.boundsCheck, t);
+		}
+	}
+	private static float cubic(float t,float p1,float p2, float p3, float p4) {
+		//q(t) = p1(1-t)3 + 3p2t(1-t)2 + 3p3t2 + p4t3
+		float tm1=1-t;
+		return p1*tm1*tm1*tm1+3*p2*tm1*tm1*t+3*p3*tm1*t*t+p4*t*t*t;
+	}
+	private static float quadric(float t,float p1,float p2, float p3) {
+		//(1-t)2•P1 + 2•(1-t) •t•p2 + t2•P3
+		float tm1=1-t;
+		return p1*tm1*tm1+2*p2*tm1*t+p3*t*t;
+	}
+	public static void genBezier(Bezier b,PointF last){
+		//PointF interval = new PointF(1f/(b.boundsCheck.size()-1),1f/(b.boundsCheck.size()-1));//new PointF( (b.x-last.x)/(b.boundsCheck.size()-1),(b.y-last.y)/(b.boundsCheck.size()-1));
+		float interval = 1f/(b.boundsCheck.size()-1);
+		int ctr=0;
+		float t =0;
+		for (t=0; ctr<b.boundsCheck.size(); t+=interval ) {
+			b.boundsCheck.get(ctr).set(
+					cubic(t,last.x,b.control1.x,b.control2.x,b.x),
+					cubic(t,last.y,b.control1.y,b.control2.y,b.y)
+					);
+			ctr++;
+		}
+		//Log.d(VecGlobals.LOG_TAG, "genBezier:"+ctr+":");
+	}
+	public static void genQuadric(Quartic b,PointF last){
+		float interval = 1f/(b.boundsCheck.size()-1);//new PointF(1f/(b.boundsCheck.size()-1),1f/(b.boundsCheck.size()-1));//new PointF( (b.x-last.x)/(b.boundsCheck.size()-1),(b.y-last.y)/(b.boundsCheck.size()-1));
+		int ctr=0;
+		float t =0;
+		for (t=0; ctr<b.boundsCheck.size(); t+=interval ) {
+			b.boundsCheck.get(ctr).set(
+					quadric(t,last.x,b.control1.x,b.x),
+					quadric(t,last.y,b.control1.y,b.y)
+					);
+			ctr++;
+		}
+		//Log.d(VecGlobals.LOG_TAG, "genQuadric:"+ctr+":");
 	}
 }

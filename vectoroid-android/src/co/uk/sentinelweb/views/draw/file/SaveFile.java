@@ -91,13 +91,13 @@ public class SaveFile {
 	
 	AssetManager _assetManager;
 	private float _previewThumbSize = 200;
-	private Context c;
+	//private Context c;
 	
-	public SaveFile(String _name, FileRepository _fr,Context c) throws Exception {
+	public SaveFile(String _name, FileRepository _fr) throws Exception {
 		super();
 		this._fr = _fr;
 		
-		this.c=c;
+		//this.c=c;
 		setDataDir( _name );
 		_set = loadSet();
 		if (_set==null) {
@@ -345,7 +345,7 @@ public class SaveFile {
 	
 	public void saveBitmaps (Drawing drawing, boolean makeVisible, boolean previewOnly) {
 		// make renderer here so render objects are reused...
-		AndGraphicsRenderer agr = new AndGraphicsRenderer(c);
+		AndGraphicsRenderer agr = new AndGraphicsRenderer();
 		if (!previewOnly) {
 			boolean success = renderFull(drawing, agr, getBitmapFile(drawing.getId()));
 			setPublished( drawing,  makeVisible && success);
@@ -361,7 +361,7 @@ public class SaveFile {
 				ViewPortData vpd = ViewPortData.getFullDrawing(drawing);
 				vpd.zoom=scale;
 				if (agr==null) {
-					agr = new AndGraphicsRenderer(c);
+					agr = new AndGraphicsRenderer();
 				}
 				agr.setVpd(vpd);
 				Bitmap thumbBitmap= Bitmap.createBitmap((int)(drawing.size.x*scale), (int)(drawing.size.y*scale), Bitmap.Config.ARGB_8888);

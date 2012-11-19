@@ -34,13 +34,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 import co.uk.sentinelweb.views.draw.model.DrawingElement;
 import co.uk.sentinelweb.views.draw.model.UpdateFlags;
-import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer;
 
 public abstract class VecRenderObject {
-	protected AndGraphicsRenderer r;
+	protected VecRenderer r;
 	public abstract void update(DrawingElement de, UpdateFlags flags);
 	
-	public VecRenderObject(AndGraphicsRenderer r) {
+	public VecRenderObject(VecRenderer r) {
 		this.r=r;
 	}
 }

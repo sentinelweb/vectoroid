@@ -38,9 +38,12 @@ import java.util.List;
 
 import android.graphics.PointF;
 import android.graphics.RectF;
+import android.util.Log;
+import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.model.TransformOperatorInOut.Axis;
 import co.uk.sentinelweb.views.draw.model.TransformOperatorInOut.Trans;
 import co.uk.sentinelweb.views.draw.model.UpdateFlags.UpdateType;
+import co.uk.sentinelweb.views.draw.model.path.Arc;
 import co.uk.sentinelweb.views.draw.model.path.PathData;
 import co.uk.sentinelweb.views.draw.render.VecRenderObject;
 import co.uk.sentinelweb.views.draw.render.VecRenderer;
@@ -63,6 +66,8 @@ public class Stroke extends DrawingElement {
 	public String fontName = "";
 	public boolean holesEven = false;
 	
+	RectF _useRect = new RectF();
+	RectF _useRect2 = new RectF();
 	public Stroke () {
 		//density = DispUtil.getDensity(context);
 	}
@@ -123,21 +128,29 @@ public class Stroke extends DrawingElement {
 		VecRenderObject sro = r.getObject(this);
 		if (flags.updateTypes.contains(UpdateType.BOUNDS)) {
 			updateBoundsAndCOG(deep);
-			sro.update(this, UpdateFlags.BOUNDSONLY);
+			if (sro!=null) {
+				sro.update(this, UpdateFlags.BOUNDSONLY);
+			}
 		}
 		
 		if (flags.updateTypes.contains(UpdateType.PAINT)) {
-			sro.update(this, UpdateFlags.PAINTONLY);
+			if (sro!=null) {
+				sro.update(this, UpdateFlags.PAINTONLY);
+			}
 		}
 		
 		if (flags.updateTypes.contains(UpdateType.PATH)) {
-			sro.update(this, UpdateFlags.PATHONLY);
+			if (sro!=null) {
+				sro.update(this, UpdateFlags.PATHONLY);
+			}
 		}
 
 		if (flags.updateTypes.contains(UpdateType.FILL) ) {
 			UpdateFlags copy = UpdateFlags.FILLONLY.copy();
 			copy.fillTypes.retainAll(flags.fillTypes);
-			sro.update(this, copy);
+			if (sro!=null) {
+				sro.update(this, copy);
+			}
 		}
 		
 		if (flags.runListeners && updateListener!=null) {
@@ -158,14 +171,63 @@ public class Stroke extends DrawingElement {
 		for (int i=points.size()-1;i>=0;i--) {
 			ArrayList<PathData> usePoints = points.get(i);
 			for (int j=usePoints.size()-1;j>=0;j--) {
-				PointF p = usePoints.get(j);
+				PathData p = usePoints.get(j);
 				//TODO need to check arc point .. and bezier/quad ? calculate? or control points ... hmmm.
-				this.calculatedCOG.x += p.x;
-				this.calculatedCOG.y += p.y;
-				this.calculatedBounds.top=Math.min(this.calculatedBounds.top, p.y);
-				this.calculatedBounds.left=Math.min(this.calculatedBounds.left, p.x);
-				this.calculatedBounds.bottom=Math.max(this.calculatedBounds.bottom, p.y);
-				this.calculatedBounds.right=Math.max(this.calculatedBounds.right, p.x);
+				PathData lastPathData = j>0?usePoints.get(j-1):null;
+				p.computeBounds( calculatedCOG,  calculatedBounds, _useRect, lastPathData);
+				/*
+				switch (p.type) {
+				case POINT:
+				case BEZIER:// still ned a calc fn for bezier area
+				case QUAD:// still ned a calc fn for quad area
+					this.calculatedCOG.x += p.x;
+					this.calculatedCOG.y += p.y;
+					this.calculatedBounds.top=Math.min(this.calculatedBounds.top, p.y);
+					this.calculatedBounds.left=Math.min(this.calculatedBounds.left, p.x);
+					this.calculatedBounds.bottom=Math.max(this.calculatedBounds.bottom, p.y);
+					this.calculatedBounds.right=Math.max(this.calculatedBounds.right, p.x);
+					break;
+				case ARC:
+					Arc a = (Arc)p;
+					if (lastPathData!=null) {// you won't have arc at the first position.
+						if (a.computArcFrom( lastPathData)) {//.x, lastPathData.y
+							_useRect.set(1e8f,1e8f,-1e8f,-1e8f);//bounds accumulator
+							//_useRect2.set( lastPathData.x, lastPathData.y,a.x,a.y);
+							for (PathData boundsPoint : a.boundsCheck) {
+								PointF testPoint = boundsPoint;
+//								if (_useRect2.contains(boundsPoint.x, boundsPoint.y)) {
+//									
+//								} else {
+//									testPoint=a;
+//								}
+								_useRect.top=Math.min(_useRect.top, testPoint.y);
+								_useRect.left=Math.min(_useRect.left, testPoint.x);
+								_useRect.bottom=Math.max(_useRect.bottom, testPoint.y);
+								_useRect.right=Math.max(_useRect.right, testPoint.x);
+//								if (testPoint==a) {break;}
+								//Log.d(VecGlobals.LOG_TAG, "updateBoundsAndCOG:arc:bounds:"+PointUtil.tostr(boundsPoint)+": rect:"+PointUtil.tostr(_useRect));
+							}
+							//Log.d(VecGlobals.LOG_TAG, "updateBoundsAndCOG:arc:bounds:"+PointUtil.tostr(_useRect));
+							PointF mid = PointUtil.midpoint(_useRect);
+							this.calculatedCOG.x += mid.x;
+							this.calculatedCOG.y += mid.y;
+							this.calculatedBounds.top=Math.min(this.calculatedBounds.top, _useRect.top);
+							this.calculatedBounds.left=Math.min(this.calculatedBounds.left,  _useRect.left);
+							this.calculatedBounds.bottom=Math.max(this.calculatedBounds.bottom,_useRect.bottom);
+							this.calculatedBounds.right=Math.max(this.calculatedBounds.right, _useRect.right);
+						} else {
+							// copy of point logic above
+							this.calculatedCOG.x += p.x;
+							this.calculatedCOG.y += p.y;
+							this.calculatedBounds.top=Math.min(this.calculatedBounds.top, p.y);
+							this.calculatedBounds.left=Math.min(this.calculatedBounds.left, p.x);
+							this.calculatedBounds.bottom=Math.max(this.calculatedBounds.bottom, p.y);
+							this.calculatedBounds.right=Math.max(this.calculatedBounds.right, p.x);
+						}
+					}
+					break;
+				}
+				*/
 				ctr++;
 			}
 		}
@@ -210,6 +272,12 @@ public class Stroke extends DrawingElement {
 	public String getId() {
 		if (id==null) {id="Stroke_"+hashCode();}
 		return id;
+	}
+	@Override
+	public ArrayList<Stroke> getAllStrokes() {
+		ArrayList<Stroke> s = new ArrayList<Stroke>();
+		s.add(this);
+		return s;
 	}
 	
 }

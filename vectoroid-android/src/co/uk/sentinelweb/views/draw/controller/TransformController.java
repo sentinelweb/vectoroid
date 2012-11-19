@@ -44,12 +44,12 @@ import co.uk.sentinelweb.views.draw.model.UpdateFlags;
 import co.uk.sentinelweb.views.draw.model.path.Arc;
 import co.uk.sentinelweb.views.draw.model.path.Bezier;
 import co.uk.sentinelweb.views.draw.model.path.PathData;
-import co.uk.sentinelweb.views.draw.model.path.Quadratic;
-import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer;
+import co.uk.sentinelweb.views.draw.model.path.Quartic;
+import co.uk.sentinelweb.views.draw.render.VecRenderer;
 
 public class TransformController {
-	// TODO a bit more inneffifcient than collating all the strokes
-	public static void transform(ArrayList<DrawingElement> deList,ArrayList<DrawingElement> deList1,  TransformOperatorInOut t, AndGraphicsRenderer r) {
+	// TODO a bit more inefficient than collating all the strokes
+	public static void transform(ArrayList<DrawingElement> deList,ArrayList<DrawingElement> deList1,  TransformOperatorInOut t, VecRenderer r) {
 		for (int i=0;i<deList.size();i++) {
 			DrawingElement de = deList.get(i);
 			DrawingElement de1 = null;
@@ -65,7 +65,7 @@ public class TransformController {
 			transform( de, de1,   t,  r);
 		}
 	}
-	public static void transform(DrawingElement de,DrawingElement de1,  TransformOperatorInOut t, AndGraphicsRenderer r) {
+	public static void transform(DrawingElement de,DrawingElement de1,  TransformOperatorInOut t, VecRenderer r) {
 		//if (DVGlobals._isDebug) Log.d(DVGlobals.LOG_TAG,"transform de:"+de.hashCode()+":"+de1.hashCode());
 		boolean updateAfter = de instanceof Drawing || de instanceof Group ;
 		if (!de.getClass().equals(de1.getClass())) {throw new RuntimeException("Only matching types please.");}
@@ -91,7 +91,7 @@ public class TransformController {
 	}
 	public static void transform(ArrayList<Stroke> processVec,
 			ArrayList<Stroke> processVecTmp, TransformOperatorInOut t,
-			boolean updateAfter, AndGraphicsRenderer r) {
+			boolean updateAfter, VecRenderer r) {
 		for (int l=processVec.size()-1;l>=0;l--) {
 			Stroke original = processVec.get(l);
 			Stroke tmp = processVecTmp.get(l);
@@ -108,15 +108,6 @@ public class TransformController {
 				pv = sin.points.get(j);
 				pvtmp = sout.points.get(j);
 			transform(pv, pvtmp, t);
-			
-			/*
-			if (pv.beizer1!=null) {
-				transform(pv.beizer1, pvtmp.beizer1, t);
-			}
-			if (pv.beizer2!=null) {
-				transform(pv.beizer2, pvtmp.beizer2, t);
-			}
-			*/
 		}
 		sin.applyTransform(t,sout);
 	}
@@ -139,16 +130,18 @@ public class TransformController {
 						t.operate( b1.control2, b2.control2 );
 						break;
 					case QUAD:
-						Quadratic q1 = (Quadratic)pt;
-						Quadratic q2 = (Quadratic)pt2;
+						Quartic q1 = (Quartic)pt;
+						Quartic q2 = (Quartic)pt2;
 						t.operate( q1.control1, q2.control1 );
 						break;
 					case ARC:
 						Arc a1 = (Arc)pt;
 						Arc a2 = (Arc)pt2;
 								//t.operate( a1.r, a2.r );
-						//a2.r.x=a1.r.x*(float)t.scaleXValue;
-						//a2.r.y=a1.r.y*(float)t.scaleYValue;
+						a2.r.x=a1.r.x*(float)t.scaleXValue;
+						a2.r.y=a1.r.y*(float)t.scaleYValue;
+						//TODO something strange afoot with rotation of arcs
+						a2.xrot=(a1.xrot+(a1.sweep?-1:1)+(float)Math.toDegrees(t.rotateValue))%360;
 						break;
 					
 				}

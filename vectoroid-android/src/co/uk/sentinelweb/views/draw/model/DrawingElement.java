@@ -32,11 +32,11 @@ ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import android.graphics.PointF;
 import android.graphics.RectF;
-import android.view.View.OnClickListener;
 import co.uk.sentinelweb.views.draw.render.VecRenderObject;
 import co.uk.sentinelweb.views.draw.render.VecRenderer;
 import co.uk.sentinelweb.views.draw.util.OnAsyncListener;
@@ -67,6 +67,8 @@ public abstract class DrawingElement {
 	}
 	public abstract DrawingElement duplicate(boolean shallow);
 	public abstract void update(boolean deep,VecRenderer r,UpdateFlags flags);
+	public abstract ArrayList<Stroke> getAllStrokes();
+	
 	protected abstract void updateBoundsAndCOG(boolean deep);
 	
 	public OnAsyncListener<?> getUpdateListener() {
@@ -196,9 +198,10 @@ public abstract class DrawingElement {
 	 * @param r
 	 * @return
 	 */
-	public  VecRenderObject delete(VecRenderer r) {
+	public VecRenderObject delete(VecRenderer r) {
 		VecRenderObject vro = r.getObject(this);
 		r.removeFromCache(this);
+		r.animations.remove(this);
 		return vro;
 	}
 	
