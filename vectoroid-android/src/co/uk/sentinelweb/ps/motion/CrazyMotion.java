@@ -53,7 +53,7 @@ public class CrazyMotion extends Motion {
 			pt.vel.add(pt.acc);
 			pt.loc.add(pt.vel);
 			pt.loc.add(0, amp * (float) (Math.sin(pt.timer / (float) pt.timerLength * freq)), 0);// LookupTable.
-			if (pt.trails.size()>0) {
+			if (pt.trails.getCapacity()>0) {
 				pt.trails.enqueue(pt.loc.copy());
 				pt.trailsRot.enqueue(pt.rot.copy());
 			}

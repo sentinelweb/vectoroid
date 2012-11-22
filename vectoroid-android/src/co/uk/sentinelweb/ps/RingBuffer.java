@@ -60,7 +60,9 @@ public class RingBuffer<Item> implements Iterable<Item> {
 
     public boolean isEmpty() { return N == 0; }
     public int size()        { return N;      }
-
+    public int getCapacity() {
+    	return a.length;
+    }
     public void enqueue(Item item) {
     	if (a.length>0) {
 	    	pos = (pos + 1) % a.length;     // wrap-around

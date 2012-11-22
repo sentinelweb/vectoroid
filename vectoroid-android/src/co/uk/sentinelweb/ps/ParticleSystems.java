@@ -150,6 +150,7 @@ public class ParticleSystems {
 			init(num, origin, motions, ren);
 		}
 		
+		/* ********** init ********************** */
 		private void init(int num, Vector3D v, ArrayList<Motion> motions, ParticleRenderer ren) {
 			this.motions=motions;
 			init( num,  v,  ren);
@@ -255,8 +256,8 @@ public class ParticleSystems {
 
 		// A simple Particle class
 		public class Particle {
-			private static final int DEF_TRAIL_LENGTH = 50;
-			private static final int DEF_TIMER_LENGTH = 50;
+			private static final int DEF_TRAIL_LENGTH = 0;
+			private static final int DEF_TIMER_LENGTH = 0;
 			
 			public int trailLength = DEF_TRAIL_LENGTH;
 			public int timerLength = DEF_TIMER_LENGTH;
