@@ -37,6 +37,7 @@ import java.util.HashMap;
 
 import co.uk.sentinelweb.ps.motion.Motion;
 import co.uk.sentinelweb.ps.render.ParticleRenderer;
+import co.uk.sentinelweb.views.draw.render.VecRenderer;
 import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer;
 
 /** 
@@ -46,15 +47,9 @@ import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer;
  */
 public class ParticleSystems {
 	ArrayList<ParticleSystem> psystems;
-	// GL gl;
-	// GLU glu;
-	// OpenGL ogl ;
-	// PApplet p;
-	// Method renderMethod;
-	// Shape s;
-	public AndGraphicsRenderer agr;
+	public VecRenderer agr;
 
-	public ParticleSystems(AndGraphicsRenderer agr) {// OpenGL ogl, PApplet p
+	public ParticleSystems(VecRenderer agr) {// OpenGL ogl, PApplet p
 		super();
 		psystems = new ArrayList<ParticleSystem>();
 		this.agr = agr;
@@ -103,7 +98,7 @@ public class ParticleSystems {
 		psystems.clear();
 	}
 	
-	public AndGraphicsRenderer getVectoroidRenderer() {
+	public VecRenderer getVectoroidRenderer() {
 		return agr;
 	}
 	/*********
@@ -140,13 +135,18 @@ public class ParticleSystems {
 		
 		public ParticleSystem(int num, Vector3D origin, Motion m, ParticleRenderer ren, int trailLength) {
 			this.trailLength = trailLength;
-			//this.timerLength = timerLength;
+			motions=new ArrayList<Motion>();
+			motions.add(m);
 			init(num, origin,  ren);
 		}
 		
 		public ParticleSystem(int num, Vector3D origin, ArrayList<Motion> motions, ParticleRenderer ren, int trailLength) {
 			this.trailLength = trailLength;
 			//this.timerLength = timerLength;
+			init(num, origin, motions, ren);
+		}
+		
+		public ParticleSystem(int num, Vector3D origin, ArrayList<Motion> motions, ParticleRenderer ren) {
 			init(num, origin, motions, ren);
 		}
 		
@@ -157,7 +157,9 @@ public class ParticleSystems {
 		
 		private void init(int num, Vector3D v, Motion m, ParticleRenderer ren) {
 			motions=new ArrayList<Motion>();
-			motions.add(m);
+			if (m!=null) {
+				motions.add(m);
+			}
 			init( num,  v, ren);
 		}
 		
