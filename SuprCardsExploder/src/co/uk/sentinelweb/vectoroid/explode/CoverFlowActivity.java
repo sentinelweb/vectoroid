@@ -53,7 +53,7 @@ public class CoverFlowActivity extends Activity {
 	public static final String MARKET_HURL = "https://market.android.com/details?id=";
 	
 	AdapterView _adapterView;
-	private CoverFlowImageAdapter _coverImageAdapter;
+	private CoverFlowImageAdapter _coverImageAdapter; 
 	int _selectedItemPosition =-1;
 	private boolean _isLoading = false;
 	
@@ -67,7 +67,7 @@ public class CoverFlowActivity extends Activity {
 		    
 		_adapterView =(AdapterView) findViewById(R.id.loader_coverflow);
 	    // _isCover = _adapterView instanceof CoverFlow;
-		findViewById(R.id.loader_sc_launch).setOnClickListener(new OnClickListener() {
+		findViewById(R.id.loader_sc_launch).setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				if (SuprCardsConstants.appInstalled(CoverFlowActivity.this)) {
@@ -77,7 +77,7 @@ public class CoverFlowActivity extends Activity {
 						Intent myIntent = new Intent(Intent.ACTION_VIEW,Uri.parse(MARKET_HURL+SuprCardsConstants.PACKAGE));
 						CoverFlowActivity.this.startActivity(myIntent); 
 					} catch (Exception e) {
-						Toast.makeText(CoverFlowActivity.this, "Cannot load market", 1000).show();
+						Toast.makeText(CoverFlowActivity.this, "Cannot load market", 1000).show();  
 					}
 				}
 			}

@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- /*
+	Vectoroid API for Android
+	Copyright (C) 2010-12 Sentinel Web Technologies Ltd
+	All rights reserved.
+	 
+	This software is made available under a Dual Licence:
+	 
+	Use is permitted under LGPL terms for Non-commercial projects
+	  
+	see: LICENCE.txt for more information
+ 
+	Redistribution and use in source and binary forms, with or without
+	modification, are permitted provided that the following conditions are met:
+	    * Redistributions of source code must retain the above copyright
+	      notice, this list of conditions and the following disclaimer.
+	    * Redistributions in binary form must reproduce the above copyright
+	      notice, this list of conditions and the following disclaimer in the
+	      documentation and/or other materials provided with the distribution.
+	    * Neither the name of the Sentinel Web Technologies Ltd. nor the
+	      names of its contributors may be used to endorse or promote products
+	      derived from this software without specific prior written permission.
+	
+	THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+	ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+	WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+	DISCLAIMED. IN NO EVENT SHALL SENTINEL WEB TECHNOLOGIES LTD BE LIABLE FOR ANY
+	DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+	(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+	LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+	ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+	(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+	SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+  -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>co.uk.sentinelweb.vectoroid</groupId>
+    <artifactId>Vectoroid</artifactId>
+    <packaging>apklib</packaging>
+    <name>Vectoroid Library</name>
+	<version>0.82</version>
+	<description>This the Vectoroid APK library for Android</description>
+	<url>http://www.vectoroid.com</url>
+	
+    <dependencies>
+        <dependency>
+            <groupId>com.google.android</groupId>
+            <artifactId>android</artifactId>
+            <scope>provided</scope>
+ 			<version>2.3.3</version>
+        </dependency>
+	    <!--  Gson: Java to Json conversion -->
+	    <dependency>
+	      <groupId>com.google.code.gson</groupId>
+	      <artifactId>gson</artifactId>
+	      <version>2.1</version>
+	      <type>jar</type>
+	    </dependency>
+    </dependencies>
+    <build>
+        <sourceDirectory>${project.build.directory}/src</sourceDirectory>
+		<plugins>
+            <plugin>
+                <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                <artifactId>android-maven-plugin</artifactId>
+                <extensions>true</extensions>
+				<configuration>
+					<sourceDirectory>${project.build.directory}/src</sourceDirectory>
+					<androidManifestFile>${project.build.directory}/AndroidManifest.xml</androidManifestFile>
+					<assetsDirectory>${project.basedir}/assets</assetsDirectory>
+					<resourceDirectory>${project.build.directory}/res</resourceDirectory>
+					<libDirectory>${project.basedir}/lib</libDirectory>
+					<sdk>
+						<platform>8</platform>
+				  	</sdk>
+				</configuration>
+				<!--<version>3.0.0</version>-->
+				<version>3.0.0-alpha-14</version>
+            </plugin>
+            <plugin>
+				<artifactId>maven-resources-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>initialize</phase>
+						<goals>
+							<goal>resources</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.5</source>
+					<target>1.5</target>
+				</configuration>
+			</plugin>
+        </plugins>
+        <resources>
+			<resource>
+				<filtering>false</filtering>
+				<directory>${basedir}</directory>
+				<includes>
+					<include>AndroidManifest.xml</include>
+				</includes>
+				<targetPath>${project.build.directory}</targetPath>
+			</resource>
+			<resource>
+				<filtering>false</filtering>
+				<directory>${basedir}/src</directory>
+				<targetPath>${project.build.directory}/src</targetPath>
+			</resource>
+			<resource>
+				<filtering>false</filtering>
+				<directory>${basedir}/asrc</directory>
+				<targetPath>${project.build.directory}/src</targetPath>
+			</resource>
+			<resource>
+				<filtering>false</filtering>
+				<directory>${basedir}/res</directory>
+				<targetPath>${project.build.directory}/res</targetPath>
+			</resource>
+		</resources>
+    </build>
+</project>

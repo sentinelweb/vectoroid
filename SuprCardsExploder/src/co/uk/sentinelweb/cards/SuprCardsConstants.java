@@ -52,7 +52,7 @@ public class SuprCardsConstants {
 	
 	public static FileRepository getFileRepo(Context c) {
 		if (_fileRepo==null) {
-			_fileRepo = FileRepository.getFileRepository( c, REPO_NAME);
+			_fileRepo = FileRepository.getFileRepository( REPO_NAME);
 		}
 		return _fileRepo;
 	}
