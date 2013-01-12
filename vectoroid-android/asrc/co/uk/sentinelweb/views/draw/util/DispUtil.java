@@ -86,4 +86,8 @@ public class DispUtil {
 	    }
 	    return orientation;
 	}
+	
+	public static int dp(int width) {
+		return (int)(width*density);
+	}
 }

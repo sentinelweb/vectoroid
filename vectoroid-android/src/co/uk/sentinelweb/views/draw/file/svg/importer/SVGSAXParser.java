@@ -6,6 +6,11 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import co.uk.sentinelweb.views.draw.VecGlobals;
+
+import android.nfc.tech.TagTechnology;
+import android.util.Log;
+
 public class SVGSAXParser extends DefaultHandler {
 	private SVGParser sp;
 	HashMap<String,String> _prefixes = new HashMap<String,String>();
@@ -86,6 +91,9 @@ public class SVGSAXParser extends DefaultHandler {
 				sto.style.putAll(ancestor.style);
 			}
 			sp.addStyles(sto.style, sto.atts.get(SVGParser.ATT_STYLE));
+			if (SVGParser.TAG_TEXT.equals(sto.tagName)) {
+				Log.d(VecGlobals.LOG_TAG, "SVGPARSE:text:"+sto.atts);
+			}
 			SVGTagObject parent = sp._parseContext.scope.get(sp._parseContext.scope.size()-1);
 			parent.children.add(sto);
 			sto.parent=parent;
@@ -107,6 +115,9 @@ public class SVGSAXParser extends DefaultHandler {
     	for (int i=0;i<attributes.getLength();i++) {
     		String qName = attributes.getQName(i);
     		if (qName!=null && !"".equals(qName)) {
+    			if (SVGParser.STYLE_FONT_SIZE.equals(qName)) {
+    				Log.d(VecGlobals.LOG_TAG, "SVGPARSE:text:"+SVGParser.STYLE_FONT_SIZE+":"+attributes.getValue(i));
+    			}
     			result.put(qName, attributes.getValue(i));
 			} else {
 				String uri = attributes.getURI(i);
@@ -116,7 +127,6 @@ public class SVGSAXParser extends DefaultHandler {
 					result.put(attributes.getLocalName(i), attributes.getValue(i));
 				}
 			}
-    		
     	}
     	
     	return result;

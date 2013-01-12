@@ -128,6 +128,7 @@ public class SVGParser {
 		HashMap<String,HashMap<String,String>> classMap=new HashMap<String,HashMap<String,String>>();
 	}
     String[] testPaths = new String[] {
+    		"134.106,42.256 130.356,43.633 129.364,47.502 126.896,44.361 122.908,44.613 125.134,41.294   123.662,37.581 127.505,38.672 130.583,36.124 130.732,40.116",
     		"M515.038,467.945c0-20.25-16.415-36.664-36.663-36.664h-41.902\nc-20.249,0-36.665,16.414-36.665,36.664l1.165,31.425c0,20.252,16.415,36.664,36.663,36.664h40.739 c20.248,0,36.663-16.412,36.663-36.664V467.945z",
     		"M334.351,128.419c-4.815-2.35-10.809-3.314-13.668,1.862c-5.273-2.676-9.69,1.49-12.353,6.139l-3.845,4.412 c0,0,4.796,2.104,10.042,0.278c1.664-0.579,3.035-1.376,4.146-2.193l-2.691-4.583l4.613,2.923c0.058-0.059,0.122-0.122,0.181-0.179 c0.961-1.01,1.426-1.771,1.426-1.771s0.87,0.384,2.31,0.678l2.582-6.107l0.482,6.431c1.29,0.017,2.741-0.115,4.284-0.529c5.364-1.438,8.853-5.56,8.853-5.56L334.351,128.419z",
     		"M499,1v498H1V1H499 M500,0H0v500h500V0L500,0z",
@@ -135,16 +136,17 @@ public class SVGParser {
     };
 	ParseContext _parseContext = new ParseContext();
 	public Drawing parseSAX(InputSource is) {
-		/*
-		if (1==1) {
-			Stroke s = new Stroke(true);
-			for (String pth : testPaths) {
-				Log.d(DVGlobals.LOG_TAG, "parsePath1:"+pth);
-				parsePath1(s, pth);
-			}
-			return null;
-		}
-		*/
+		
+//		if (1==1) {
+//			Stroke s = new Stroke(true);
+//			for (String pth : testPaths) {
+//				Log.d(VecGlobals.LOG_TAG, "test parsePath1:"+pth);
+//				SVGStatic.parsePath1(s, pth);
+//				Log.d(VecGlobals.LOG_TAG, "test parsePath:"+s.points.size());
+//			}
+//			//return null;
+//		}
+		
 		XMLReader xmlreader;
 		SVGSAXParser svgSAXHandler = new SVGSAXParser(this);
 		try {
@@ -417,7 +419,9 @@ public class SVGParser {
 				}
 				if (de!=null) {
 					de.setId(child.atts.get(ATT_ID));
-					//Log.d(DVGlobals.LOG_TAG, "transform on element: "+child.id);
+					//if (TAG_TEXT.equals(child.tagName)) {
+					//	Log.d(VecGlobals.LOG_TAG, "transform on element: "+child.id+":"+child.atts.get(ATT_TRANSFORM));
+					//}
 					applyTransformToDE(child, de);
 					elements.add(de);
 				}
@@ -443,7 +447,9 @@ public class SVGParser {
 					s.type=Type.TEXT_TTF;
 					s.text=child.text;
 					PointVec pv = s.currentVec;
-					float fontSize=parseFloat(removeUnits(child.style.get(STYLE_FONT_SIZE)), 10);
+					String fontSizeStr = getStyleOrAtt(child,STYLE_FONT_SIZE);
+					float fontSize=parseFloat(removeUnits(fontSizeStr), 10);
+					//Log.d(VecGlobals.LOG_TAG,"fontSizeStr:"+fontSizeStr+":"+fontSize);
 					String fontFamilyStr = getStyleOrAtt(child,STYLE_FONT_FAMILY);
 					if (fontFamilyStr!=null) {s.fontName=fontFamilyStr.replaceAll(" ", "_");}
 					float x = parseFloat(child.atts.get(ATT_X),0);
@@ -464,7 +470,10 @@ public class SVGParser {
 			s.type=Type.TEXT_TTF;
 			s.text=obj.text;
 			PointVec pv = s.currentVec;
-			float fontSize=parseFloat(removeUnits(obj.style.get(STYLE_FONT_SIZE)), 10);
+			String fontSizeStr = getStyleOrAtt(obj,STYLE_FONT_SIZE);
+			float fontSize=parseFloat(removeUnits(fontSizeStr), 10);
+			//Log.d(VecGlobals.LOG_TAG,"fontSizeStr:"+fontSizeStr+":"+fontSize);
+			
 			String fontFamilyStr = getStyleOrAtt(obj,STYLE_FONT_FAMILY);
 			if (fontFamilyStr!=null) {s.fontName=fontFamilyStr.replaceAll(" ", "_");}
 			float x = parseFloat(obj.atts.get(ATT_X),0);
@@ -499,8 +508,9 @@ public class SVGParser {
 					float y = parseFloat(t.atts.get(ATT_Y),0);
 					float w = parseFloat(t.atts.get(ATT_WID),0);
 					float h = parseFloat(t.atts.get(ATT_HGT),0);
-					String fontSizeStr = flowReigon.style.get(STYLE_FONT_SIZE);
+					String fontSizeStr = getStyleOrAtt(flowReigon,STYLE_FONT_SIZE);//flowReigon.style.get(STYLE_FONT_SIZE);
 					float fontSize=parseFloat(removeUnits(fontSizeStr), 10);
+					//Log.d(VecGlobals.LOG_TAG,"fontSizeStr:"+fontSizeStr+":"+fontSize);
 					String fontFamilyStr = getStyleOrAtt(flowReigon,STYLE_FONT_FAMILY);
 					if (fontFamilyStr!=null) {s.fontName=fontFamilyStr.replaceAll(" ", "_");}
 					//Log.d(VecGlobals.LOG_TAG,"FLOWREIGON fontSize: "+fontSizeStr+"=="+fontSize);
@@ -644,7 +654,7 @@ public class SVGParser {
 		return color1;
 	}
 	private String getStyleOrAtt(SVGTagObject child, String tag) {
-		while (child!=null) {
+		while (child!=null) {// TODO : probably should disable the atts check for the parent tags - is it 
 			String fcolorStr = child.style.get(tag);
 			if (fcolorStr==null) {
 				fcolorStr = child.atts.get(tag);
@@ -658,10 +668,11 @@ public class SVGParser {
 		return null;
 	}
 	private String removeUnits(String strokeWid) {// assumes all units in px
+		if (strokeWid==null) {return null;}
 		if (strokeWid.endsWith("px") || strokeWid.endsWith("pc") ||strokeWid.endsWith("mm")||strokeWid.endsWith("cm")||strokeWid.endsWith("in")) {
-			//prunes off units - need to apply scaling - ignored
+			//TODO prunes off units - need to apply scaling - ignored
 			strokeWid=strokeWid.substring(0,strokeWid.length()-2);
-		} else if (strokeWid.endsWith("%")) {
+		} else if (strokeWid.endsWith("%")) {//need to apply after parsing
 			strokeWid=strokeWid.substring(0,strokeWid.length()-1);
 		}
 		return strokeWid;

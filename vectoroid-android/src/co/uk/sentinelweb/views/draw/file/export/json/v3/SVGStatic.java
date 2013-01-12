@@ -140,7 +140,8 @@ public class SVGStatic {
 			String[] split = pathStr.split(" ");
 			for (String data : split) {
 				if (data==null || "".equals(data)) {
-					Log.d(VecGlobals.LOG_TAG,"parsePoints: badData:"+data);
+					//chomp empty strings
+					//Log.d(VecGlobals.LOG_TAG,"parsePoints: badData:"+data);
 					continue;
 				}
 				PathData p = new PathData(getPoint(data));
@@ -153,6 +154,7 @@ public class SVGStatic {
 			}
 		}
 	}
+	
 	static HashMap<Character,Integer> _pointsReqForCmd = new HashMap<Character,Integer>();
 	static {
 		_pointsReqForCmd.put('M',2);
@@ -176,9 +178,10 @@ public class SVGStatic {
 		_pointsReqForCmd.put('A',7);
 		_pointsReqForCmd.put('a',7);
 	}
+	
 	public static void parsePath1(Stroke s, String pathStr) {
 		s.points.clear();
-		char currentMode = 0;
+		char currentMode = 'M';
 		ArrayList<String> currentPointData = new ArrayList<String>();
 		PointF lastPoint = new PointF();
 		int pos=0;
@@ -203,6 +206,7 @@ public class SVGStatic {
 						currentPointData.add(_useSB.toString());
 						_useSB.delete(0, _useSB.length());
 				}
+				//Log.d(VecGlobals.LOG_TAG, "parsePath1:"+charAt+":"+currentPointData+":"+_pointsReqForCmd.get(currentMode)+":"+currentMode);
 				if (currentPointData.size()==_pointsReqForCmd.get(currentMode)) {
 					processPointData(s,currentMode,currentPointData,lastPoint);
 					// assume l after m if not specified

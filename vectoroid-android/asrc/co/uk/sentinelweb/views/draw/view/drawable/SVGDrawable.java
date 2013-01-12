@@ -35,7 +35,7 @@ public class SVGDrawable extends Drawable {
 	SVGDrawable _parent = null;
 	PointF _tl;
 	Drawing _drawing = null;
-	AndGraphicsRenderer _agr ;
+	static AndGraphicsRenderer _agr = new AndGraphicsRenderer();;
 	Bitmap cache = null;
 	Rect cachePadding = new Rect();
 	Paint _cachePaint= null;
@@ -44,31 +44,36 @@ public class SVGDrawable extends Drawable {
 	public boolean _debug = false;
 	Rect _clipping = null;
 	PointF _offset = new PointF();
-	OnAsyncListener<Stroke> _modifier = null;
+	Modifier _modifier = null;
 	Rect _intrinsicBounds = null;
 	//Rect clipping  = null;
 	RectF _useRectF = new RectF();
 	Rect _useRect = new Rect();
 	PointF _usePointF = new PointF();
 	
-	public SVGDrawable(InputStream is,OnAsyncListener<Stroke> modifier) {
+	public static class Modifier {
+		public UpdateFlags modify(Drawing d){return null;}
+	}
+	
+	public SVGDrawable(InputStream is,Modifier modifier) {
 		super();
-		this._agr = new AndGraphicsRenderer();//TODO move out
+		//this._agr = new AndGraphicsRenderer();//TODO move out
 		this._modifier=modifier;
 		loadDrawing(is);
 		init(  );
 	}
-	public SVGDrawable(Drawing d,OnAsyncListener<Stroke> modifier) {
+	
+	public SVGDrawable(Drawing d,Modifier modifier) {
 		super();
-		this._agr = new AndGraphicsRenderer();//TODO move out
+		//this._agr = new AndGraphicsRenderer();//TODO move out
 		this._modifier=modifier;
 		this._drawing=d;
 		d.update(true, _agr, UpdateFlags.ALL);
 		init(  );
 	}
-	public SVGDrawable(SVGDrawable root,OnAsyncListener<Stroke> modifier) {
+	public SVGDrawable(SVGDrawable root,Modifier modifier) {
 		super();
-		this._agr = root._agr;
+		//this._agr = root._agr;
 		this._parent=root;
 		this._modifier=modifier;
 		this._clipping=root._clipping;
@@ -82,22 +87,15 @@ public class SVGDrawable extends Drawable {
 		_testPaint.setColor(Color.RED);
 		_testPaint.setStyle(Style.STROKE);
 		if (this._parent!=null) {
-			_drawing = (Drawing)this._parent._drawing.duplicate();
+			_drawing = (Drawing)this._parent._drawing;//.duplicate();
 			if (this._parent._intrinsicBounds!=null) {
 				_intrinsicBounds=new Rect(this._parent._intrinsicBounds);
 			}
 			_offset=this._parent._offset;
 		}
-		if (_modifier!=null && _drawing!=null) {
-			DrawingElement de = getElement();
-			if (de!=null) {
-				for (Stroke s : de.getAllStrokes()) {
-					_modifier.onAsync(s);
-				}
-				//de.update(true, _agr, UpdateFlags.FILLPAINTONLY);
-			}
+		if (_drawing!=null) {
+			
 		}
-		_drawing.update(true, _agr, UpdateFlags.ALL);
 	}
 	private DrawingElement getElement() {
 		if (_drawing!=null && _drawing.elements.size()>0) {
@@ -147,6 +145,11 @@ public class SVGDrawable extends Drawable {
 	public void draw(Canvas canvas) {
 		DrawingElement de = getElement();
 		if (de!=null) {
+			UpdateFlags flags = UpdateFlags.ALL;
+			if (_modifier!=null ) {
+				flags =_modifier.modify(_drawing);
+			}
+			_drawing.update(true, _agr, flags);
 			Rect bounds = getBoundsRect();
 			ViewPortData vpd = ViewPortData.getFragmentViewPort(de);//ViewPortData.getFullDrawing(d);
 			int dWidth = bounds.width();//-padding.left-padding.right // - getPaddingLeft() - getPaddingRight();
@@ -175,8 +178,8 @@ public class SVGDrawable extends Drawable {
 			//if (_debug) {
 			getPadding(_useRect);Rect padding =_useRect;
 			String file = (String)_drawing.getNameSpaced("co.uk.sentinel", "file");
-			Log.d(VecGlobals.LOG_TAG, "SVGDrawable.draw:src:"+file+" dim:"+dWidth +"x"+dHeight +" : "+ PointUtil.tostr(calculatedBounds)+" : scaling:"+scaling+":"+_drawing.elements.size()+":"+PointUtil.tostr(_tl));
-			Log.d(VecGlobals.LOG_TAG, "SVGDrawable.draw:"+PointUtil.tostr(getBounds())+" tl:"+PointUtil.tostr(_tl)+":"+PointUtil.tostr(padding));
+			if (_debug) Log.d(VecGlobals.LOG_TAG, "SVGDrawable.draw:src:"+file+" dim:"+dWidth +"x"+dHeight +" : "+ PointUtil.tostr(calculatedBounds)+" : scaling:"+scaling+":"+_drawing.elements.size()+":"+PointUtil.tostr(_tl));
+			if (_debug) Log.d(VecGlobals.LOG_TAG, "SVGDrawable.draw:"+PointUtil.tostr(getBounds())+" tl:"+PointUtil.tostr(_tl)+":"+PointUtil.tostr(padding));
 			//}
 			vpd.topLeft.set(_tl);
 			vpd.zoom=scaling;
@@ -237,11 +240,11 @@ public class SVGDrawable extends Drawable {
 		}
 	}
 
-	public OnAsyncListener<Stroke> getModifier() {
+	public Modifier getModifier() {
 		return _modifier;
 	}
 
-	public void setModifier(OnAsyncListener<Stroke> modifier) {
+	public void setModifier(Modifier modifier) {
 		this._modifier = modifier;
 	}
 	
