@@ -74,6 +74,7 @@ import co.uk.sentinelweb.views.draw.util.PointUtil;
 public class StrokeRenderObject extends VecRenderObject{
 	
 
+	private static final String[] EMPTY_STRING_ARR = new String[]{""};
 	PointF _usePoint = new PointF();
 	PointF _usePoint2 = new PointF();
 	RectF _useRect = new RectF();
@@ -138,7 +139,7 @@ public class StrokeRenderObject extends VecRenderObject{
 		if (s.type==Stroke.Type.TEXT_TTF  ) { 
 			if (s.text!=null) {
 				splitStr = s.text.split("\n");
-			} else {splitStr = new String[]{""};}
+			} else {splitStr = EMPTY_STRING_ARR;}
 			if (s.fontName!=null) {
 				fontTTF = FileRepository.getFileRepository(null).getFontController().getTTFont(s.fontName);
 			}

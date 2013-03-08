@@ -158,7 +158,6 @@ public class AndGraphicsRenderer extends VecRenderer {
 		if (_debug)Log.d(VecGlobals.LOG_TAG, "renderer zoom:"+_vpd.zoom);
 		canvas.scale(_vpd.zoom, _vpd.zoom);
 		canvas.translate(-_vpd.topLeft.x,-_vpd.topLeft.y);
-		
 	}
 
 	@Override

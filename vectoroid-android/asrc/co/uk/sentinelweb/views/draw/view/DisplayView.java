@@ -33,6 +33,7 @@ import co.uk.sentinelweb.views.draw.model.ViewPortData;
 import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer;
 import co.uk.sentinelweb.views.draw.util.DispUtil;
 import co.uk.sentinelweb.views.draw.util.OnAsyncListener;
+import co.uk.sentinelweb.views.draw.util.StrokeUtil;
 
 public class DisplayView extends ImageView {
 	
@@ -52,6 +53,7 @@ public class DisplayView extends ImageView {
 	OnAsyncListener<Integer> onLoadListener;
 	boolean _isAsset = false;
 	boolean _correctBounds=false;
+	boolean _scaleSource=false;
 	private SaveFile _saveFile;
 	private Bitmap _previewBitmap;
 	Rect _previewSrcRect;
@@ -140,7 +142,6 @@ public class DisplayView extends ImageView {
 			//canvas.getClipBounds(_useRect);
 			//canvas.clipRect(_useRect.left-50*_density, _useRect.top-50*_density, _useRect.right, _useRect.bottom, Region.Op.REPLACE);
 			//ViewPortData vpd = ViewPortData.getFromBounds(drawingBounds);
-			ViewPortData vpd = ViewPortData.getFullDrawing(d);
 			int dWidth = getMeasuredWidth() - getPaddingLeft() - getPaddingRight();
 			int dHeight = getMeasuredHeight() - getPaddingTop() - getPaddingBottom();
 			RectF calculatedBounds = d.calculatedBounds;
@@ -149,20 +150,40 @@ public class DisplayView extends ImageView {
 			
 			float yscaling = (float)dHeight / calculatedBounds.height();
 			float scaling = Math.min( xscaling,  yscaling );
-			scaling = scaling*0.95f;
-			//float aspect = calculatedBounds.width()/calculatedBounds.height();
-			//float daspect = dWidth/dHeight;
-			//Log.d(DVGlobals.LOG_TAG, "scr:"+dWidth +"x"+dHeight +" : "+ calculatedBounds.width() +"x"+ calculatedBounds.height()+" : scaling:"+scaling);
+			
 			_tl.set(0, 0);
-			//if (aspect>1 ) {
+			
+			if (_scaleSource) {
+				// TODO not working properly
+				if (scaling!=1) {
+					Log.d(VecGlobals.LOG_TAG, "scr:"+dWidth +"x"+dHeight +" : "+ calculatedBounds.width() +"x"+ calculatedBounds.height()+" : scaling:"+scaling);
+					StrokeUtil.scale(d, scaling, new RectF(),agr);// scale from tl corner - not center
+//					dHeight*=scaling;
+//					dWidth*=scaling;
+					scaling=1;
+					calculatedBounds = d.calculatedBounds;
+					Log.d(VecGlobals.LOG_TAG, "scr:"+dWidth +"x"+dHeight +" : "+ calculatedBounds.width() +"x"+ calculatedBounds.height()+" : scaling:"+scaling);
+					
+				}
+				_tl.y=Math.abs(dHeight - calculatedBounds.height())/-2;
+				_tl.x=Math.abs(dWidth - calculatedBounds.width())/-2;
+				// topleft is inverted, hence -
+				_tl.y-=getPaddingTop();
+				_tl.x-=getPaddingLeft();
+				
+			} else {
+				scaling = scaling*0.95f;
+				//float aspect = calculatedBounds.width()/calculatedBounds.height();
+				//float daspect = dWidth/dHeight;
 				_tl.y=(dHeight/scaling - calculatedBounds.height())/-2;
-			//} else {
 				_tl.x=(dWidth/scaling - calculatedBounds.width())/-2;
-			//}
-			// topleft is inverted, hence -
-			_tl.y-=getPaddingTop()/scaling;
-			_tl.x-=getPaddingLeft()/scaling;
+				// topleft is inverted, hence -
+				_tl.y-=getPaddingTop()/scaling;
+				_tl.x-=getPaddingLeft()/scaling;
+				
+			}
 			//DebugUtil.logCall("padding:"+getPaddingTop()+"x"+getPaddingLeft(),new Exception(),-1);
+			ViewPortData vpd = ViewPortData.getFullDrawing(d);
 			vpd.topLeft.set(_tl);
 			vpd.zoom=scaling;
 			agr.setVpd(vpd);
@@ -505,6 +526,14 @@ public class DisplayView extends ImageView {
 	 */
 	public void setSwipeRightListener(OnClickListener _swipeRightListener) {
 		this._swipeRightListener = _swipeRightListener;
+	}
+
+	public boolean isScaleSource() {
+		return _scaleSource;
+	}
+
+	public void setScaleSource(boolean scaleSource) {
+		_scaleSource = scaleSource;
 	}
 
 	

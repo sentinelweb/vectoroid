@@ -104,14 +104,14 @@ public class TransformController {
 	public static void transform(Stroke sin, Stroke sout, TransformOperatorInOut t) {
 		PointVec pv = null;
 		PointVec pvtmp = null;
-		for (int j=sin.points.size()-1;j>=0;j--) {
+		int size = sin.points.size();
+		for (int j=size-1;j>=0;j--) {
 				pv = sin.points.get(j);
 				pvtmp = sout.points.get(j);
 			transform(pv, pvtmp, t);
 		}
 		sin.applyTransform(t,sout);
 	}
-	
 	
 	public static void transform(ArrayList<PathData> points,ArrayList<PathData> pointsOut, TransformOperatorInOut t) {
 		for (int j=points.size()-1;j>=0 ;j--) {
@@ -145,9 +145,6 @@ public class TransformController {
 						break;
 					
 				}
-				//if (j==points.size()-1) {
-			//		Log.d(DVGlobals.LOG_TAG,"transform out:"+PointUtil.tostr(pt2)+":"+pt.hashCode()+":"+t.scaleValue);
-				//}
 			}
 		}
 	}

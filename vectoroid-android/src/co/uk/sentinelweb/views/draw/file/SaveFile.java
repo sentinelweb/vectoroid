@@ -387,7 +387,6 @@ public class SaveFile {
 	}
 
 	public static boolean renderFull(Drawing drawing, AndGraphicsRenderer agr,File f)	 {
-		
 		try {
 			ViewPortData vpd = ViewPortData.getFullDrawing(drawing);
 		// scale down dimensions to something maneagable.
