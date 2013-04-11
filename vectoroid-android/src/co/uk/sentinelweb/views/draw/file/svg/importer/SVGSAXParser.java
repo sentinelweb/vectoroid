@@ -7,8 +7,6 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import co.uk.sentinelweb.views.draw.VecGlobals;
-
-import android.nfc.tech.TagTechnology;
 import android.util.Log;
 
 public class SVGSAXParser extends DefaultHandler {
