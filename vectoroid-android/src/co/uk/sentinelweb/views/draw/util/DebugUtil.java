@@ -57,7 +57,7 @@ public class DebugUtil {
 			_useStringBuffer.append(st.getMethodName());
 			_useStringBuffer.append(":");
 			_useStringBuffer.append(st.getLineNumber());
-			_useStringBuffer.append(",");
+			_useStringBuffer.append(",\n");
 			cnt++;
 			if (limit>-1 && cnt>limit) break;
 		}

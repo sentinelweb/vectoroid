@@ -99,9 +99,10 @@ public class TransformOperatorInOut {
 		matrix3[1][2]=anchorCorrect.y+trans.y;
 	}
 	
-	public final void operate(PointF pin,PointF pout){
+	public void operate(PointF pin,PointF pout){
 		_pointUtil.mul3(pin,pout,matrix3);
 	}
+	
 	public void choseScaleClosestTo1() {
 		this.scaleValue = Math.abs(this.scaleXValue-1)<Math.abs(this.scaleYValue-1)?this.scaleXValue:this.scaleYValue;
 	}

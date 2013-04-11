@@ -19,6 +19,7 @@ import android.util.Log;
 import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.controller.TransformController;
 import co.uk.sentinelweb.views.draw.file.export.json.v3.SVGStatic;
+import co.uk.sentinelweb.views.draw.model.ComposeTransformOperatorInOut;
 import co.uk.sentinelweb.views.draw.model.Drawing;
 import co.uk.sentinelweb.views.draw.model.DrawingElement;
 import co.uk.sentinelweb.views.draw.model.Fill;
@@ -113,6 +114,7 @@ public class SVGParser {
 	public static final String TRANSFORM_SCALE = "scale";//
 	public static final String TRANSFORM_MATRIX = "matrix";//
 	public static final String TRANSFORM_SKEW = "skew";//
+	public static final String TRANSFORM_ROTATE = "rotate";//
 	
 	private List<String> defcolors = Arrays.asList(new String[]{"transparent","red","white","blue","black","yellow","green","grey","magenta"});
 	private List<Integer> mapcolors = Arrays.asList(new Integer[]{Color.TRANSPARENT,Color.RED,Color.WHITE,Color.BLUE,Color.BLACK,Color.YELLOW,Color.GREEN,Color.GRAY,Color.MAGENTA});
@@ -878,81 +880,112 @@ public class SVGParser {
 	private TransformOperatorInOut getTransform(String string) {
 		if (string!=null) {
 			//Log.d(DVGlobals.LOG_TAG, "parsing transform:"+string);
-			double mat[][] = null;
-			int indexOfOpen = string.indexOf("(");
-			int indexOfClose = string.indexOf(")");
-			if (indexOfOpen>-1 && indexOfClose>-1) {
-				String type = string.substring(0,indexOfOpen);
-				String ctnt =  string.substring(indexOfOpen+1,indexOfClose);
-				String[] vals = null;
-				if (ctnt.indexOf(",")>0) {
-					vals = ctnt.split(",");
-				} else {
-					vals = ctnt.split(" ");
-				}
-				if (vals==null) {
-					Log.d(VecGlobals.LOG_TAG, "Couldnt parse transform:"+ctnt);
-				}
-				mat=new double[3][3];
-				mat[0][0]=1;mat[1][1]=1;mat[2][2]=1;
-				TransformOperatorInOut t = new TransformOperatorInOut();
-				//Matrix m = new Matrix();
-				t.matrix3=mat;
-				if (TRANSFORM_TRANS.equals(type)) {
-					mat[0][2]=parseFloat(vals[0], 0);
-					mat[1][2]=parseFloat(vals[1], 0);
-					t.trans.set((float)mat[0][2],(float)mat[1][2]);
-				} else if (TRANSFORM_SCALE.equals(type)){
-					mat[0][0]=parseFloat(vals[0], 0);
-					mat[1][1]=parseFloat(vals[1], 0);
-					t.scaleXValue = mat[0][0];
-					t.scaleYValue = mat[1][1];
-				} else if (TRANSFORM_SKEW.equals(type)){
-					mat[0][1]=parseFloat(vals[0], 0);
-					mat[1][0]=parseFloat(vals[1], 0);
-					t.skewXValue = mat[0][1];
-					t.skewYValue = mat[1][0];
-				} else if (TRANSFORM_MATRIX.equals(type)){
-					mat[0][0]=parseFloat(vals[0], 0);
-					mat[1][0]=parseFloat(vals[1], 0);
-					mat[0][1]=parseFloat(vals[2], 0);
-					mat[1][1]=parseFloat(vals[3], 0);
-					mat[0][2]=parseFloat(vals[4], 0);
-					mat[1][2]=parseFloat(vals[5], 0);
-					//t.scaleXValue = mat[0][0]/mat[1][1];
-					//t.scaleYValue = mat[1][0]/mat[0][1];
-					// can recover scaling if noof diagonal factors - not sure how to recover the lot - complicated?
-					if (mat[1][0]==0 && mat[0][1]==0) {
+			int lastpos = 0;
+			//TransformOperatorInOut finalTrans = null;
+			ArrayList<TransformOperatorInOut> stack = new ArrayList<TransformOperatorInOut>();
+			//Log.d(VecGlobals.LOG_TAG, "transform :"+string);
+			int pos = string.indexOf("(");
+			while (pos>-1) {
+				double mat[][] = null;
+				//int indexOfOpen = string.indexOf("(");
+				int indexOfClose = string.indexOf(")",pos);
+				if (pos>-1 && indexOfClose>-1) {
+					String type = string.substring(lastpos,pos).trim();
+					String ctnt =  string.substring(pos+1,indexOfClose).trim();
+					//Log.d(VecGlobals.LOG_TAG, "transform type:"+type+" ctnt:"+ctnt);
+					String[] vals = null;
+					if (ctnt.indexOf(",")>0) {
+						vals = ctnt.split(",");
+					} else {
+						vals = ctnt.split(" ");
+					}
+					//if (vals==null) {
+					//	Log.d(VecGlobals.LOG_TAG, "Couldnt parse transform:"+ctnt);
+					//}
+					mat=new double[3][3];
+					mat[0][0]=1;mat[1][1]=1;mat[2][2]=1;
+					TransformOperatorInOut t = new TransformOperatorInOut();
+					stack.add(t);
+					//Matrix m = new Matrix();
+					t.matrix3=mat;
+					if (TRANSFORM_TRANS.equals(type)) {
+						mat[0][2]=parseFloat(vals[0], 0);
+						double y = vals.length>1?parseFloat(vals[1], 0):0;
+						t.ops.add(Trans.MOVE);
+						mat[1][2]=y;//parseFloat(vals[1], 0);
+						t.trans.set((float)mat[0][2],(float) y);
+						//Log.d(VecGlobals.LOG_TAG, "transform trans:"+mat[0][2]+","+y);
+					} else if (TRANSFORM_SCALE.equals(type)){
+						mat[0][0]=parseFloat(vals[0], 0);
+						mat[1][1]=parseFloat(vals[1], 0);
+						t.ops.add(Trans.SCALE);
 						t.scaleXValue = mat[0][0];
 						t.scaleYValue = mat[1][1];
-						// take the closest to 1
-						t.choseScaleClosestTo1();
-						t.ops.add(Trans.SCALE);
-					} else {
-						// TODO insert maths;
-						// TODO this assumes no skew ? - need a check
-						// ref: http://stackoverflow.com/questions/4361242/extract-rotation-scale-values-from-2d-transformation-matrix
-						double rot1 = Math.atan2(-mat[0][1], mat[0][0]);
-						double rot2 = Math.atan2(mat[1][0], mat[1][1]);
-						//Log.d(VecGlobals.LOG_TAG, "parsed transform : rot:"+rot1+"="+rot2+" - "+Math.abs(rot1-rot2));
-						if (Math.abs(rot1-rot2)<0.000001) {// valid rotation matrix
-							t.scaleXValue =Math.sqrt(mat[0][0]*mat[0][0]+mat[0][1]*mat[0][1]);
-							t.scaleYValue =Math.sqrt(mat[1][0]*mat[1][0]+mat[1][1]*mat[1][1]);
+					} else if (TRANSFORM_SKEW.equals(type)){
+						mat[0][1]=parseFloat(vals[0], 0);
+						mat[1][0]=parseFloat(vals[1], 0);
+						t.ops.add(Trans.SHEAR);
+						t.skewXValue = mat[0][1];
+						t.skewYValue = mat[1][0];
+					} else if (TRANSFORM_ROTATE.equals(type)){
+						t.rotateValue = parseFloat(vals[0], 0)*Math.PI/180f;
+						if (vals.length>1) {
+							t.anchor.x=parseFloat(vals[1], 0);
+						}
+						if (vals.length>2) {
+							t.anchor.y=parseFloat(vals[2], 0);
+						}
+						t.ops.add(Trans.ROTATE);
+						t.generate();
+					} else if (TRANSFORM_MATRIX.equals(type)){
+						mat[0][0]=parseFloat(vals[0], 0);
+						mat[1][0]=parseFloat(vals[1], 0);
+						mat[0][1]=parseFloat(vals[2], 0);
+						mat[1][1]=parseFloat(vals[3], 0);
+						mat[0][2]=parseFloat(vals[4], 0);
+						mat[1][2]=parseFloat(vals[5], 0);
+						//t.scaleXValue = mat[0][0]/mat[1][1];
+						//t.scaleYValue = mat[1][0]/mat[0][1];
+						// can recover scaling if noof diagonal factors - not sure how to recover the lot - complicated?
+						if (mat[1][0]==0 && mat[0][1]==0) {
+							t.scaleXValue = mat[0][0];
+							t.scaleYValue = mat[1][1];
+							// take the closest to 1
 							t.choseScaleClosestTo1();
 							t.ops.add(Trans.SCALE);
-							
-							// TODO rotation value
-							//t.rotateValue = rot1;// -b/a
+						} else {
+							// TODO insert maths;
+							// TODO this assumes no skew ? - need a check
+							// ref: http://stackoverflow.com/questions/4361242/extract-rotation-scale-values-from-2d-transformation-matrix
+							double rot1 = Math.atan2(-mat[0][1], mat[0][0]);
+							double rot2 = Math.atan2(mat[1][0], mat[1][1]);
+							//Log.d(VecGlobals.LOG_TAG, "parsed transform : rot:"+rot1+"="+rot2+" - "+Math.abs(rot1-rot2));
+							if (Math.abs(rot1-rot2)<0.000001) {// valid rotation matrix
+								t.scaleXValue =Math.sqrt(mat[0][0]*mat[0][0]+mat[0][1]*mat[0][1]);
+								t.scaleYValue =Math.sqrt(mat[1][0]*mat[1][0]+mat[1][1]*mat[1][1]);
+								t.choseScaleClosestTo1();
+								t.ops.add(Trans.SCALE);
+								
+								// TODO rotation value
+								//t.rotateValue = rot1;// -b/a
+							}
+						}
+						if (mat[0][2]!=0 || mat[1][2]!=0) {
+							t.ops.add(Trans.MOVE);
+							t.trans.set((float)mat[0][2],(float)mat[1][2]);
 						}
 					}
-					if (mat[0][2]!=0 || mat[1][2]!=0) {
-						t.ops.add(Trans.MOVE);
-						t.trans.set((float)mat[0][2],(float)mat[1][2]);
-					}
+					
 				}
-				//t.scaleValue=Math.abs(t.scaleXValue-1)<Math.abs(t.scaleYValue-1)?t.scaleXValue:t.scaleYValue;
-				//Log.d(VecGlobals.LOG_TAG, "parsed transform: orig:"+ctnt+" || parsed:"+t.toString());
-				return t;
+				lastpos=indexOfClose+1;
+				pos = string.indexOf("(",indexOfClose);
+				
+			}
+			if (stack.size()==1 ) {
+				return stack.get(0);
+			} else {
+				ComposeTransformOperatorInOut ctio = new ComposeTransformOperatorInOut(stack);
+				return ctio;
 			}
 		}
 		return null;
@@ -980,7 +1013,7 @@ public class SVGParser {
 	private float parseFloat(HashMap<String,String> atts,String att,float def) {
 		if (atts!=null) {
 			try {
-				return Float.parseFloat(_parseContext.root.atts.get(att));
+				return Float.parseFloat(_parseContext.root.atts.get(att).trim());
 			} catch (NumberFormatException e) {
 				return def;
 			}
@@ -992,7 +1025,7 @@ public class SVGParser {
 	public static float parseFloat(String data,float def) { 
 		if (data!=null) {
 			try {
-				return Float.parseFloat(data);
+				return Float.parseFloat(data.trim());
 			} catch (NumberFormatException e) {
 				DebugUtil.logCall("!!!!!!!!!!!!!  floatparse: ex:"+data+" ;"+e.getMessage(),e);
 				return def;

@@ -28,14 +28,25 @@ import co.uk.sentinelweb.views.draw.model.Fill.Type;
 import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer;
 import co.uk.sentinelweb.views.draw.util.OnAsyncListener;
 import co.uk.sentinelweb.views.draw.util.PointUtil;
+import co.uk.sentinelweb.views.draw.util.StrokeUtil;
 
+/**
+ * Static renderObject Caching:
+ * one render is used statically in this class - which is actually a good thing since all the drawing objects in MyPOS are the same and stored in their own cache. 
+ * So really one drawing per sizing then hopefully it doesn't resize the SVG everytime it draws. i think not though it seems to work  ...
+ * 
+ * For Memory Management: The static AndGraphicsRenderer renderer's cache still needs to be dropped on app destroy though. along with the relevant drawing Cache (SVGDrawingCache in mYPODs case).
+ * 
+ * TODO actually there is a big bug!! the static AGR is created each time the object is ? hmm maybe not acutually. check.
+ * @author robert
+ */
 public class SVGDrawable extends Drawable {
+	static AndGraphicsRenderer _agr = new AndGraphicsRenderer();;
 	
 	int opacity = 255;
 	SVGDrawable _parent = null;
 	PointF _tl;
 	Drawing _drawing = null;
-	static AndGraphicsRenderer _agr = new AndGraphicsRenderer();;
 	Bitmap cache = null;
 	Rect cachePadding = new Rect();
 	Paint _cachePaint= null;
@@ -151,17 +162,25 @@ public class SVGDrawable extends Drawable {
 			}
 			_drawing.update(true, _agr, flags);
 			Rect bounds = getBoundsRect();
-			ViewPortData vpd = ViewPortData.getFragmentViewPort(de);//ViewPortData.getFullDrawing(d);
 			int dWidth = bounds.width();//-padding.left-padding.right // - getPaddingLeft() - getPaddingRight();
 			int dHeight = bounds.height();//-padding.top-padding.bottom //getMeasuredHeight() - getPaddingTop() - getPaddingBottom();
 			RectF calculatedBounds = de.calculatedBounds;
 			float xscaling = (float)dWidth / calculatedBounds.width();
 			float yscaling = (float)dHeight / calculatedBounds.height();
 			float scaling = Math.min( xscaling,  yscaling );
+			if (scaling<0.99f || scaling>1.01f) {
+				if (_debug) 	Log.d(VecGlobals.LOG_TAG, "scaling vector:"+scaling);
+				StrokeUtil.scale(_drawing, scaling, new RectF(), _agr);
+				calculatedBounds = de.calculatedBounds;
+			} else {
+				if (_debug) 	Log.d(VecGlobals.LOG_TAG, "NOT scaling vector:"+scaling);
+			}
+			scaling=1;
 			//scaling = scaling*0.95f;
+			ViewPortData vpd = ViewPortData.getFragmentViewPort(de);//ViewPortData.getFullDrawing(d);
 			_tl.set(0, 0);
-			_tl.y=(dHeight/scaling - calculatedBounds.height())/-2+calculatedBounds.top;
-			_tl.x=(dWidth/scaling - calculatedBounds.width())/-2+calculatedBounds.left;
+			_tl.y=(dHeight/scaling - calculatedBounds.height())/-2+calculatedBounds.top-2;
+			_tl.x=(dWidth/scaling - calculatedBounds.width())/-2+calculatedBounds.left-2;
 			if (bounds == _intrinsicBounds) {
 				_useRectF.set(_intrinsicBounds);
 				_usePointF.set(_intrinsicBounds.left,_intrinsicBounds.top);
