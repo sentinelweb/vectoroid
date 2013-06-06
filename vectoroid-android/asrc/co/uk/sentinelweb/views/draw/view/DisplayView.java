@@ -445,13 +445,21 @@ public class DisplayView extends ImageView {
 	public void setDrawing(Drawing d,boolean compute) {
 		this.d=d;
 		getRenderer().dropCache();
-		d.update(true, agr, UpdateFlags.ALL);
-		//if (compute) {d.computeBounds(drawingBounds);}
-		//else {drawingBounds.set(d.calculatedBounds);}
-		loadState=LOADSTATE_LOADED;
-		invalidate();
-		if (onLoadListener!=null) {
-			onLoadListener.onAsync(loadState);
+		if (d!=null) {
+			d.update(true, agr, UpdateFlags.ALL);
+			//if (compute) {d.computeBounds(drawingBounds);}
+			//else {drawingBounds.set(d.calculatedBounds);}
+			loadState=LOADSTATE_LOADED;
+			invalidate();
+			if (onLoadListener!=null) {
+				onLoadListener.onAsync(loadState);
+			}
+		} else {
+			loadState=LOADSTATE_UNLOADED;
+			invalidate();
+			if (onLoadListener!=null) {
+				onLoadListener.onAsync(loadState);
+			}
 		}
 	}
 	public int getLoadState() {
