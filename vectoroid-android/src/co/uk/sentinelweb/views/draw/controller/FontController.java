@@ -65,7 +65,7 @@ public class FontController {
 	private static final int PRV_FONT_SZ = 35;
 	private static final String DEFAULT_FONT = "Default";
 	public static final String FONT_PREVIEW_DIR = ".preview";
-	public static HashMap<String, SoftReference<Typeface>> _ttfonts = new HashMap<String, SoftReference<Typeface>>();
+	public static HashMap<String, Typeface> _ttfonts = new HashMap<String, Typeface>();
 	public HashMap<String, Font> _ttfontFiles = new HashMap<String, Font>();
 	public ArrayList<String> _ttFontsOrder=new ArrayList<String>();
 	FileRepository _fr;
@@ -80,19 +80,22 @@ public class FontController {
 		try {
 			if (DEFAULT_FONT.equals(name)) {
 				return Typeface.DEFAULT;
-			} else if ((!_ttfonts.containsKey(name) || _ttfonts.get(name).get()==null) && _fr!=null && name!=null && !name.equals("")) {
+			} else if ((!_ttfonts.containsKey(name) ) && _fr!=null && name!=null && !name.equals("")) {// || _ttfonts.get(name).get()==null
 				if (_ttfontFiles==null || _ttfontFiles.size()==0) {
 					
 				}
 				File file = _ttfontFiles.get(name)._fontFile;//new File(fr.getDirectory(Directory.TTF),ttfontFiles.get(name));
-				Typeface t = Typeface.createFromFile(file);
-				if (VecGlobals._isDebug) Log.d(VecGlobals.LOG_TAG, "create TTF Font : "+ name);
-				SoftReference<Typeface> typeRef = new SoftReference<Typeface>(t);
-				_ttfonts.put(name, typeRef);
-				return t;
-			} else if (_ttfonts.containsKey(name) && _ttfonts.get(name).get()!=null && !name.equals("")) {
+				if (file!=null) {
+					Typeface t = Typeface.createFromFile(file);
+					if (VecGlobals._isDebug) Log.d(VecGlobals.LOG_TAG, "create TTF Font : "+ name);
+					//SoftReference<Typeface> typeRef = new SoftReference<Typeface>(t);
+					_ttfonts.put(name, t);
+					return t;
+				}
+				return null;
+			} else if (_ttfonts.containsKey(name) && !name.equals("")) {// && _ttfonts.get(name).get()!=null
 				if (VecGlobals._isDebug) Log.d(VecGlobals.LOG_TAG, "cache TTF Font : "+ name);
-				return _ttfonts.get(name).get();
+				return _ttfonts.get(name);//.get();
 			} else { return Typeface.DEFAULT;}
 			
 		} catch (Exception e) {
@@ -103,6 +106,13 @@ public class FontController {
 	
 	public void unloadFont(String name) {
 		_ttfonts.remove(name);
+	}
+	
+	public void  addTTFontAsset(Context c , String name) {
+		Typeface t = Typeface.createFromAsset(c.getAssets(), name);
+		if (VecGlobals._isDebug) Log.d(VecGlobals.LOG_TAG, "create TTF Font : "+ name);
+		//SoftReference<Typeface> typeRef = new SoftReference<Typeface>(t);
+		_ttfonts.put(name, t);
 	}
 	
 	public void scanFonts(Context c) {// NOTE context is optional 
@@ -129,7 +139,7 @@ public class FontController {
 			}
 		}
 	}
-
+	
 	public void scanFontFile(Context c,File f) {
 		if (f.getName().indexOf(".")>0) {
 			Font font = new Font(f);

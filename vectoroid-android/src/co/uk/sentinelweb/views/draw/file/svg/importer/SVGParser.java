@@ -526,7 +526,9 @@ public class SVGParser {
 			ArrayList<SVGTagObject> flowParas = obj.getChildrenByTagName(TAG_FLOWPARA);
 			if (flowParas.size()>0) {
 				for (SVGTagObject para:flowParas) {
-					s.text += ("".equals(s.text)?"":"\n")+para.text;
+					if (para.text!=null) {
+						s.text += ("".equals(s.text)?"":"\n")+para.text;
+					}
 				}
 			}
 			if (s.text==null) {

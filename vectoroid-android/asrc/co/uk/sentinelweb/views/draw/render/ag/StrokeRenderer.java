@@ -108,7 +108,7 @@ public class StrokeRenderer {
 				renderTip(canvas, stroke, stroke.pen.startTip, true, true,sro);
 				renderTip(canvas, stroke, stroke.pen.endTip, false, true,sro);
 			}
-		} else {
+		} else if ( stroke.text!=null && !"".equals(stroke.text)) {
 			if (stroke.calculatedBounds!=null) {
 				if (stroke.fill.type==Fill.Type.BITMAP) {
 					if (!sro.fgOnly) {
