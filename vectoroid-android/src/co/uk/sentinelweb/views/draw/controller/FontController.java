@@ -110,11 +110,16 @@ public class FontController {
 	
 	public void  addTTFontAsset(Context c , String name) {
 		Typeface t = Typeface.createFromAsset(c.getAssets(), name);
-		if (VecGlobals._isDebug) Log.d(VecGlobals.LOG_TAG, "create TTF Font : "+ name);
+		String fontName = name.substring(name.lastIndexOf("/",name.lastIndexOf(".")-1));
+		//if (VecGlobals._isDebug) 
+			Log.d(VecGlobals.LOG_TAG, "create TTF Font : "+fontName +":"+ name);
 		//SoftReference<Typeface> typeRef = new SoftReference<Typeface>(t);
-		_ttfonts.put(name, t);
+		_ttfonts.put(fontName, t);
 	}
 	
+	public void  addTTFontTypeface(Typeface t , String name) {
+		_ttfonts.put(name, t);
+	}
 	public void scanFonts(Context c) {// NOTE context is optional 
 		File ttfdir = _fr.getDirectory(Directory.TTF);
 			if (ttfdir!=null) {
