@@ -39,7 +39,7 @@ public class SVGDrawing extends SVGParent{
 			outBuffer.append(">\n");
 			outBuffer.append("<defs>\n");
 			outBuffer.append("<style><![CDATA[\n");
-			if (_saveFile._assetList!=null) {// TODO 150612 : check reload assets?
+			if (_saveFile!=null && _saveFile._assetList!=null) {// TODO 150612 : check reload assets?
 				for (Object o :_saveFile._assetList) {
 					if (o instanceof Font) {
 						Font f = (Font)o;

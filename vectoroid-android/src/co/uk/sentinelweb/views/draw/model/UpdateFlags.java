@@ -35,14 +35,23 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import java.util.Arrays;
 import java.util.HashSet;
 
+import co.uk.sentinelweb.views.draw.model.Stroke.Type;
+
 
 public class UpdateFlags {
 	public enum UpdateType {PAINT,FILL,PATH,BOUNDS}
-	public HashSet<Stroke.Type> paintTypes = new HashSet<Stroke.Type>(Arrays.asList(Stroke.Type.values()));
-	public HashSet<Fill.Type> fillTypes = new HashSet<Fill.Type>(Arrays.asList(Fill.Type.values()));
-	public HashSet<UpdateType> updateTypes = new HashSet<UpdateType>(Arrays.asList(UpdateType.values()));
+	public HashSet<Stroke.Type> paintTypes = null;
+	public HashSet<Fill.Type> fillTypes = null;
+	public HashSet<UpdateType> updateTypes = null;
 	public boolean runListeners = true;
 	public boolean expandText = true;
+	
+	public UpdateFlags() {
+		super();
+		this.paintTypes = new HashSet<Stroke.Type>(Arrays.asList(Stroke.Type.values()));
+		this.fillTypes = new HashSet<Fill.Type>(Arrays.asList(Fill.Type.values()));
+		this.updateTypes = new HashSet<UpdateType>(Arrays.asList(UpdateType.values()));
+	}
 	
 	public UpdateFlags copy() {
 		UpdateFlags u = new UpdateFlags();

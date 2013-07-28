@@ -17,6 +17,7 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
+import android.widget.ImageView.ScaleType;
 import co.uk.sentinelweb.views.draw.VecGlobals;
 import co.uk.sentinelweb.views.draw.file.svg.importer.SVGParser;
 import co.uk.sentinelweb.views.draw.model.Drawing;
@@ -42,7 +43,7 @@ import co.uk.sentinelweb.views.draw.util.StrokeUtil;
  */
 public class SVGDrawable extends Drawable {
 	static AndGraphicsRenderer _agr = new AndGraphicsRenderer();;
-	
+	ScaleType _scaleType = ScaleType.CENTER_INSIDE;
 	int opacity = 255;
 	SVGDrawable _parent = null;
 	PointF _tl;
@@ -88,6 +89,7 @@ public class SVGDrawable extends Drawable {
 		this._parent=root;
 		this._modifier=modifier;
 		this._clipping=root._clipping;
+		this._scaleType=root._scaleType;
 		init();
 	}
 	
@@ -143,6 +145,14 @@ public class SVGDrawable extends Drawable {
 	}
 	
 	
+	public ScaleType getScaleType() {
+		return _scaleType;
+	}
+
+	public void setScaleType(ScaleType scaleType) {
+		_scaleType = scaleType;
+	}
+
 	public Rect getClipping() {
 		return this._clipping;
 	}
@@ -165,22 +175,35 @@ public class SVGDrawable extends Drawable {
 			int dWidth = bounds.width();//-padding.left-padding.right // - getPaddingLeft() - getPaddingRight();
 			int dHeight = bounds.height();//-padding.top-padding.bottom //getMeasuredHeight() - getPaddingTop() - getPaddingBottom();
 			RectF calculatedBounds = de.calculatedBounds;
-			float xscaling = (float)dWidth / calculatedBounds.width();
-			float yscaling = (float)dHeight / calculatedBounds.height();
-			float scaling = Math.min( xscaling,  yscaling );
-			if (scaling<0.99f || scaling>1.01f) {
-				if (_debug) 	Log.d(VecGlobals.LOG_TAG, "scaling vector:"+scaling);
-				StrokeUtil.scale(_drawing, scaling, new RectF(), _agr);
-				calculatedBounds = de.calculatedBounds;
-			} else {
-				if (_debug) 	Log.d(VecGlobals.LOG_TAG, "NOT scaling vector:"+scaling);
+			float xscaling = 1;
+			float yscaling = 1;
+			//float scaling = 1;
+			if (_scaleType==ScaleType.CENTER_INSIDE) {
+				xscaling = (float)dWidth / calculatedBounds.width();
+				yscaling = (float)dHeight / calculatedBounds.height();
+				//scaling = Math.min( xscaling,  yscaling );
+				xscaling= Math.min( xscaling,  yscaling );
+				yscaling=xscaling;
+			} else if (_scaleType==ScaleType.FIT_XY) {
+				xscaling = (float)dWidth / calculatedBounds.width();
+				yscaling = (float)dHeight / calculatedBounds.height();
+				//scaling = Math.min( xscaling,  yscaling );
 			}
-			scaling=1;
+			if (yscaling<0.99f || yscaling>1.01f || xscaling<0.99f || xscaling>1.01f) {
+				if (_debug) 	Log.d(VecGlobals.LOG_TAG, "scaling vector:"+xscaling+","+yscaling);
+				StrokeUtil.scale(_drawing, xscaling,yscaling, new RectF(), _agr);
+				calculatedBounds = de.calculatedBounds;
+				
+			} else {
+				if (_debug) 	Log.d(VecGlobals.LOG_TAG, "NOT scaling vector:"+xscaling+","+yscaling);
+			}
+			yscaling=xscaling=1;
+			//scaling=1;
 			//scaling = scaling*0.95f;
 			ViewPortData vpd = ViewPortData.getFragmentViewPort(de);//ViewPortData.getFullDrawing(d);
 			_tl.set(0, 0);
-			_tl.y=(dHeight/scaling - calculatedBounds.height())/-2+calculatedBounds.top-2;
-			_tl.x=(dWidth/scaling - calculatedBounds.width())/-2+calculatedBounds.left-2;
+			_tl.y=(dHeight/yscaling - calculatedBounds.height())/-2+calculatedBounds.top-2;
+			_tl.x=(dWidth/xscaling - calculatedBounds.width())/-2+calculatedBounds.left-2;
 			if (bounds == _intrinsicBounds) {
 				_useRectF.set(_intrinsicBounds);
 				_usePointF.set(_intrinsicBounds.left,_intrinsicBounds.top);
@@ -197,11 +220,11 @@ public class SVGDrawable extends Drawable {
 			//if (_debug) {
 			getPadding(_useRect);Rect padding =_useRect;
 			String file = (String)_drawing.getNameSpaced("co.uk.sentinel", "file");
-			if (_debug) Log.d(VecGlobals.LOG_TAG, "SVGDrawable.draw:src:"+file+" dim:"+dWidth +"x"+dHeight +" : "+ PointUtil.tostr(calculatedBounds)+" : scaling:"+scaling+":"+_drawing.elements.size()+":"+PointUtil.tostr(_tl));
+			if (_debug) Log.d(VecGlobals.LOG_TAG, "SVGDrawable.draw:src:"+file+" dim:"+dWidth +"x"+dHeight +" : "+ PointUtil.tostr(calculatedBounds)+" : scaling:"+xscaling+","+xscaling+":"+_drawing.elements.size()+":"+PointUtil.tostr(_tl));
 			if (_debug) Log.d(VecGlobals.LOG_TAG, "SVGDrawable.draw:"+PointUtil.tostr(getBounds())+" tl:"+PointUtil.tostr(_tl)+":"+PointUtil.tostr(padding));
 			//}
 			vpd.topLeft.set(_tl);
-			vpd.zoom=scaling;
+			vpd.zoom=1;
 			Rect clipbounds = null;
 			if (_clipping!=null) {
 				clipbounds = canvas.getClipBounds();

@@ -37,6 +37,7 @@ import java.util.ArrayList;
 import android.graphics.PointF;
 import co.uk.sentinelweb.ps.ParticleSystems.ParticleSystem.Particle;
 import co.uk.sentinelweb.views.draw.model.DrawingElement;
+import co.uk.sentinelweb.views.draw.model.Stroke;
 import co.uk.sentinelweb.views.draw.render.VecRenderer.Operator;
 import co.uk.sentinelweb.views.draw.util.OnAsyncListener;
 
@@ -55,6 +56,12 @@ public class DERenderer extends ParticleRenderer {
 		
 		public DERenderer(ArrayList<DrawingElement> deArray) {// Vector3D col
 			this.deArray = deArray;
+		}
+		public DERenderer() {// Vector3D col
+		}
+		public void set(ArrayList<Stroke> deArray) {
+			this.deArray =new ArrayList<DrawingElement>();
+			this.deArray.addAll(deArray);
 		}
 		public DERenderer(DrawingElement de) {// Vector3D col
 			this.deArray = new ArrayList<DrawingElement>();

@@ -35,6 +35,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import android.os.SystemClock;
+
 import co.uk.sentinelweb.ps.motion.Motion;
 import co.uk.sentinelweb.ps.render.ParticleRenderer;
 import co.uk.sentinelweb.views.draw.render.VecRenderer;
@@ -217,7 +219,7 @@ public class ParticleSystems {
 			if (renderTime!=null) {
 				return renderTime;
 			} else {
-				return System.currentTimeMillis();
+				return SystemClock.uptimeMillis();
 			}
 		}
 		public void setTime(long t) {renderTime=t;}

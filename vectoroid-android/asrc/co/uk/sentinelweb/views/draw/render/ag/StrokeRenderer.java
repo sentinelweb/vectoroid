@@ -153,7 +153,7 @@ public class StrokeRenderer {
 		if (renderObject.bitmapMask!=null ) {
 			_useRect.set(0,0 ,  renderObject.bitmapMask.getWidth(),renderObject.bitmapMask.getHeight());
 			canvas.drawBitmap( renderObject.bitmapMask, _useRect, stroke.calculatedBounds, renderObject.fgFill);
-			Log.d(VecGlobals.LOG_TAG, "stroke bmp: id="+stroke.hashCode()+" bnds:"+PointUtil.tostr(stroke.calculatedBounds)+" mask:"+PointUtil.tostr(_useRect));
+			//Log.d(VecGlobals.LOG_TAG, "stroke bmp: id="+stroke.hashCode()+" bnds:"+PointUtil.tostr(stroke.calculatedBounds)+" mask:"+PointUtil.tostr(_useRect));
 			return true;
 		}
 		return false;

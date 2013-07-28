@@ -21,9 +21,9 @@ import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer;
 public class BitmapUtil {
 	private static final int MAX_OP_PXL = 10*1024*1024;//10MB
 	
-	static RectF _useRectF = new RectF();
-	static Rect _useRect = new Rect();
-	static PointF _usePointF = new PointF();
+//	static RectF _useRectF = new RectF();
+//	static Rect _useRect = new Rect();
+//	static PointF _usePointF = new PointF();
 	
 	public static Bitmap renderFull(DrawingElement drawing, AndGraphicsRenderer agr)	 {
 		return renderFull( drawing,  agr,  null,0);
@@ -54,7 +54,7 @@ public class BitmapUtil {
 		float yscaling = (float)dHeight / calculatedBounds.height();
 		float scaling = Math.min( xscaling,  yscaling );
 		PointF _tl = new PointF();
-		_tl.set(0, 0);
+		_tl.set(3, 3);
 		_tl.y=(dHeight/scaling - calculatedBounds.height())/-2+calculatedBounds.top;
 		_tl.x=(dWidth/scaling - calculatedBounds.width())/-2+calculatedBounds.left;
 		vpd.topLeft.set(_tl);

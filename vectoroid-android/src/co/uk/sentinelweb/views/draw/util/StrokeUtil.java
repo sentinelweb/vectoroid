@@ -104,6 +104,10 @@ public class StrokeUtil {
 		TransformOperatorInOut t = TransformOperatorInOut.makeScale(sc,bounds);
 		TransformController.transform(de, de, t, agr);
 	}
+	public static void scale(DrawingElement de, float scx,float scy,RectF bounds, VecRenderer agr) {
+		TransformOperatorInOut t = TransformOperatorInOut.makeScale(new PointF(scx,scy),bounds);
+		TransformController.transform(de, de, t, agr);
+	}
 	public static void scaleAndTrans(DrawingElement de, float sc,PointF p,VecRenderer agr) {
 		TransformOperatorInOut t = TransformOperatorInOut.makeScaleAndTranslate(p, sc,de.calculatedBounds);
 		TransformController.transform(de, de, t, agr);

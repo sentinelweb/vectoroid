@@ -182,6 +182,22 @@ public class Drawing extends DrawingElement implements IDrawingElementCollection
 		}
 		return strokes;
 	}
+	
+	public ArrayList<Stroke> getStrokesByType(Stroke.Type t){
+		ArrayList<Stroke> strokes = new ArrayList<Stroke>();
+		for (DrawingElement de : elements) {
+			if (de instanceof Stroke) {
+				Stroke stroke = (Stroke)de;
+				if (t==stroke.type) strokes.add((Stroke)de);
+			} else {
+				strokes.addAll(((Group)de).getStrokesByType(t));
+			}
+		}
+		for (Layer de : layers) {
+			strokes.addAll(de.getStrokesByType(t));
+		}
+		return strokes;
+	}
 	/**
 	 * @return the id
 	 */

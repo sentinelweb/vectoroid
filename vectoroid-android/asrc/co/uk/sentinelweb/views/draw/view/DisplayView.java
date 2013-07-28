@@ -46,6 +46,7 @@ public class DisplayView extends ImageView {
 	Drawing d = null;
 	AndGraphicsRenderer agr ;
 	PointF _tl;
+	float _scaling;
 	Paint testPaint;
 	Rect _useRect = new Rect();
 	private String filePath;
@@ -186,6 +187,7 @@ public class DisplayView extends ImageView {
 			ViewPortData vpd = ViewPortData.getFullDrawing(d);
 			vpd.topLeft.set(_tl);
 			vpd.zoom=scaling;
+			_scaling=scaling;
 			agr.setVpd(vpd);
 			agr.setCanvas(canvas);
 			agr.setupViewPort();
@@ -543,6 +545,15 @@ public class DisplayView extends ImageView {
 	public void setScaleSource(boolean scaleSource) {
 		_scaleSource = scaleSource;
 	}
+
+	public PointF getTl() {
+		return _tl;
+	}
+
+	public float getScaling() {
+		return _scaling;
+	}
+
 
 	
 }
