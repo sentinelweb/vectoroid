@@ -167,10 +167,8 @@ public class SVGDrawable extends Drawable {
 		DrawingElement de = getElement();
 		if (de!=null) {
 			UpdateFlags flags = UpdateFlags.ALL;
-			if (_modifier!=null ) {
-				flags =_modifier.modify(_drawing);
-			}
-			_drawing.update(true, _agr, flags);
+			
+			//_drawing.update(true, _agr, flags);
 			Rect bounds = getBoundsRect();
 			int dWidth = bounds.width();//-padding.left-padding.right // - getPaddingLeft() - getPaddingRight();
 			int dHeight = bounds.height();//-padding.top-padding.bottom //getMeasuredHeight() - getPaddingTop() - getPaddingBottom();
@@ -196,6 +194,10 @@ public class SVGDrawable extends Drawable {
 				
 			} else {
 				if (_debug) 	Log.d(VecGlobals.LOG_TAG, "NOT scaling vector:"+xscaling+","+yscaling);
+			}
+			if (_modifier!=null ) {
+				flags =_modifier.modify(_drawing);
+				_drawing.update(true, _agr, flags);
 			}
 			yscaling=xscaling=1;
 			//scaling=1;

@@ -207,7 +207,7 @@ public class SVGStatic {
 						_useSB.delete(0, _useSB.length());
 				}
 				//Log.d(VecGlobals.LOG_TAG, "parsePath1:"+charAt+":"+currentPointData+":"+_pointsReqForCmd.get(currentMode)+":"+currentMode);
-				if (currentPointData.size()==_pointsReqForCmd.get(currentMode)) {
+				if (currentMode != 0 && currentPointData.size()==_pointsReqForCmd.get(currentMode)) {//RM note : fix from Siarhei Yankouski
 					processPointData(s,currentMode,currentPointData,lastPoint);
 					// assume l after m if not specified
 					if (currentMode=='M' && setMode=='M') {setMode='L';}

@@ -43,7 +43,7 @@ public class DisplayView extends ImageView {
 	public static final int LOADSTATE_LOADED = 3 ;
 	public static final int LOADSTATE_FAILED = 4 ;
 	
-	Drawing d = null;
+	Drawing _drawing = null;
 	AndGraphicsRenderer agr ;
 	PointF _tl;
 	float _scaling;
@@ -138,14 +138,14 @@ public class DisplayView extends ImageView {
 		//super.onDraw(canvas);
 		//canvas.drawRect(5, 5, 20, 20, testPaint);
 		//ViewPortData vpd = ViewPortData.getFullDrawing(d);
-		if (loadState==LOADSTATE_LOADED) {
+		if (loadState==LOADSTATE_LOADED && _drawing!=null) {
 			// TODO this expands the canvas clipRect but draw over the components behind. need to set a cipRect on the View somehow to truncate
 			//canvas.getClipBounds(_useRect);
 			//canvas.clipRect(_useRect.left-50*_density, _useRect.top-50*_density, _useRect.right, _useRect.bottom, Region.Op.REPLACE);
 			//ViewPortData vpd = ViewPortData.getFromBounds(drawingBounds);
 			int dWidth = getMeasuredWidth() - getPaddingLeft() - getPaddingRight();
 			int dHeight = getMeasuredHeight() - getPaddingTop() - getPaddingBottom();
-			RectF calculatedBounds = d.calculatedBounds;
+			RectF calculatedBounds = _drawing.calculatedBounds;
 			//RectF calculatedBounds = drawingBounds;
 			float xscaling = (float)dWidth / calculatedBounds.width();
 			
@@ -158,11 +158,11 @@ public class DisplayView extends ImageView {
 				// TODO not working properly
 				if (scaling!=1) {
 					Log.d(VecGlobals.LOG_TAG, "scr:"+dWidth +"x"+dHeight +" : "+ calculatedBounds.width() +"x"+ calculatedBounds.height()+" : scaling:"+scaling);
-					StrokeUtil.scale(d, scaling, new RectF(),agr);// scale from tl corner - not center
+					StrokeUtil.scale(_drawing, scaling, new RectF(),agr);// scale from tl corner - not center
 //					dHeight*=scaling;
 //					dWidth*=scaling;
 					scaling=1;
-					calculatedBounds = d.calculatedBounds;
+					calculatedBounds = _drawing.calculatedBounds;
 					Log.d(VecGlobals.LOG_TAG, "scr:"+dWidth +"x"+dHeight +" : "+ calculatedBounds.width() +"x"+ calculatedBounds.height()+" : scaling:"+scaling);
 					
 				}
@@ -184,7 +184,7 @@ public class DisplayView extends ImageView {
 				
 			}
 			//DebugUtil.logCall("padding:"+getPaddingTop()+"x"+getPaddingLeft(),new Exception(),-1);
-			ViewPortData vpd = ViewPortData.getFullDrawing(d);
+			ViewPortData vpd = ViewPortData.getFullDrawing(_drawing);
 			vpd.topLeft.set(_tl);
 			vpd.zoom=scaling;
 			_scaling=scaling;
@@ -192,7 +192,7 @@ public class DisplayView extends ImageView {
 			agr.setCanvas(canvas);
 			agr.setupViewPort();
 			//DebugUtil.logCall( "svg:rendering:"+vpd.zoom,new Exception());
-			agr.render(d);
+			agr.render(_drawing);
 			//if (borderColor!=null) {
 			//	canvas.drawRect(drawingBounds, borderPaint);
 			//}
@@ -240,7 +240,7 @@ public class DisplayView extends ImageView {
 				new LoadDrawingTask().execute(assetPath);
 			} 
 		} else {
-			d=null;
+			_drawing=null;
 			loadState=LOADSTATE_UNLOADED;
 			invalidate();
 		}
@@ -270,7 +270,7 @@ public class DisplayView extends ImageView {
 				new LoadDrawingTask().execute(f.getAbsolutePath());
 			} 
 		} else {
-			d=null;
+			_drawing=null;
 			loadState=LOADSTATE_UNLOADED;
 			invalidate();
 		}
@@ -310,7 +310,7 @@ public class DisplayView extends ImageView {
 				try {
 					loadState=LOADSTATE_LOADING;
 					this.publishProgress(loadState);
-					d=null;
+					_drawing=null;
 					agr.dropCache();
 					System.gc();
 					InputStream is = null;
@@ -326,11 +326,11 @@ public class DisplayView extends ImageView {
 					if (is!=null) {
 						InputSource isc = new InputSource(is);
 						SVGParser svgp = new SVGParser();
-						d = svgp.parseSAX(isc);
+						_drawing = svgp.parseSAX(isc);
 						is.close();
 						loadState=LOADSTATE_UPDATING;
 						this.publishProgress(loadState);
-						d.update(true, agr, UpdateFlags.ALL);
+						_drawing.update(true, agr, UpdateFlags.ALL);
 //						d.computeBounds(drawingBounds);
 						
 						//if (DVGlobals._isDebug) Log.d(DVGlobals.LOG_TAG, "LoadSVGTask:drawing bounds:"+PointUtil.tostr(d.calculatedBounds)+":"+PointUtil.tostr(d.size)+PointUtil.tostr(drawingBounds));
@@ -339,7 +339,7 @@ public class DisplayView extends ImageView {
 //							correctBounds();
 //						}
 						loadState=LOADSTATE_LOADED;
-						this.publishProgress(loadState);
+						//this.publishProgress(loadState);
 					}
 					
 				} catch (IOException e) {
@@ -390,18 +390,18 @@ public class DisplayView extends ImageView {
 				try {
 					loadState=LOADSTATE_LOADING;
 					this.publishProgress(loadState);
-					d=null;
+					_drawing=null;
 					agr.dropCache();
 					System.gc();
 					if (_isAsset) {
 						InputStream is = getContext().getResources().getAssets().open(params[0]);
-						d = DrawingFileUtil.loadJSON(is);
+						_drawing = DrawingFileUtil.loadJSON(is);
 					} else {
-						d = DrawingFileUtil.loadJSON(f,_saveFile);
+						_drawing = DrawingFileUtil.loadJSON(f,_saveFile);
 					}
 					loadState=LOADSTATE_UPDATING;
 					this.publishProgress(loadState);
-					d.update(true, agr, UpdateFlags.ALL);
+					_drawing.update(true, agr, UpdateFlags.ALL);
 					//d.computeBounds(drawingBounds);
 					//if (DVGlobals._isDebug) Log.d(DVGlobals.LOG_TAG, "LoadSVGTask:drawing bounds:"+PointUtil.tostr(d.calculatedBounds)+":"+PointUtil.tostr(d.size)+":"+PointUtil.tostr(drawingBounds));
 					
@@ -441,11 +441,11 @@ public class DisplayView extends ImageView {
 		}
 	}
 	public Drawing getDrawing() {
-		return d;
+		return _drawing;
 	}
 	
 	public void setDrawing(Drawing d,boolean compute) {
-		this.d=d;
+		this._drawing=d;
 		getRenderer().dropCache();
 		if (d!=null) {
 			d.update(true, agr, UpdateFlags.ALL);
