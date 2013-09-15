@@ -33,6 +33,7 @@ import co.uk.sentinelweb.views.draw.model.ViewPortData;
 import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer;
 import co.uk.sentinelweb.views.draw.util.DispUtil;
 import co.uk.sentinelweb.views.draw.util.OnAsyncListener;
+import co.uk.sentinelweb.views.draw.util.PointUtil;
 import co.uk.sentinelweb.views.draw.util.StrokeUtil;
 
 public class DisplayView extends ImageView {
@@ -554,6 +555,9 @@ public class DisplayView extends ImageView {
 		return _scaling;
 	}
 
-
+	public void convertTouchPointToDrawingCoords(PointF use) {
+		PointUtil.mulVector(use, use, 1/getScaling());
+		PointUtil.addVector(use, use, getTl());
+	}
 	
 }

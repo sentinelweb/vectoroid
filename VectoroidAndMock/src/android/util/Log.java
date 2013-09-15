@@ -20,12 +20,22 @@ public class Log {
 		return 0;
 	}
 	public static int e(String tag, String msg, Throwable error) {
-		System.out.println(tag+" :: "+msg+" : "+error.getClass().getSimpleName());
+		System.err.println(tag+" :: "+msg+" : "+error.getClass().getSimpleName());
 		error.printStackTrace();
 		
 		return 0;
 	}
 	public static int e(String tag, String msg) {
+		System.err.println(tag+" :: "+msg);
+		return 0;
+	}
+	public static int w(String tag, String msg, Throwable error) {
+		System.out.println(tag+" :: "+msg+" : "+error.getClass().getSimpleName());
+		error.printStackTrace();
+		
+		return 0;
+	}
+	public static int w(String tag, String msg) {
 		System.out.println(tag+" :: "+msg);
 		return 0;
 	}

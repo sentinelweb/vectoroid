@@ -62,14 +62,20 @@ public abstract class DrawingElement {
 	// update listeners
 	OnAsyncListener updateListener;
 	
+	public interface OnClickListener {
+		public void onClick(DrawingElement de);
+	}
+	public OnClickListener _onClick;
+	
 	public DrawingElement duplicate() {
 		return duplicate(false);
 	}
+	
 	public abstract DrawingElement duplicate(boolean shallow);
 	public abstract void update(boolean deep,VecRenderer r,UpdateFlags flags);
 	public abstract ArrayList<Stroke> getAllStrokes();
-	
 	protected abstract void updateBoundsAndCOG(boolean deep);
+	public abstract void applyTransform(TransformOperatorInOut t, DrawingElement de) ;
 	
 	public OnAsyncListener<?> getUpdateListener() {
 		return updateListener;
@@ -195,6 +201,7 @@ public abstract class DrawingElement {
 	}
 	
 	/**
+	 * Delete the renderObject associated with this
 	 * @param r
 	 * @return
 	 */
@@ -205,5 +212,18 @@ public abstract class DrawingElement {
 		return vro;
 	}
 	
-	public abstract void applyTransform(TransformOperatorInOut t, DrawingElement de) ;
+	/**
+	 * Check & execute the clickListener if needed 
+	 * 
+	 * @param use
+	 */
+	public void checkClick(PointF use) {
+		if (_onClick!=null && calculatedBounds.contains(use.x,use.y)){
+			_onClick.onClick(this);
+		}
+	}
+	
+	public void setOnClick(OnClickListener onClick) {
+		_onClick = onClick;
+	}
 }
