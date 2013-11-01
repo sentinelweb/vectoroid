@@ -85,7 +85,7 @@ public class ViewPortData {
 		vpd.zoom=1;
 		vpd.zoomSrcRect.set(0,0,(int)drawing.size.x,(int)drawing.size.y);
 		vpd.zoomSrcRectF.set(vpd.zoomSrcRect);
-		vpd.zoomCullingRectF.set(vpd.zoomSrcRectF);// maybe shuld just be huge?
+		vpd.zoomCullingRectF.set(vpd.zoomSrcRectF);// maybe should just be huge?
 		return vpd;
 	}
 	

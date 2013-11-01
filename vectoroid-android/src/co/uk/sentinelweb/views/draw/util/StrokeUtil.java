@@ -41,6 +41,7 @@ import co.uk.sentinelweb.views.draw.controller.TransformController;
 import co.uk.sentinelweb.views.draw.model.DrawingElement;
 import co.uk.sentinelweb.views.draw.model.PointVec;
 import co.uk.sentinelweb.views.draw.model.Stroke;
+import co.uk.sentinelweb.views.draw.model.Stroke.Type;
 import co.uk.sentinelweb.views.draw.model.TransformOperatorInOut;
 import co.uk.sentinelweb.views.draw.model.path.Arc;
 import co.uk.sentinelweb.views.draw.model.path.Bezier;
@@ -281,6 +282,18 @@ public class StrokeUtil {
 		curVec.add(new PathData(right,top));
 		curVec.add(new PathData(left,top));
 		return s;
+	}
+	
+	public static void setTextHeight(Stroke s,float size) {
+		if (s.type==Type.TEXT_TTF) {
+			// TODO will have to make work with rotated text. use trig
+			PointVec pointVec = s.points.get(0);
+			if (pointVec.size()==4 && Math.abs(pointVec.get(0).y-pointVec.get(1).y)<0.00001) {//check horizontal else need trig
+				float height = pointVec.get(0).y-pointVec.get(3).y;
+				pointVec.get(3).y=pointVec.get(0).y-size;
+				pointVec.get(2).y=pointVec.get(1).y-size;
+			}
+		}
 	}
 	
 	public static void genArc(Arc arc) {

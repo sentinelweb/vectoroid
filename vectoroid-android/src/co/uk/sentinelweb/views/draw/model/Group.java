@@ -162,7 +162,19 @@ public class Group extends DrawingElement  implements IDrawingElementCollection{
 		}
 		return depth;
 	}
-	
+	public IDrawingElementCollection getParent(DrawingElement child){
+		if (elements.contains(child)) return this; 
+		for (DrawingElement de : elements) {
+			if (de instanceof Group) {
+				Group g = (Group)de;
+				IDrawingElementCollection de1 = g.getParent(child);
+				if (de1!=null) {
+					return de1;
+				}
+			} 
+		}
+		return null;
+	}
 	/**
 	 * @return the id
 	 */

@@ -39,6 +39,7 @@ import co.uk.sentinelweb.views.draw.model.Stroke.Type;
 
 
 public class UpdateFlags {
+	// RM Need to have a NONE Type
 	public enum UpdateType {PAINT,FILL,PATH,BOUNDS}
 	public HashSet<Stroke.Type> paintTypes = null;
 	public HashSet<Fill.Type> fillTypes = null;

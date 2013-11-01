@@ -9,9 +9,11 @@ import org.xml.sax.InputSource;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.PointF;
@@ -28,6 +30,7 @@ import co.uk.sentinelweb.views.draw.file.DrawingFileUtil;
 import co.uk.sentinelweb.views.draw.file.SaveFile;
 import co.uk.sentinelweb.views.draw.file.svg.importer.SVGParser;
 import co.uk.sentinelweb.views.draw.model.Drawing;
+import co.uk.sentinelweb.views.draw.model.DrawingElement;
 import co.uk.sentinelweb.views.draw.model.UpdateFlags;
 import co.uk.sentinelweb.views.draw.model.ViewPortData;
 import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer;
@@ -67,6 +70,9 @@ public class DisplayView extends ImageView {
 	float _swipeDist = 200;
 	String svgPath=null;
 	
+	boolean useCache = false;
+	Bitmap cache = null;
+	
 	public DisplayView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		init(context,attrs);
@@ -96,6 +102,7 @@ public class DisplayView extends ImageView {
 		_density = DispUtil.getDensity(context);
 		borderPaint.setStrokeWidth(1*_density);
 		_swipeDist = 200*_density;
+//		setDrawingCacheEnabled(true);
 		if (attrs!=null) {
 		//	TypedArray a = context.obtainStyledAttributes(attrs,R.styleable.DisplayView);
 		//	String svgPath = a.getString(R.styleable.DisplayView_svg);
@@ -134,11 +141,28 @@ public class DisplayView extends ImageView {
 	/* (non-Javadoc)
 	 * @see android.widget.ImageView#onDraw(android.graphics.Canvas)
 	 */
+	DrawingElement updElement = null;
 	@Override
 	protected void onDraw(Canvas canvas) {
 		//super.onDraw(canvas);
 		//canvas.drawRect(5, 5, 20, 20, testPaint);
 		//ViewPortData vpd = ViewPortData.getFullDrawing(d);
+		Canvas sysCanvas = canvas;
+		if (useCache) {
+			boolean wasCreated = false;
+			if (cache==null) {
+				cache = Bitmap.createBitmap(getMeasuredWidth(),getMeasuredHeight(),Config.ARGB_8888);
+				wasCreated = true;
+			}
+			canvas = new Canvas(cache);
+			if (updElement!=null) {
+	//			//canvas.drawBitmap(getDrawingCache(), 0, 0, testPaint);
+				drawElementInner(updElement, canvas);
+				updElement=null;
+				sysCanvas.drawBitmap(cache, 0,0, testPaint);
+				if (!wasCreated) return;
+			}
+		}
 		if (loadState==LOADSTATE_LOADED && _drawing!=null) {
 			// TODO this expands the canvas clipRect but draw over the components behind. need to set a cipRect on the View somehow to truncate
 			//canvas.getClipBounds(_useRect);
@@ -172,9 +196,8 @@ public class DisplayView extends ImageView {
 				// topleft is inverted, hence -
 				_tl.y-=getPaddingTop();
 				_tl.x-=getPaddingLeft();
-				
 			} else {
-				scaling = scaling*0.95f;
+				//scaling = scaling*0.95f;
 				//float aspect = calculatedBounds.width()/calculatedBounds.height();
 				//float daspect = dWidth/dHeight;
 				_tl.y=(dHeight/scaling - calculatedBounds.height())/-2;
@@ -185,10 +208,10 @@ public class DisplayView extends ImageView {
 				
 			}
 			//DebugUtil.logCall("padding:"+getPaddingTop()+"x"+getPaddingLeft(),new Exception(),-1);
+			_scaling=scaling;
 			ViewPortData vpd = ViewPortData.getFullDrawing(_drawing);
 			vpd.topLeft.set(_tl);
 			vpd.zoom=scaling;
-			_scaling=scaling;
 			agr.setVpd(vpd);
 			agr.setCanvas(canvas);
 			agr.setupViewPort();
@@ -199,7 +222,10 @@ public class DisplayView extends ImageView {
 			//}
 			agr.revertViewPort();
 			//canvas.clipRect(r.left, r.top, r.right, r.bottom, Region.Op.REPLACE);
-			
+//			buildDrawingCache();
+			if (useCache) {
+				sysCanvas.drawBitmap(cache, 0,0, testPaint);
+			}
 		} else {
 			String text = "Unloaded";
 			switch(loadState) {
@@ -214,15 +240,45 @@ public class DisplayView extends ImageView {
 				case LOADSTATE_UNLOADED:text = "No Image";break;
 				case LOADSTATE_FAILED:text = "Failed:"+filePath;break;
 			}
-			canvas.drawText(text, 20, 40, testPaint);
+			if (useCache) {
+				sysCanvas.drawBitmap(cache, 0,0, testPaint);
+			}
+			sysCanvas.drawText(text, 20, 40, testPaint);
 		}
 	}
 	
 	private void showPreview(Canvas canvas) {
-		
 		canvas.drawBitmap(_previewBitmap,_previewSrcRect,_previewTgtRect , testPaint);
 	}
+	
+	public void drawElement(DrawingElement de) {
+		updElement = de;
+		RectF cb = de.calculatedBounds;
+		invalidate();
+	}
+	
+//	public void drawElement(DrawingElement de) {
+//		Canvas c = new Canvas(getDrawingCache());
+//		updElement = de;
+//		invalidate();
+//	}
 
+	private void drawElementInner(DrawingElement de, Canvas c) {
+		if (_drawing!=null && _drawing.size!=null) {
+			ViewPortData vpd = ViewPortData.getFullDrawing(_drawing);
+			vpd.topLeft.set(_tl);
+			vpd.zoom=_scaling;
+			agr.setVpd(vpd);
+			agr.setCanvas(c);
+			agr.setupViewPort();
+			//DebugUtil.logCall( "svg:rendering:"+vpd.zoom,new Exception());
+			agr.render(de);
+			//if (borderColor!=null) {
+			//	canvas.drawRect(drawingBounds, borderPaint);
+			//}
+			agr.revertViewPort();
+		}
+	}
 	/* (non-Javadoc)
 	 * @see android.widget.ImageView#onMeasure(int, int)
 	 */
@@ -299,7 +355,6 @@ public class DisplayView extends ImageView {
 		} 
 		invalidate();
 	}
-	
 
 	private class LoadSVGTask extends AsyncTask<String, Integer, Long> {
 		@Override
@@ -357,10 +412,11 @@ public class DisplayView extends ImageView {
 		 */
 		@Override
 		protected void onPostExecute(Long result) {
-			invalidate();
 			if (onLoadListener!=null) {
 				onLoadListener.onAsync(loadState);
 			}
+			invalidate();
+			
 		}
 
 		/* (non-Javadoc)
@@ -368,14 +424,14 @@ public class DisplayView extends ImageView {
 		 */
 		@Override
 		protected void onProgressUpdate(Integer... values) {
-			invalidate();
 			if (loadState!=LOADSTATE_LOADED && onLoadListener!=null) {
 				onLoadListener.onAsync(loadState);
 			}
+			invalidate();
 		}
 	}
+	
 	private class LoadDrawingTask extends AsyncTask<String , Integer, Long> {
-
 		@Override
 		protected Long doInBackground(String... params) {
 			//File f  = params[0];
@@ -424,10 +480,10 @@ public class DisplayView extends ImageView {
 		 */
 		@Override
 		protected void onPostExecute(Long result) {
-			invalidate();
 			if (onLoadListener!=null) {
 				onLoadListener.onAsync(loadState);
 			}
+			invalidate();
 		}
 
 		/* (non-Javadoc)
@@ -435,12 +491,13 @@ public class DisplayView extends ImageView {
 		 */
 		@Override
 		protected void onProgressUpdate(Integer... values) {
-			invalidate();
 			if (loadState!=LOADSTATE_LOADED && onLoadListener!=null) {
 				onLoadListener.onAsync(loadState);
 			}
+			invalidate();
 		}
 	}
+	
 	public Drawing getDrawing() {
 		return _drawing;
 	}
@@ -558,6 +615,14 @@ public class DisplayView extends ImageView {
 	public void convertTouchPointToDrawingCoords(PointF use) {
 		PointUtil.mulVector(use, use, 1/getScaling());
 		PointUtil.addVector(use, use, getTl());
+	}
+
+	public boolean isUseCache() {
+		return useCache;
+	}
+
+	public void setUseCache(boolean useCache) {
+		this.useCache = useCache;
 	}
 	
 }

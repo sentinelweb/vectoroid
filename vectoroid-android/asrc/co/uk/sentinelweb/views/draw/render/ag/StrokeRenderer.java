@@ -165,23 +165,25 @@ public class StrokeRenderer {
 	
 	public void processText(Stroke stroke, Path thePath,TextLineHandler loopMethod) {
 		StrokeRenderObject sro = (StrokeRenderObject)renderer.getObject(stroke);
-		for (int i = 0 ; i< sro.splitStr.length;i++) {
-			float heightOffset = -sro.fgInner.getTextSize()*(sro.splitStr.length-1-i);
-			float xstart = 0;
-			float ystart = heightOffset;
-			if (stroke.points.size()>=2 || (sro.textAngle>=MIN_ROTATION && sro.textAngle<=2*Math.PI-MIN_ROTATION)) {//
-				xstart = -(float)Math.sin(sro.textAngle)*heightOffset;
-				ystart = (float)Math.cos(sro.textAngle)*heightOffset;
-				_textMatrix.reset();
-				_textMatrix.postTranslate(xstart,ystart);
-				_textPath.reset();
-				thePath.transform(_textMatrix, _textPath);
-				//Log.d(VecGlobals.LOG_TAG, "angle:"+ sro.textAngle);
-			} else {
-				_textPoint.set(stroke.calculatedBounds.left+xstart,stroke.calculatedBounds.bottom+ystart);
-				//Log.d(VecGlobals.LOG_TAG, "level"+ sro.textAngle);
+		if (sro.splitStr!=null) {
+			for (int i = 0 ; i< sro.splitStr.length;i++) {
+				float heightOffset = -sro.fgInner.getTextSize()*(sro.splitStr.length-1-i);
+				float xstart = 0;
+				float ystart = heightOffset;
+				if (stroke.points.size()>=2 || (sro.textAngle>=MIN_ROTATION && sro.textAngle<=2*Math.PI-MIN_ROTATION)) {//
+					xstart = -(float)Math.sin(sro.textAngle)*heightOffset;
+					ystart = (float)Math.cos(sro.textAngle)*heightOffset;
+					_textMatrix.reset();
+					_textMatrix.postTranslate(xstart,ystart);
+					_textPath.reset();
+					thePath.transform(_textMatrix, _textPath);
+					//Log.d(VecGlobals.LOG_TAG, "angle:"+ sro.textAngle);
+				} else {
+					_textPoint.set(stroke.calculatedBounds.left+xstart,stroke.calculatedBounds.bottom+ystart);
+					//Log.d(VecGlobals.LOG_TAG, "level"+ sro.textAngle);
+				}
+				loopMethod.onLoop(stroke,  sro.splitStr[i]);
 			}
-			loopMethod.onLoop(stroke,  sro.splitStr[i]);
 		}
 	}
 	

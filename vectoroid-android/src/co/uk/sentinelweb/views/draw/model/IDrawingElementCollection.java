@@ -7,4 +7,6 @@ public interface IDrawingElementCollection {
 	public DrawingElement findById(String id);
 	public DrawingElement element();
 	public abstract ArrayList<Stroke> getStrokesByType(Stroke.Type t);
+	public IDrawingElementCollection getParent(DrawingElement de);
+	
 }

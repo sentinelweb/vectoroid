@@ -244,6 +244,29 @@ public class Drawing extends DrawingElement implements IDrawingElementCollection
 		}
 		return null;
 	}
+	
+	public IDrawingElementCollection getParent(DrawingElement child){
+		if (elements.contains(child)) return this; 
+		for (Layer de : layers) {
+			if (de.elements.contains(child)) return this; 
+		}
+		for (DrawingElement de : elements) {
+			if (de instanceof Group) {
+				Group g = (Group)de;
+				IDrawingElementCollection de1 = g.getParent(child);
+				if (de1!=null) {
+					return de1;
+				}
+			} 
+		}
+		for (Layer de : layers) {
+			IDrawingElementCollection de1 = de.getParent(child);
+				if (de1!=null) {
+					return de1;
+				}
+		}
+		return null;
+	}
 	public void applyTransform(TransformOperatorInOut t , DrawingElement tgtde) {
 		Drawing tgt = (Drawing) tgtde;
 		switch (t.axis) {

@@ -454,7 +454,16 @@ public class SVGParser {
 					//Log.d(VecGlobals.LOG_TAG,"fontSizeStr:"+fontSizeStr+":"+fontSize);
 					String fontFamilyStr = getStyleOrAtt(child,STYLE_FONT_FAMILY);
 					if (fontFamilyStr!=null) {s.fontName=fontFamilyStr.replaceAll(" ", "_");}
-					float x = parseFloat(child.atts.get(ATT_X),0);
+					String xattr = child.atts.get(ATT_X);
+					//TODO need to support character spacing (more x & y values see:http://www.w3.org/TR/SVG/text.html#TextElementXAttribute)
+					float x=0;
+					if (xattr!=null) {
+						String[] xsplit = xattr.split(" ");
+						if (xsplit.length>0) {
+							x = parseFloat(xsplit[0],0);
+						}
+					} 
+					//float x = parseFloatx;
 					float y = parseFloat(child.atts.get(ATT_Y),0);
 					pv.add(new PathData(x,y+0));
 					pv.add(new PathData(x+20,y+0));
@@ -607,7 +616,7 @@ public class SVGParser {
 			} 
 		}  
 		String fcolorStr = getStyleOrAtt(child, STYLE_FILL);
-		float fcolorOpacityVal = (int)(parseFloat(getStyleOrAtt(child,STYLE_FILL_OPACITY),1));
+		float fcolorOpacityVal = (parseFloat(getStyleOrAtt(child,STYLE_FILL_OPACITY),1));//(int)
 		float opacity = parseFloat(getStyleOrAtt(child,STYLE_OPACITY),1);
 		fcolorOpacityVal*=opacity;
 		//int opacity = (int)(parseFloat(child.style.get(STYLE_FILL_OPACITY),1)*255);
@@ -1025,7 +1034,7 @@ public class SVGParser {
 	}
 	
 	public static float parseFloat(String data,float def) { 
-		if (data!=null) {
+		if (data!=null && data.length()>0) {
 			try {
 				return Float.parseFloat(data.trim());
 			} catch (NumberFormatException e) {
