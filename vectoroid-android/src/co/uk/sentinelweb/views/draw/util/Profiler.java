@@ -14,7 +14,6 @@ public class Profiler {
 	ArrayList<Long> _marksTimes = new ArrayList<Long>();
 	StringBuilder sb=new StringBuilder();
 	
-	
 	public Profiler() {
 		start();
 	}

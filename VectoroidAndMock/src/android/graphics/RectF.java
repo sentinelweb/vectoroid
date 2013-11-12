@@ -47,4 +47,8 @@ public class RectF {
 	public boolean intersect(float f, float g, float h, float i) {
 		return false;
 	}
+
+	public boolean contains(float x, float y) {
+		return top<y&&bottom>y&&left<x&&right>x;
+	}
 }
