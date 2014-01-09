@@ -29,6 +29,7 @@ import co.uk.sentinelweb.views.draw.model.Fill.Type;
 import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer;
 import co.uk.sentinelweb.views.draw.util.OnAsyncListener;
 import co.uk.sentinelweb.views.draw.util.PointUtil;
+import co.uk.sentinelweb.views.draw.util.Profiler;
 import co.uk.sentinelweb.views.draw.util.StrokeUtil;
 
 /**
@@ -62,6 +63,11 @@ public class SVGDrawable extends Drawable {
 	RectF _useRectF = new RectF();
 	Rect _useRect = new Rect();
 	PointF _usePointF = new PointF();
+	
+//	static Profiler p = new Profiler();
+//	public static Profiler getProfiler() {
+//		return p;
+//	}
 	
 	public static class Modifier {
 		public UpdateFlags modify(Drawing d){return null;}
@@ -167,7 +173,7 @@ public class SVGDrawable extends Drawable {
 		DrawingElement de = getElement();
 		if (de!=null) {
 			UpdateFlags flags = UpdateFlags.ALL;
-			
+			//p.start();
 			//_drawing.update(true, _agr, flags);
 			Rect bounds = getBoundsRect();
 			int dWidth = bounds.width();//-padding.left-padding.right // - getPaddingLeft() - getPaddingRight();
@@ -232,11 +238,19 @@ public class SVGDrawable extends Drawable {
 				clipbounds = canvas.getClipBounds();
 				canvas.clipRect(clipbounds.left-_clipping.left, clipbounds.top-_clipping.top, clipbounds.right+_clipping.right, clipbounds.bottom+_clipping.bottom);
 			}
+			//p.mark("draw");
 			_agr.setVpd(vpd);
 			_agr.setCanvas(canvas);
 			_agr.setupViewPort();
 			_agr.render(de);
 			_agr.revertViewPort();
+			//p.mark("drawfin");
+			//p.logAccum("draw", 2, 1);
+			//p.logAccum("afterdraw", 2, 3);
+//			p.logAccum("b4draw",3, 2);
+//			p.logAccum("total", 3, 0);
+//			p.dump("svg:"+file);
+//			p.dumpAccum("svg"+file);
 			if (_clipping!=null) {
 				canvas.clipRect(clipbounds.left, clipbounds.top, clipbounds.right, clipbounds.bottom);
 			}
@@ -279,7 +293,7 @@ public class SVGDrawable extends Drawable {
 			_drawing = svgp.parseSAX(isc);
 			is.close();
 			_drawing.update(true, _agr, UpdateFlags.ALL);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

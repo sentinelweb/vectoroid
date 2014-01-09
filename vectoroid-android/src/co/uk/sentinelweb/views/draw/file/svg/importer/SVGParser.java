@@ -1,14 +1,17 @@
 package co.uk.sentinelweb.views.draw.file.svg.importer;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 
 import android.graphics.Color;
@@ -137,7 +140,7 @@ public class SVGParser {
     		"m 365.511,209.258 c -0.077,-0.459 0.397,-0.916 1.045,-1.097 l 0,0 c 0.651,-0.163 1.295,0.048 1.441,0.482 l 0,0 c 0.153,0.457 -0.306,0.988 -1.029,1.17 l 0,0 c -0.158,0.043 -0.313,0.063 -0.46,0.063 l 0,0 c -0.522,0 -0.937,-0.254 -0.997,-0.618"
     };
 	ParseContext _parseContext = new ParseContext();
-	public Drawing parseSAX(InputSource is) {
+	public Drawing parseSAX(InputSource is) throws ParserConfigurationException, SAXException, IOException {
 		
 //		if (1==1) {
 //			Stroke s = new Stroke(true);
@@ -151,7 +154,7 @@ public class SVGParser {
 		
 		XMLReader xmlreader;
 		SVGSAXParser svgSAXHandler = new SVGSAXParser(this);
-		try {
+		//try {
 			// create the factory
 			SAXParserFactory factory = SAXParserFactory.newInstance();
 			factory.setNamespaceAware(true);
@@ -167,12 +170,12 @@ public class SVGParser {
 			// perform the synchronous parse
 			xmlreader.parse(is);
 			return makeDrawing(_parseContext.root);
-		} catch (Throwable e) {
+		//} catch (Throwable e) {
 			//Log.e(Globals.TAG, "XMLParserEX:"+e.getClass().getName()+":"+e.getMessage());
-			e.printStackTrace();
+		//	e.printStackTrace();
 			
-			return null;
-		}
+		//	return null;
+		//}
 	}
 	/*
 	public Drawing parseXPP(XmlPullParser xpp) {

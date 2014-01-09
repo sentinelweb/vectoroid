@@ -37,6 +37,7 @@ import co.uk.sentinelweb.views.draw.render.ag.AndGraphicsRenderer;
 import co.uk.sentinelweb.views.draw.util.DispUtil;
 import co.uk.sentinelweb.views.draw.util.OnAsyncListener;
 import co.uk.sentinelweb.views.draw.util.PointUtil;
+import co.uk.sentinelweb.views.draw.util.Profiler;
 import co.uk.sentinelweb.views.draw.util.StrokeUtil;
 
 public class DisplayView extends ImageView {
@@ -73,6 +74,11 @@ public class DisplayView extends ImageView {
 	boolean useCache = false;
 	Bitmap cache = null;
 	
+	//static Profiler p = new Profiler();
+//	public static Profiler getProfiler() {
+//		return p;
+//	}
+//	
 	public DisplayView(Context context, AttributeSet attrs, int defStyle) {
 		super(context, attrs, defStyle);
 		init(context,attrs);
@@ -170,17 +176,20 @@ public class DisplayView extends ImageView {
 			//ViewPortData vpd = ViewPortData.getFromBounds(drawingBounds);
 			int dWidth = getMeasuredWidth() - getPaddingLeft() - getPaddingRight();
 			int dHeight = getMeasuredHeight() - getPaddingTop() - getPaddingBottom();
+			if (_drawing.calculatedBounds==null) {
+				_drawing.update(true, agr, UpdateFlags.ALL);
+			}
 			RectF calculatedBounds = _drawing.calculatedBounds;
 			//RectF calculatedBounds = drawingBounds;
-			float xscaling = (float)dWidth / calculatedBounds.width();
-			
-			float yscaling = (float)dHeight / calculatedBounds.height();
-			float scaling = Math.min( xscaling,  yscaling );
-			
+			//p.start();
+			float scaling = 1;
+			if (calculatedBounds!=null) {
+				float xscaling = (float)dWidth / calculatedBounds.width();
+				float yscaling = (float)dHeight / calculatedBounds.height();
+				scaling = Math.min( xscaling,  yscaling );
+			}
 			_tl.set(0, 0);
-			
 			if (_scaleSource) {
-				// TODO not working properly
 				if (scaling!=1) {
 					Log.d(VecGlobals.LOG_TAG, "scr:"+dWidth +"x"+dHeight +" : "+ calculatedBounds.width() +"x"+ calculatedBounds.height()+" : scaling:"+scaling);
 					StrokeUtil.scale(_drawing, scaling, new RectF(),agr);// scale from tl corner - not center
@@ -189,7 +198,6 @@ public class DisplayView extends ImageView {
 					scaling=1;
 					calculatedBounds = _drawing.calculatedBounds;
 					Log.d(VecGlobals.LOG_TAG, "scr:"+dWidth +"x"+dHeight +" : "+ calculatedBounds.width() +"x"+ calculatedBounds.height()+" : scaling:"+scaling);
-					
 				}
 				_tl.y=Math.abs(dHeight - calculatedBounds.height())/-2;
 				_tl.x=Math.abs(dWidth - calculatedBounds.width())/-2;
@@ -214,6 +222,7 @@ public class DisplayView extends ImageView {
 			vpd.zoom=scaling;
 			agr.setVpd(vpd);
 			agr.setCanvas(canvas);
+			//p.mark("draw");
 			agr.setupViewPort();
 			//DebugUtil.logCall( "svg:rendering:"+vpd.zoom,new Exception());
 			agr.render(_drawing);
@@ -221,11 +230,17 @@ public class DisplayView extends ImageView {
 			//	canvas.drawRect(drawingBounds, borderPaint);
 			//}
 			agr.revertViewPort();
+			//p.mark("drawfin");
 			//canvas.clipRect(r.left, r.top, r.right, r.bottom, Region.Op.REPLACE);
 //			buildDrawingCache();
 			if (useCache) {
 				sysCanvas.drawBitmap(cache, 0,0, testPaint);
 			}
+//			p.logAccum("total", 0, 3);
+//			p.logAccum("draw", 1, 2);
+//			p.logAccum("afterdraw", 2, 3);
+//			p.logAccum("b4draw",0, 1);
+//			p.dumpAccum("disp");
 		} else {
 			String text = "Unloaded";
 			switch(loadState) {
@@ -364,10 +379,11 @@ public class DisplayView extends ImageView {
 			if (VecGlobals._isDebug) Log.d(VecGlobals.LOG_TAG, "SVGImageView.this.svgPath: "+DisplayView.this.svgPath);
 			if (svgPath!=null) {
 				try {
-					loadState=LOADSTATE_LOADING;
-					this.publishProgress(loadState);
+					//loadState=LOADSTATE_LOADING;
+					this.publishProgress(loadState=LOADSTATE_LOADING);
 					_drawing=null;
 					agr.dropCache();
+					Drawing localDrawing = null;
 					System.gc();
 					InputStream is = null;
 					if (_isAsset) {
@@ -382,11 +398,11 @@ public class DisplayView extends ImageView {
 					if (is!=null) {
 						InputSource isc = new InputSource(is);
 						SVGParser svgp = new SVGParser();
-						_drawing = svgp.parseSAX(isc);
+						localDrawing = svgp.parseSAX(isc);
 						is.close();
-						loadState=LOADSTATE_UPDATING;
-						this.publishProgress(loadState);
-						_drawing.update(true, agr, UpdateFlags.ALL);
+						//loadState=LOADSTATE_UPDATING;
+						this.publishProgress(loadState=LOADSTATE_UPDATING);
+						localDrawing.update(true, agr, UpdateFlags.ALL);
 //						d.computeBounds(drawingBounds);
 						
 						//if (DVGlobals._isDebug) Log.d(DVGlobals.LOG_TAG, "LoadSVGTask:drawing bounds:"+PointUtil.tostr(d.calculatedBounds)+":"+PointUtil.tostr(d.size)+PointUtil.tostr(drawingBounds));
@@ -394,14 +410,17 @@ public class DisplayView extends ImageView {
 //						if (_correctBounds) {
 //							correctBounds();
 //						}
+						_drawing=localDrawing;
 						loadState=LOADSTATE_LOADED;
 						//this.publishProgress(loadState);
 					}
 					
-				} catch (IOException e) {
-					if (VecGlobals._isDebug) Log.d(VecGlobals.LOG_TAG, "Load failed:"+DisplayView.this.svgPath,e);
-					loadState=LOADSTATE_FAILED;
-					this.publishProgress(loadState);
+				} catch (Exception e) {
+					//if (VecGlobals._isDebug) 
+						Log.d(VecGlobals.LOG_TAG, "Load failed:"+DisplayView.this.svgPath,e);
+					//loadState=LOADSTATE_FAILED;
+					
+					this.publishProgress(loadState=LOADSTATE_FAILED);
 				}
 			}
 			return null;
@@ -445,31 +464,33 @@ public class DisplayView extends ImageView {
 			if (VecGlobals._isDebug) Log.d(VecGlobals.LOG_TAG, "SVGImageView.this.svgPath: "+DisplayView.this.filePath);
 			if (filePath!=null) {
 				try {
-					loadState=LOADSTATE_LOADING;
-					this.publishProgress(loadState);
+					//loadState=LOADSTATE_LOADING;
+					this.publishProgress(loadState=LOADSTATE_LOADING);
 					_drawing=null;
+					Drawing localDrawing = null;
 					agr.dropCache();
 					System.gc();
 					if (_isAsset) {
 						InputStream is = getContext().getResources().getAssets().open(params[0]);
-						_drawing = DrawingFileUtil.loadJSON(is);
+						localDrawing = DrawingFileUtil.loadJSON(is);
 					} else {
-						_drawing = DrawingFileUtil.loadJSON(f,_saveFile);
+						localDrawing = DrawingFileUtil.loadJSON(f,_saveFile);
 					}
-					loadState=LOADSTATE_UPDATING;
-					this.publishProgress(loadState);
-					_drawing.update(true, agr, UpdateFlags.ALL);
+					//loadState=LOADSTATE_UPDATING;
+					this.publishProgress(loadState=LOADSTATE_UPDATING);
+					localDrawing.update(true, agr, UpdateFlags.ALL);
 					//d.computeBounds(drawingBounds);
 					//if (DVGlobals._isDebug) Log.d(DVGlobals.LOG_TAG, "LoadSVGTask:drawing bounds:"+PointUtil.tostr(d.calculatedBounds)+":"+PointUtil.tostr(d.size)+":"+PointUtil.tostr(drawingBounds));
 					
 					//if (_correctBounds) {
 					//	correctBounds();
 					//}
+					_drawing=localDrawing;
 					loadState=LOADSTATE_LOADED;
 				} catch (Exception e) {
 					if (VecGlobals._isDebug) Log.d(VecGlobals.LOG_TAG, "Load failed:"+DisplayView.this.filePath,e);
-					loadState=LOADSTATE_FAILED;
-					this.publishProgress(loadState);
+					//loadState=LOADSTATE_FAILED;
+					this.publishProgress(loadState=LOADSTATE_FAILED);
 				}
 			}
 			return null;
