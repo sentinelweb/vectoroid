@@ -70,6 +70,19 @@ public class SVGDrawable extends Drawable {
 //	}
 	
 	public static class Modifier {
+		public int _color=Color.WHITE;
+		public float _glow=0;
+		public int _glowColor=Color.TRANSPARENT;
+		public Modifier() {
+			
+		}
+		public Modifier(int color, float glow, int glowColor) {
+			super();
+			this._color = color;
+			this._glow = glow;
+			this._glowColor = glowColor;
+		}
+
 		public UpdateFlags modify(Drawing d){return null;}
 	}
 	
@@ -171,6 +184,7 @@ public class SVGDrawable extends Drawable {
 	@Override
 	public void draw(Canvas canvas) {
 		DrawingElement de = getElement();
+		//if (true) return;// test 
 		if (de!=null) {
 			UpdateFlags flags = UpdateFlags.ALL;
 			//p.start();

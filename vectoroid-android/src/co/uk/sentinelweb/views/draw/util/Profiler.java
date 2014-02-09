@@ -27,10 +27,11 @@ public class Profiler {
 		start();
 	}
 
-	public void start() {
+	public Profiler start() {
 		_marks.clear();
 		_marksTimes.clear();
 		time =System.nanoTime();
+		return this;
 	}
 	
 	public void mark(String mark) {
