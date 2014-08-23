@@ -126,7 +126,22 @@ public class SVGDrawable extends Drawable {
 			_offset=this._parent._offset;
 		}
 		if (_drawing!=null) {
-			
+			if (_drawing.calculatedBounds==null) {
+				_drawing.update(true,_agr,UpdateFlags.BOUNDSONLY);
+			}
+			if (_drawing.calculatedBounds!=null) {
+//				setBounds(
+//					new Rect(
+//						(int)_drawing.calculatedBounds.left,
+//						(int)_drawing.calculatedBounds.top,
+//						(int)_drawing.calculatedBounds.right,
+//						(int)_drawing.calculatedBounds.bottom
+//					)
+//				);
+				//setBounds( new Rect(0,0,0,0) );
+			} else {
+				//setBounds( new Rect(0,0,0,0) );
+			}
 		}
 	}
 	private DrawingElement getElement() {
@@ -211,6 +226,14 @@ public class SVGDrawable extends Drawable {
 				if (_debug) 	Log.d(VecGlobals.LOG_TAG, "scaling vector:"+xscaling+","+yscaling);
 				StrokeUtil.scale(_drawing, xscaling,yscaling, new RectF(), _agr);
 				calculatedBounds = de.calculatedBounds;
+//				setBounds(
+//						new Rect(
+//							(int)calculatedBounds.left,
+//							(int)calculatedBounds.top,
+//							(int)calculatedBounds.right,
+//							(int)calculatedBounds.bottom
+//						)
+//					);
 				
 			} else {
 				if (_debug) 	Log.d(VecGlobals.LOG_TAG, "NOT scaling vector:"+xscaling+","+yscaling);
@@ -252,6 +275,7 @@ public class SVGDrawable extends Drawable {
 				clipbounds = canvas.getClipBounds();
 				canvas.clipRect(clipbounds.left-_clipping.left, clipbounds.top-_clipping.top, clipbounds.right+_clipping.right, clipbounds.bottom+_clipping.bottom);
 			}
+			
 			//p.mark("draw");
 			_agr.setVpd(vpd);
 			_agr.setCanvas(canvas);
@@ -270,6 +294,7 @@ public class SVGDrawable extends Drawable {
 			}
 		}
 	}
+	
 	private Rect getBoundsRect() {
 		Rect bounds = getBounds();//new Rect(0,0,canvas.getWidth(),canvas.getHeight());
 		if (bounds==null || bounds.width()<=0 ) {
@@ -283,7 +308,7 @@ public class SVGDrawable extends Drawable {
 		//}
 		return bounds;
 	}
-	
+
 	@Override
 	public int getOpacity() {
 		return opacity;

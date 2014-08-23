@@ -45,9 +45,12 @@ public class DebugUtil {
 		Log.d(VecGlobals.LOG_TAG, label+": memory: " +	"used: used:"+umemK+": total:"+tmemK+":"+pcfree+" % free.");
 	}
 	public static void logCall(String label, Throwable e) {
-		logCall( label,  e,5);
+		logCall( label,  e,5,true);
 	}
-	public static void logCall(String label, Throwable e,int limit) {
+	public static void logCall(String label, Throwable e,boolean newline) {
+		logCall( label,  e,5,newline);
+	}
+	public static void logCall(String label, Throwable e,int limit,boolean newline) {
 		StackTraceElement ste[] = e.getStackTrace();
 		int cnt = 0;
 		clear();
@@ -57,7 +60,7 @@ public class DebugUtil {
 			_useStringBuffer.append(st.getMethodName());
 			_useStringBuffer.append(":");
 			_useStringBuffer.append(st.getLineNumber());
-			_useStringBuffer.append(",\n");
+			if (newline) _useStringBuffer.append(",\n");
 			cnt++;
 			if (limit>-1 && cnt>limit) break;
 		}
@@ -65,7 +68,7 @@ public class DebugUtil {
 	}
 	
 	public static void clear() {
-		if (_useStringBuffer.length()>0) {_useStringBuffer.delete(0, _useStringBuffer.length()-1);}
+		if (_useStringBuffer.length()>0) {_useStringBuffer.delete(0, _useStringBuffer.length());}
 		
 	}
 }
