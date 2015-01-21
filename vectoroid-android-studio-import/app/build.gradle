@@ -1,0 +1,28 @@
+apply plugin: 'android-library'
+
+android {
+    compileSdkVersion 19
+    buildToolsVersion "19.1.0"
+
+    defaultConfig {
+        //applicationId "co.uk.sentinelweb.vectoroid"
+        minSdkVersion 8
+        targetSdkVersion 19
+    }
+    sourceSets {
+        main.java.srcDirs = ['src/main/java','src/android/java']
+        //androidTest.setRoot('src/main/androidTest')
+    }
+    buildTypes {
+        release {
+//            runProguard true
+//            proguardFiles 'proguard.cfg'
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+        }
+    }
+}
+
+dependencies {
+    compile 'com.google.code.gson:gson:2.1'
+}
