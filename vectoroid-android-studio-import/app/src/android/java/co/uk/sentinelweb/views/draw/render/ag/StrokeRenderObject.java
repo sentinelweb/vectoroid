@@ -483,12 +483,16 @@ public class StrokeRenderObject extends VecRenderObject {
 		fgOuter.setStrokeWidth(s.pen.glowWidth/* *zoom */);//*density
 		if (s.pen.glowWidth>0) {
 			float blurRadius = s.pen.glowWidth/* *r.density  */;//*zoom
+			BlurMaskFilter.Blur blurTyp = BlurMaskFilter.Blur.NORMAL;
 			//ctr++;
 			//BlurMaskFilter.Blur blurTyp=BlurMaskFilter.Blur.values()[ctr%4];
-			//Log.d(Globals.LOG_TAG, "blurRadius:"+blurRadius+" type:"+blurTyp);
-			BlurMaskFilter.Blur blurTyp=BlurMaskFilter.Blur.NORMAL;
-			BlurMaskFilter mBlur = new BlurMaskFilter(blurRadius, blurTyp);
-			fgOuter.setMaskFilter(mBlur);
+			//Log.d(VecGlobals.LOG_TAG, "blurRadius:"+blurRadius+" type:"+blurTyp);
+			if (blurRadius>0f && !Float.isInfinite(blurRadius)) {
+				BlurMaskFilter mBlur = new BlurMaskFilter(blurRadius, blurTyp);
+				fgOuter.setMaskFilter(mBlur);
+			} else {
+				fgOuter.setMaskFilter(null);
+			}
 		} else {
 			fgOuter.setMaskFilter(null);
 		}

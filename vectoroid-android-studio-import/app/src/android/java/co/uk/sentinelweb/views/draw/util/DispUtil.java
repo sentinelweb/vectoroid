@@ -47,7 +47,7 @@ public class DispUtil {
 	
 	private static float density = -1; 
 	public static float getDensity(Context context) {
-		 if (density==-1) {
+		 if (density==-1 && context!=null) {
 			try {
 				DisplayMetrics metrics = getMetrics(context);
 				density=metrics.density;
@@ -58,7 +58,7 @@ public class DispUtil {
 				density=1;
 			}
 		}
-		return density;
+		return density==-1?1:density;
 	}
 	
 	public  static DisplayMetrics getMetrics(Context context) {

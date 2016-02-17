@@ -58,7 +58,7 @@ public class SVGDrawable extends Drawable {
 	RectF _useRectF = new RectF();
 	Rect _useRect = new Rect();
 	PointF _usePointF = new PointF();
-	
+	String path = null;
 //	static Profiler p = new Profiler();
 //	public static Profiler getProfiler() {
 //		return p;
@@ -104,6 +104,7 @@ public class SVGDrawable extends Drawable {
 		this._modifier=modifier;
 		this._clipping=root._clipping;
 		this._scaleType=root._scaleType;
+        this.path = root.path;
 		init();
 	}
 	
@@ -205,31 +206,19 @@ public class SVGDrawable extends Drawable {
 			RectF calculatedBounds = de.calculatedBounds;
 			float xscaling = 1;
 			float yscaling = 1;
-			//float scaling = 1;
 			if (_scaleType==ScaleType.CENTER_INSIDE) {
 				xscaling = (float)dWidth / calculatedBounds.width();
 				yscaling = (float)dHeight / calculatedBounds.height();
-				//scaling = Math.min( xscaling,  yscaling );
 				xscaling= Math.min( xscaling,  yscaling );
 				yscaling=xscaling;
 			} else if (_scaleType==ScaleType.FIT_XY) {
 				xscaling = (float)dWidth / calculatedBounds.width();
 				yscaling = (float)dHeight / calculatedBounds.height();
-				//scaling = Math.min( xscaling,  yscaling );
 			}
 			if (yscaling<0.99f || yscaling>1.01f || xscaling<0.99f || xscaling>1.01f) {
 				if (_debug) 	Log.d(VecGlobals.LOG_TAG, "scaling vector:"+xscaling+","+yscaling);
 				StrokeUtil.scale(_drawing, xscaling, yscaling, new RectF(), _agr);
 				calculatedBounds = de.calculatedBounds;
-//				setBounds(
-//						new Rect(
-//							(int)calculatedBounds.left,
-//							(int)calculatedBounds.top,
-//							(int)calculatedBounds.right,
-//							(int)calculatedBounds.bottom
-//						)
-//					);
-				
 			} else {
 				if (_debug) 	Log.d(VecGlobals.LOG_TAG, "NOT scaling vector:"+xscaling+","+yscaling);
 			}
@@ -238,8 +227,6 @@ public class SVGDrawable extends Drawable {
 				_drawing.update(true, _agr, flags);
 			}
 			yscaling=xscaling=1;
-			//scaling=1;
-			//scaling = scaling*0.95f;
 			ViewPortData vpd = ViewPortData.getFragmentViewPort(de);//ViewPortData.getFullDrawing(d);
 			_tl.set(0, 0);
 			_tl.y=(dHeight/yscaling - calculatedBounds.height())/-2+calculatedBounds.top-2;
@@ -355,5 +342,12 @@ public class SVGDrawable extends Drawable {
 		}
 	    return super.getIntrinsicHeight();
 	}
-	
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(final String path) {
+        this.path = path;
+    }
 }
